@@ -1,0 +1,9 @@
+.vscode/c_cpp_properties.json
+build/*
+devel/*
+install/*
+.vscode/*
+src/kinova_*
+src/i_tongue_pkg
+src/librealsense
+src/realsense_camera
