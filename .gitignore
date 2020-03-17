@@ -7,3 +7,4 @@ src/kinova_*
 src/i_tongue_pkg
 src/librealsense
 src/realsense_camera
+src/jaco*
