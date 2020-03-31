@@ -6,6 +6,7 @@ import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
 import tf2_ros
+import tf2_msgs.msg
 from tf.transformations import quaternion_from_euler
 from math import pi
 from std_msgs.msg import String
@@ -18,8 +19,12 @@ cameraAttachFrame = 'j2n6s300_link_6'
 cameraNameFrame = 'realsense'
 #x, y, z, roll, yaw, pitch
 cameraTransformation = [0, 0, 0.2, 0, 0, 0]
+publisher_transform = []
 
-camera_Message = geometry_msgs.msg.Transform()
+camera_Message = geometry_msgs.msg.TransformStamped()
+
+camera_Message.header.frame_id = cameraAttachFrame
+camera_Message.child_frame_id = cameraNameFrame
 
 camera_Message.transform.translation.x = cameraTransformation[0]
 camera_Message.transform.translation.y = cameraTransformation[1]
@@ -32,9 +37,14 @@ camera_Message.transform.rotation.y = quad[1]
 camera_Message.transform.rotation.z = quad[2]
 camera_Message.transform.rotation.w = quad[3]
 
+def pose_callback(pose, another):
+    camera_Message.header.stamp = rospy.Time.now()
+    tfm = tf2_msgs.msg.TFMessage([camera_Message])
+    publisher_transform.publish(tfm)
+
 if __name__ == '__main__':
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_python_interface_tutorial')
+    rospy.init_node('moveit_node')
 
     display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
                                             moveit_msgs.msg.DisplayTrajectory,
@@ -52,6 +62,13 @@ if __name__ == '__main__':
     tfBuffer = tf2_ros.Buffer()
     listener = tf2_ros.TransformListener(tfBuffer)
     camera_Broadcaster = tf2_ros.TransformBroadcaster()
+
+    publisher_transform = rospy.Publisher("/tf", tf2_msgs.msg.TFMessage, queue_size=1)
+
+    rospy.Subscriber('/tf',
+                tf2_ros.TFMessage,
+                pose_callback,
+                robotName)
 
     # robot:
     print "============ Printing robot state"
