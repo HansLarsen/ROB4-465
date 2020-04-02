@@ -164,7 +164,7 @@ install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(PROGRAMS
-  src/moveit_nodelet
+  scripts/moveit_nodelet.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
