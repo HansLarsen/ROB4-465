@@ -1,27 +1,31 @@
 #!/usr/bin/env python
 
-
+#packages for the GUI
 from Tkinter import *
 from ttk import *
 from PIL import ImageTk, Image
 
 import rospkg
 import rospy
-from std_msgs.msg import String
+#import msg's from our package
 from autonomous_eating.msg import gui_status
 from autonomous_eating.msg import gui_mode
 
 pkgPath = rospkg.RosPack().get_path('autonomous_eating')
 
+#has all the methods and handles for the GUI
 class GUIApp():
+  #callback for gui_mode
   def gui_mode_callback(self, data):
     self.updateAcitvationBar(data.selectness)
     self.updateItciImg(self.frame, data.x, data.y)
 
+  #callback for gui_status
   def gui_status_callback(self, data):
     status = (data.jaco_status, data.camera_status, data.main_status, data.moving_status)
     self.updateStatusText(status)
 
+  #updates image of itci with the red circle showing tongue position
   def updateItciImg(self, frame, x=25,y=25):
     self.itciCanvas.create_image(0,0, anchor=NW, image=self.itciBaseImg, state=NORMAL)
     self.circleSize = 25
@@ -31,33 +35,32 @@ class GUIApp():
     self.y2 = y + self.circleSize
     self.itciCanvas.create_oval(self.x1,self.y1,self.x2,self.y2, width=5, outline="red")
 
+  #shows selectiveness as a status bar
   def updateAcitvationBar(self, value=0):
     self.activationBar['value'] = value
 
+  #updates text box with the status messages
   def updateStatusText(self, status):
-    self.text.configure(state="normal")
+    self.text.configure(state="normal") #unlock text field
     self.text.delete(1.0, END)
     self.text.insert(END, "JACO Connect:  " + status[0] + "\n")
     self.text.insert(END, "Camera status:   " + status[1] + "\n")
     self.text.insert(END, "System status:    " + status[2] + "\n")
     self.text.insert(END, "System Moving:  " + status[3] + "\n")
-    self.text.configure(state="disabled")
+    self.text.configure(state="disabled") #lock it, so user does not mess with it
 
+  #init the gui, place widgets in grid, and setup the initial state
   def __init__(self, master):
     self.frame = Frame(master)
     self.frame.style = Style()
     self.frame.pack()
-    #('clam', 'alt', 'default', 'classic')
     self.frame.style.theme_use("clam")
     master.title("Autonomous Eating")
 
-    #label for status panels below it:
-    #self.statusLabel = Label(frame, text="SYSTEM STATUS", width=15, font=("Arial", 12, "bold"))
-    #self.statusLabel.grid(column=0,row=0)
-    
-    #add info panel on the left, top part is status panel
+    #add info panel on the left
     self.text = Text(self.frame, font=("Arial", 12), width = 50)
     self.text.grid(column=0, row=0)
+    # set text at start:
     self.updateStatusText(("Connected", "Disconnected", "OK", "False"))
 
     #adding itci image with red ellipse showing tongue position
@@ -78,7 +81,7 @@ app = GUIApp(root)
 
 #init ros:
 rospy.init_node('display_node')
-rospy.Subscriber("/gui_status", gui_status , app.gui_status_callback)
+rospy.Subscriber("/gui_status", gui_status, app.gui_status_callback)
 rospy.Subscriber("/gui_mode", gui_mode, app.gui_mode_callback)
  
 #loop using Tk instead of ros::spin, does the same thing, but keeps the GUI updating
