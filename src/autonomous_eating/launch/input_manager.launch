@@ -7,4 +7,8 @@
     <group if="$(arg joy)">
         <node pkg="joy" type="joy_node" name="joy_node" output="screen"/>
     </group>
+
+    <group unless="$(arg joy)">
+        <node pkg="i_tongue_pkg" name="ITCI" type="itci.py" output="screen" />
+    </group>
 </launch>
