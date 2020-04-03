@@ -1,0 +1,14 @@
+<launch>
+    <arg name="joy" default="true"/>
+    <param name="joy" value="$(arg joy)"/>
+
+    <node pkg="autonomous_eating" type="input_manager.py" name="input_manager" output="screen"/>
+
+    <group if="$(arg joy)">
+        <node pkg="joy" type="joy_node" name="joy_node" output="screen"/>
+    </group>
+
+    <group unless="$(arg joy)">
+        <node pkg="i_tongue_pkg" name="ITCI" type="itci.py" output="screen" />
+    </group>
+</launch>
