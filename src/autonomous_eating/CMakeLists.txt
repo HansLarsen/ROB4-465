@@ -165,9 +165,13 @@ install(DIRECTORY launch
 
 install(PROGRAMS
   scripts/moveit_nodelet.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
+install(PROGRAMS
+  scripts/find_bowl.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+  
 
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
