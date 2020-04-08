@@ -124,6 +124,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+add_executable(face_detector src/face_detector.cpp)
+target_link_libraries(face_detector ${catkin_LIBRARIES})
+
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/autonomous_eating.cpp
