@@ -48,13 +48,11 @@ faceData Face_worker::detectFace(Mat frame)
   {
     ROS_ERROR_STREAM("EMPTY FACE FRAME, in: Face_worker::detectFace");// << "--(!) No captured frame -- Break!\n";
   }
-  imshow("og frame", frame);
-  //convert img to gray
   Mat frame_gray;
   cvtColor( frame, frame_gray, COLOR_BGR2GRAY );
   imshow( "Capture - Face detection", frame_gray );
 
-  //resize frame first for better performance:
+  //resize frame first for better performance, if necessary
   /*
   Size scale = frame_gray.size();
   float to_scale = 300000.0/(frame.cols*frame.rows);
@@ -62,8 +60,9 @@ faceData Face_worker::detectFace(Mat frame)
   scale.height = scale.height*to_scale;
   resize(frame_gray,frame_gray,scale);
   */
+
   //-- 3. Apply the classifier to the frame
-  //equalizeHist( frame_gray, frame_gray );
+  //equalizeHist( frame_gray, frame_gray ); //should be done for real images, bad for gazebo images
   //-- Detect faces
   std::vector<Rect> faces;
   face_cascade.detectMultiScale( frame_gray, faces );
@@ -79,6 +78,7 @@ faceData Face_worker::detectFace(Mat frame)
 
 
   // optionally draw faces, and landmarks on the frame
+  /*
   for ( size_t i = 0; i < faces.size(); i++ )
   {
       rectangle(frame_gray, faces[i].tl(), faces[i].br(), Scalar(255,0,255), 4);
@@ -91,12 +91,52 @@ faceData Face_worker::detectFace(Mat frame)
   //-- Show image
   imshow( "Capture - Face detection", frame_gray );
   waitKey(1);
+  */
   return data;
 }
 
 Face_worker::~Face_worker()
 {
   delete facemark;
+}
+
+void image_raw_callback(const sensor_msgs::ImageConstPtr& msg);
+
+void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg);
+
+int main( int argc, char** argv )
+{
+  ros::init(argc, argv, "face_detector_node");
+  ros::NodeHandle n;
+
+  String face_classifier_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/haarcascade_frontalface_alt.xml";
+  String face_landmark_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/lbfmodel.yaml";
+  Face_worker faceworker;
+  faceworker.init(face_classifier_filename,face_landmark_filename);
+
+  ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
+  ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
+
+  faceData faces;
+  ROS_INFO_STREAM("initialized, ready to find faces!");
+  while (ros::ok()){
+
+    if(new_color_img && new_depth_img)
+    {
+      new_depth_img = false;
+      new_color_img = false;
+      faces = faceworker.detectFace(color_image);
+      
+      //fit a plane to the face:
+      if(faces.faces.size() > 1)// we have multiple faces, skip until only one face is detected
+      {
+        ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
+        continue;
+      }
+    }
+    ros::spinOnce();
+  }
+  return 0;
 }
 
 void image_raw_callback(const sensor_msgs::ImageConstPtr& msg)
@@ -130,36 +170,3 @@ void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg)
   depth_image = cv_ptr->image;
   new_depth_img = true;
 }
-
-int main( int argc, char** argv )
-{
-  ros::init(argc, argv, "face_detector_node");
-  ros::NodeHandle n;
-
-  String face_classifier_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/haarcascade_frontalface_alt.xml";
-  String face_landmark_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/lbfmodel.yaml";
-  Face_worker faceworker;
-  faceworker.init(face_classifier_filename,face_landmark_filename);
-
-  ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
-  ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
-  Mat empty = imread("/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/figures/itci.png");
-
-  //imshow("empty", empty);
-  //waitKey(0);
-  faceData faces;
-  ROS_INFO_STREAM("initialized");
-  while (ros::ok()){
-
-    if(new_color_img && new_depth_img)
-    {
-      new_depth_img = false;
-      new_color_img = false;
-      faces = faceworker.detectFace(color_image);
-      
-    }
-    ros::spinOnce();
-  }
-  return 0;
-}
-
