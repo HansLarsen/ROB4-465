@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(autonomous_eating)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -219,5 +219,11 @@ install(PROGRAMS
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
+find_package(OpenCV)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 add_executable(moveit_test_cpp src/moveit_nodelet_test.cpp)
 target_link_libraries(moveit_test_cpp ${catkin_LIBRARIES})
+
+add_executable(camera_recorder src/camera_recorder.cpp)
+target_link_libraries(camera_recorder ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
