@@ -1,10 +1,9 @@
 #include "ros/ros.h"
 #include "ros/time.h"
-#include "opencv2/objdetect.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/videoio.hpp"
-#include "opencv2/face.hpp"
+#include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+//#include "opencv2/contrib/contrib.hpp"
 #include <iostream>
 using namespace std;
 using namespace cv;
