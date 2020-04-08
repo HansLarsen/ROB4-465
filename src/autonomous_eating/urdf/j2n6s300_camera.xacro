@@ -18,7 +18,35 @@
 
 
   <xacro:include filename="$(find kinova_description)/urdf/j2n6s300.xacro"/>
+  <xacro:include filename="$(find realsense_gazebo_plugin)/urdf/realsense-RS200.macro.xacro"/>
+
+  <xacro:property name="M_pi" value="3.1415" />
+
+  <link name="root"/>
+
+  <!-- for gazebo -->
+  <link name="world"/>
+  <!-- <link name="camera_link"/>-->
   
-  <xacro:j2n6s300  base_parent="world" prefix="left"/>
+  <joint name="connect_root_and_world" type="fixed">
+    <child link="root" />
+    <parent link="world" />
+    <origin xyz="0 0 0" rpy="0 0 0" />    
+  </joint> 
+
+  <!--<joint name="connect_link_and_camera" type="fixed">
+    <child link="camera_link" />
+    <parent link="j2n6s300_link_6" />
+    <origin xyz="0 1 0" rpy="0 0 0" />    
+  </joint> -->
+
+  <xacro:property name="robot_root" value="root" />
+
+  <xacro:j2n6s300  base_parent="${robot_root}"/>
+
+  <!-- Create camera instance -->
+  <xacro:realsense-rs200 prefix="" parent="j2n6s300_link_6">
+  <origin xyz="0 0 -0.2" rpy="0 ${M_pi/2} 0"/>
+  </xacro:realsense-rs200>
 
 </robot>
