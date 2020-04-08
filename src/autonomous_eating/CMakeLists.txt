@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2 
   tf2_ros
   message_generation
+  OpenCV
 )
 
 ## System dependencies are found with CMake's conventions
@@ -107,7 +108,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-   INCLUDE_DIRS /usr/include
+#   INCLUDE_DIRS /usr/include
 #  LIBRARIES autonomous_eating
    CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 #  DEPENDS system_lib
