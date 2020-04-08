@@ -1,5 +1,7 @@
 #include "ros/ros.h"
 #include "ros/time.h"
+#include "cv_bridge/cv_bridge.h"
+#include "sensor_msgs/Image.h"
 #include "opencv2/core/version.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -10,6 +12,8 @@ using namespace std;
 using namespace cv;
 using namespace cv::face;
 
+Mat depth_image, color_image;
+bool new_color_img = false, new_depth_img = false;
 struct faceData
 {
   std::vector<Rect> faces;
@@ -44,20 +48,22 @@ faceData Face_worker::detectFace(Mat frame)
   {
     ROS_ERROR_STREAM("EMPTY FACE FRAME, in: Face_worker::detectFace");// << "--(!) No captured frame -- Break!\n";
   }
-
+  imshow("og frame", frame);
   //convert img to gray
   Mat frame_gray;
   cvtColor( frame, frame_gray, COLOR_BGR2GRAY );
+  imshow( "Capture - Face detection", frame_gray );
 
   //resize frame first for better performance:
+  /*
   Size scale = frame_gray.size();
   float to_scale = 300000.0/(frame.cols*frame.rows);
   scale.width = scale.width*to_scale;
   scale.height = scale.height*to_scale;
   resize(frame_gray,frame_gray,scale);
-
+  */
   //-- 3. Apply the classifier to the frame
-  equalizeHist( frame_gray, frame_gray );
+  //equalizeHist( frame_gray, frame_gray );
   //-- Detect faces
   std::vector<Rect> faces;
   face_cascade.detectMultiScale( frame_gray, faces );
@@ -70,10 +76,9 @@ faceData Face_worker::detectFace(Mat frame)
   faceData data;
   data.faces = faces;
   data.landmarks = landmarks;
-  return data;
 
 
-  /* optionally draw faces, and landmarks on the frame
+  // optionally draw faces, and landmarks on the frame
   for ( size_t i = 0; i < faces.size(); i++ )
   {
       rectangle(frame_gray, faces[i].tl(), faces[i].br(), Scalar(255,0,255), 4);
@@ -85,7 +90,8 @@ faceData Face_worker::detectFace(Mat frame)
   }
   //-- Show image
   imshow( "Capture - Face detection", frame_gray );
-  */
+  waitKey(1);
+  return data;
 }
 
 Face_worker::~Face_worker()
@@ -93,24 +99,66 @@ Face_worker::~Face_worker()
   delete facemark;
 }
 
+void image_raw_callback(const sensor_msgs::ImageConstPtr& msg)
+{
+  cv_bridge::CvImagePtr cv_ptr;
+  try
+  {
+    cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+  }
+  catch (cv_bridge::Exception& e)
+  {
+    ROS_ERROR("cv_bridge exception: %s", e.what());
+    Mat img;
+    img.setTo(0);
+  }
+  color_image = cv_ptr->image;
+  new_color_img = true;
+}
+
+void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg)
+{
+  cv_bridge::CvImagePtr cv_ptr;
+  try
+  {
+    cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::TYPE_16UC1);
+  }
+  catch (cv_bridge::Exception& e)
+  {
+    ROS_ERROR("cv_bridge exception: %s", e.what());
+  }
+  depth_image = cv_ptr->image;
+  new_depth_img = true;
+}
 
 int main( int argc, char** argv )
 {
   ros::init(argc, argv, "face_detector_node");
   ros::NodeHandle n;
-  ros::Rate loop_rate(100);
 
-  String face_classifier_filename = "insert_me";
-  String face_landmark_filename = "lbfmodel.yaml";
+  String face_classifier_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/haarcascade_frontalface_alt.xml";
+  String face_landmark_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/lbfmodel.yaml";
   Face_worker faceworker;
   faceworker.init(face_classifier_filename,face_landmark_filename);
 
+  ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
+  ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
+  Mat empty = imread("/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/figures/itci.png");
 
+  //imshow("empty", empty);
+  //waitKey(0);
+  faceData faces;
+  ROS_INFO_STREAM("initialized");
   while (ros::ok()){
-    //master_node->handleGesture();
 
+    if(new_color_img && new_depth_img)
+    {
+      new_depth_img = false;
+      new_color_img = false;
+      faces = faceworker.detectFace(color_image);
+      
+    }
     ros::spinOnce();
-    //loop_rate.sleep();
   }
   return 0;
 }
