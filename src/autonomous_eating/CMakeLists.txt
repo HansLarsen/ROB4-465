@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
   message_generation
   OpenCV
+  cv_bridge
+  image_transport
 )
 
 ## System dependencies are found with CMake's conventions
@@ -110,7 +112,7 @@ generate_messages(
 catkin_package(
 #   INCLUDE_DIRS /usr/include
 #  LIBRARIES autonomous_eating
-   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
+   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime cv_bridge image_transport
 #  DEPENDS system_lib
 )
 
