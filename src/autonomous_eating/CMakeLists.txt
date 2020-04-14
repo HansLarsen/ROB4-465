@@ -15,10 +15,12 @@ find_package(catkin REQUIRED COMPONENTS
   tf2 
   tf2_ros
   message_generation
-  OpenCV
   cv_bridge
   image_transport
+  librealsense
 )
+
+find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -128,7 +130,7 @@ include_directories(
 )
 
 add_executable(face_detector src/face_detector.cpp)
-target_link_libraries(face_detector ${catkin_LIBRARIES})
+target_link_libraries(face_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -239,3 +241,6 @@ target_link_libraries(moveit_test_cpp ${catkin_LIBRARIES})
 
 add_executable(camera_recorder src/camera_recorder.cpp)
 target_link_libraries(camera_recorder ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
+add_executable(deprojector src/3d_deprojection.cpp)
+target_link_libraries(deprojector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
