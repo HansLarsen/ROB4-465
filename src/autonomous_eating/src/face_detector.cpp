@@ -2,7 +2,6 @@
 #include "ros/time.h"
 #include "cv_bridge/cv_bridge.h"
 #include "sensor_msgs/Image.h"
-#include "opencv2/core/version.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -24,14 +23,15 @@ class Face_worker
 {
   CascadeClassifier face_cascade; 
   Ptr<Facemark> facemark;
+  bool debug;
 
 public:
-  void init(String face_cascade_filename, String landmark_model_filename);
+  void init(String face_cascade_filename, String landmark_model_filename, bool debug);
   faceData detectFace(Mat frame);
   ~Face_worker();
 };
 
-void Face_worker::init(String face_cascade_filename, String landmark_model_filename)
+void Face_worker::init(String face_cascade_filename, String landmark_model_filename, bool _debug)
 {
   //load trained data to viola-jones detector
   face_cascade.load(face_cascade_filename);
@@ -40,6 +40,7 @@ void Face_worker::init(String face_cascade_filename, String landmark_model_filen
   params.model_filename = landmark_model_filename; // the trained model
   facemark = FacemarkLBF::create(params);
   facemark->loadModel(params.model_filename);
+  debug = _debug;
 }
 
 faceData Face_worker::detectFace(Mat frame)
@@ -50,7 +51,6 @@ faceData Face_worker::detectFace(Mat frame)
   }
   Mat frame_gray;
   cvtColor( frame, frame_gray, COLOR_BGR2GRAY );
-  imshow( "Capture - Face detection", frame_gray );
 
   //resize frame first for better performance, if necessary
   /*
@@ -78,20 +78,22 @@ faceData Face_worker::detectFace(Mat frame)
 
 
   // optionally draw faces, and landmarks on the frame
-  /*
-  for ( size_t i = 0; i < faces.size(); i++ )
+  if(debug)
   {
-      rectangle(frame_gray, faces[i].tl(), faces[i].br(), Scalar(255,0,255), 4);
-      for(int j = 0; j < landmarks[i].size(); j++)
-      {
-          Point2f point = landmarks.at(i).at(j);
-          ellipse(frame_gray, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
-      }
+    for ( size_t i = 0; i < faces.size(); i++ )
+    {
+        rectangle(frame_gray, faces[i].tl(), faces[i].br(), Scalar(255,0,255), 4);
+        for(int j = 0; j < landmarks[i].size(); j++)
+        {
+            Point2f point = landmarks.at(i).at(j);
+            ellipse(frame_gray, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
+        }
+    }
+    //-- Show image
+    imshow( "Capture - Face detection", frame_gray );
+    waitKey(1);
   }
-  //-- Show image
-  imshow( "Capture - Face detection", frame_gray );
-  waitKey(1);
-  */
+  
   return data;
 }
 
@@ -104,18 +106,29 @@ void image_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 
 void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 
-int main( int argc, char** argv )
+int main( int argc, char* argv[] )
 {
+  string param;
+  bool debug;
+
   ros::init(argc, argv, "face_detector_node");
   ros::NodeHandle n;
+  string True = "debug:=true";
+  if(argv[1] == True)
+  {
+    debug = true;
+    ROS_INFO_STREAM("Debug on");
+  }
+  else
+    debug = false;
 
   String face_classifier_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/haarcascade_frontalface_alt.xml";
   String face_landmark_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/lbfmodel.yaml";
   Face_worker faceworker;
-  faceworker.init(face_classifier_filename,face_landmark_filename);
+  faceworker.init(face_classifier_filename,face_landmark_filename, debug);
 
-  ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
-  ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
+  ros::Subscriber color_image_raw_sub = n.subscribe("/camera/color/image_raw", 5, &image_raw_callback);
+  ros::Subscriber depth_image_raw_sub = n.subscribe("/camera/depth/image_raw", 5, &depth_raw_callback);
 
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
@@ -130,7 +143,8 @@ int main( int argc, char** argv )
       //fit a plane to the face:
       if(faces.faces.size() > 1)// we have multiple faces, skip until only one face is detected
       {
-        ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
+        if(debug)
+          ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
         continue;
       }
     }
