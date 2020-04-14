@@ -60,6 +60,8 @@ add_message_files(
   FILES
   gui_mode.msg
   gui_status.msg
+  face_cords.msg
+  command_msg.msg
 )
 
 ## Generate services in the 'srv' folder

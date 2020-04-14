@@ -6,12 +6,14 @@ import geometry_msgs.msg
 import tf2_ros
 import tf2_msgs.msg
 import sys
+import copy
 from std_msgs.msg import String
 from std_msgs.msg import Int32MultiArray, Int32
 from sensor_msgs.msg import Joy
 from tf.transformations import quaternion_from_euler
 from moveit_commander.conversions import pose_to_list
 from enum import Enum
+
 
 class MoveitApp():
     def __init__(self):
@@ -20,7 +22,7 @@ class MoveitApp():
         self.rootFrame = 'root'
         self.cameraAttachFrame = 'j2n6s300_link_6'
         self.cameraNameFrame = 'r200_realsense'
-        self.movement_factor = 1
+        self.movement_factor = 0.1
 
         self.camera_transform = geometry_msgs.msg.Pose()
         self.bowl_transform = geometry_msgs.msg.Pose()
@@ -68,6 +70,10 @@ class MoveitApp():
                     self.face_cords_callback,
                     self.robotName)
 
+        rospy.sleep(1000)
+        self.move_capture(0, 0)
+        self.move_capture(1, 0)
+
     def move_to_callback(self, data, topic):
         goal_transform = []
         if (data.data=="mouth"):
@@ -86,8 +92,10 @@ class MoveitApp():
             
 
     def move_xy_callback(self, data, topic):
-        self.bowl_cords.translation = self.bowl_cords.translation + ([data[0], data[1], 0] * self.movement_factor)
-        self.group.set_pose_target(self.bowl_transform)
+        newSearchPos = copy.copy(self.bowl_transform)
+        newSearchPos.position.x = self.bowl_transform.position.x + float(data.data[0]) * self.movement_factor
+        newSearchPos.position.y = self.bowl_transform.position.y + float(data.data[1]) * self.movement_factor
+        self.group.set_pose_target(newSearchPos)
         self.transmit_moving(True)
         self.group.go(wait=True)
         self.transmit_moving(False)

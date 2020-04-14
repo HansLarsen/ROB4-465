@@ -1,43 +1,25 @@
-#! /usr/bin/env python
-
-import rospy
 import cv2
 import numpy as np
-from std_msgs.msg import Header
-from std_msgs.msg import Int32MultiArray, Bool
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
-import image_geometry
+import glob
 
-search = False
-
-def bool_callback(data):
-    global search
-    #print(data.data)
-    search = data.data
-
-
-def color_camera_calback(data):
-    try:
-        rgb_image = CvBridge().imgmsg_to_cv2(data, "bgr8")
-         
-
-    except CvBridgeError as e:
-        print(e)
-    
-def depth_camera_callback(data):
-    try:
-        depth_image = CvBridge().imgmsg_to_cv2(data,"32FC1")
-       
-    except CvBridgeError as e:
-        print(e)
 
 def find_biggest_contour(image):
+    image = image.copy()
     contours, hierarchy = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
     biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
+    bowl = np.zeros(image.shape, np.uint8)
+    cv2.drawContours(bowl, [biggest_contour], -1, 255, -1)
 
-    return biggest_contour
+    return biggest_contour, bowl
+
+def draw_center(image, center):
+
+    radius = 5
+    color = (0, 0, 0)
+    thickness = -1
+    cv2.circle(image, center, radius, color, thickness)
+
 
 def bowl_finder(image):
     #resize so all picture are same size
@@ -70,8 +52,7 @@ def bowl_finder(image):
     morph_close = cv2.morphologyEx(filter, cv2.MORPH_CLOSE, kernel )
     morph_open = cv2.morphologyEx(morph_close, cv2.MORPH_OPEN, kernel)
 
-    #find biggest contour (subject to change)
-    biggest_contour = find_biggest_contour(morph_open)
+    biggest_contour, bowl = find_biggest_contour(morph_open)
 
     #find center
 
@@ -81,27 +62,17 @@ def bowl_finder(image):
     #cx = int(M["m10"]/M["m00"])
     #cy = int(M["m01"]/M["m00"])
 
-    return center
+    draw_center(image, center)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+    return bowl, image, center
 
-#subscribers and publishers
-pub = rospy.Publisher('/bowl_cords', Int32MultiArray, queue_size=1)
-sub_bool = rospy.Subscriber("/find_bowl_trigger", Bool, bool_callback)
-color_sub = rospy.Subscriber("/camera/color/image_raw", Image, color_camera_calback)
-depth_sub = rospy.Subscriber("/camera/depth/image_raw", Image, depth_camera_callback)
+image = cv2.imread("/home/ubuntu/Desktop/bowl_pics/Bowl_Movements/36.jpg")
 
+bowl, image, center = bowl_finder(image)
 
-if __name__ == '__main__':
-    
-    rospy.init_node('find_bowl')
-
-    print("This works!")
-    if(search):
-        print "searching"
-
-        #put code here to find bowl in 3D and publish coordinates 
-
-    else:
-        rospy.sleep
-
-    rospy.spin()
+print(center)
+cv2.imshow("bowl", bowl)
+cv2.imshow("test", image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
