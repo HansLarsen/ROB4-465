@@ -6,26 +6,31 @@ import numpy as np
 from std_msgs.msg import Header
 from std_msgs.msg import Int32MultiArray, Bool
 from sensor_msgs.msg import Image
-
 from cv_bridge import CvBridge
+import image_geometry
 
+search = False
 
 def bool_callback(data):
-    return data
+    global search
+    #print(data.data)
+    search = data.data
 
 
 def color_camera_calback(data):
     try:
-        rgb_image = CvBridge().imgmsg_to_cv2(image_message, desired_encoding="rgb8")
+        rgb_image = CvBridge().imgmsg_to_cv2(data, "bgr8")
+         
 
     except CvBridgeError as e:
         print(e)
-
-    cv2.imshow("rgb", rgb_image)
-
-
+    
 def depth_camera_callback(data):
-    return 0
+    try:
+        depth_image = CvBridge().imgmsg_to_cv2(data,"32FC1")
+       
+    except CvBridgeError as e:
+        print(e)
 
 def find_biggest_contour(image):
     contours, hierarchy = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -79,36 +84,24 @@ def bowl_finder(image):
     return center
 
 
-# make a publisher that publishes position of bowl.
-# subscriber to the camera
-# make a subscriber to the topic that tells us that we are in bowl mode
-
+#subscribers and publishers
 pub = rospy.Publisher('/bowl_cords', Int32MultiArray, queue_size=1)
 sub_bool = rospy.Subscriber("/find_bowl_trigger", Bool, bool_callback)
-color_sub = rospy.Subscriber("/color/image_raw", Image, color_camera_calback)
-depth_sub = rospy.Subscriber("/depth/image_raw", Image, depth_camera_callback)
-
-if __name__ == '__main__':
-    rospy.init_node('moveit_node')
-
-    print("This works!")
-
-    rospy.spin()
-
-# make a publisher that publishes position of bowl.
-# subscriber to the camera
-# make a subscriber to the topic that tells us that we are in bowl mode
-
-pub = rospy.Publisher('/bowl_cords', Int32MultiArray, queue_size=1)
-sub_bool = rospy.Subscriber("/find_bowl_trigger", Bool, bool_callback)
-color_sub = rospy.Subscriber("/color/image_raw", Image, color_camera_calback)
-depth_sub = rospy.Subscriber("/depth/image_raw", Image, depth_camera_callback)
+color_sub = rospy.Subscriber("/camera/color/image_raw", Image, color_camera_calback)
+depth_sub = rospy.Subscriber("/camera/depth/image_raw", Image, depth_camera_callback)
 
 
 if __name__ == '__main__':
-    rospy.init_node('moveit_node')
-
-    print("This works!")
     
+    rospy.init_node('find_bowl')
+
+    print("This works!")
+    if(search):
+        print "searching"
+
+        #put code here to find bowl in 3D and publish coordinates 
+
+    else:
+        rospy.sleep
 
     rospy.spin()
