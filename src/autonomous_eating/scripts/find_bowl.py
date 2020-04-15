@@ -94,6 +94,7 @@ def bowl_finder(image):
 
 
 #subscribers and publishers
+pubimg = rospy.Publisher('/gui_figure', Image, queue_size=1)
 pub = rospy.Publisher('/bowl_cords', Int32MultiArray, queue_size=1)
 sub_bool = rospy.Subscriber("/find_bowl_trigger", Bool, bool_callback)
 color_sub = rospy.Subscriber("/camera/color/image_raw", Image, color_camera_calback)
