@@ -108,18 +108,11 @@ void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 int main( int argc, char* argv[] )
 {
   string param;
-  bool debug;
+  bool debug = true;
 
   ros::init(argc, argv, "face_detector_node");
   ros::NodeHandle n;
-  string True = "debug:=true";
-  if(argv[1] == True)
-  {
-    debug = true;
-    ROS_INFO_STREAM("Debug on");
-  }
-  else
-    debug = false;
+
 
   String face_classifier_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/haarcascade_frontalface_alt.xml";
   String face_landmark_filename = "/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/extra/lbfmodel.yaml";
