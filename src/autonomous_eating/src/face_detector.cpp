@@ -65,8 +65,6 @@ faceData Face_worker::detectFace(Mat frame)
   //equalizeHist( frame_gray, frame_gray ); //should be done for real images, bad for gazebo images
   //-- Detect faces
   std::vector<Rect> faces;
-  face_cascade.detectMultiScale( frame_gray, faces );
-
   //fit landmarks:
   vector<vector<Point2f>> landmarks;
   facemark->fit(frame,faces,landmarks);
@@ -147,6 +145,18 @@ int main( int argc, char* argv[] )
           ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
         continue;
       }
+      // JONAS WRITE HERE YOUR STUFF AND STUFFZ
+      // ==> faces.landmarks has all the points
+      // faces.landmarks.size() <== amount of landmarks (68)
+      // x and y position of first landmark:
+      //faces.landmarks[0].at(0).x
+      //faces.landmarks[0].at(0).y
+
+
+
+
+      //publish stuff here, add the publisher before the while loop (around line 130)
+      //...
     }
     ros::spinOnce();
   }
