@@ -131,6 +131,7 @@ int main( int argc, char* argv[] )
       new_depth_img = false;
       new_color_img = false;
       faces = faceworker.detectFace(color_image);
+      imshow("depth", depth_image);
       
       //fit a plane to the face:
       if(faces.faces.size() > 1)// we have multiple faces, skip until only one face is detected
@@ -167,8 +168,6 @@ void image_raw_callback(const sensor_msgs::ImageConstPtr& msg)
   catch (cv_bridge::Exception& e)
   {
     ROS_ERROR("cv_bridge exception: %s", e.what());
-    Mat img;
-    img.setTo(0);
   }
   color_image = cv_ptr->image;
   new_color_img = true;

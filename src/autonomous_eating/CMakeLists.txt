@@ -116,7 +116,7 @@ generate_messages(
 catkin_package(
 #   INCLUDE_DIRS /usr/include
 #  LIBRARIES autonomous_eating
-   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime cv_bridge image_transport
+   CATKIN_DEPENDS roscpp rospy sensor_msgs std_msgs message_runtime cv_bridge image_transport
 #  DEPENDS system_lib
 )
 
