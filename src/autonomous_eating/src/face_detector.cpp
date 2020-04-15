@@ -65,6 +65,7 @@ faceData Face_worker::detectFace(Mat frame)
   //equalizeHist( frame_gray, frame_gray ); //should be done for real images, bad for gazebo images
   //-- Detect faces
   std::vector<Rect> faces;
+  face_cascade.detectMultiScale(frame_gray, faces);
   //fit landmarks:
   vector<vector<Point2f>> landmarks;
   facemark->fit(frame,faces,landmarks);
