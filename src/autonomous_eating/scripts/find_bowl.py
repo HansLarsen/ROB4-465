@@ -33,11 +33,19 @@ def depth_camera_callback(data):
         print(e)
 
 def find_biggest_contour(image):
+    image = image.copy()
     contours, hierarchy = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
     biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
 
     return biggest_contour
+
+def draw_center(image, center):
+
+    radius = 200
+    color = (0, 0, 0)
+    thickness = 2
+    cv2.circle(image, center, radius, color, thickness)
 
 def bowl_finder(image):
     #resize so all picture are same size
@@ -70,7 +78,6 @@ def bowl_finder(image):
     morph_close = cv2.morphologyEx(filter, cv2.MORPH_CLOSE, kernel )
     morph_open = cv2.morphologyEx(morph_close, cv2.MORPH_OPEN, kernel)
 
-    #find biggest contour (subject to change)
     biggest_contour = find_biggest_contour(morph_open)
 
     #find center
@@ -80,8 +87,10 @@ def bowl_finder(image):
     center = (int(M["m10"]/M["m00"]), int(M["m01"]/M["m00"]) )
     #cx = int(M["m10"]/M["m00"])
     #cy = int(M["m01"]/M["m00"])
+    draw_center(image, center)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    return center
+    return center, image
 
 
 #subscribers and publishers
