@@ -11,6 +11,7 @@ import image_geometry
 
 search = False
 
+
 def bool_callback(data):
     global search
     #print(data.data)
@@ -18,16 +19,20 @@ def bool_callback(data):
 
 
 def color_camera_calback(data):
+    global bgr_image
     try:
-        rgb_image = CvBridge().imgmsg_to_cv2(data, "bgr8")
-         
+        bgr_image = CvBridge().imgmsg_to_cv2(data, "bgr8")
+       
+        
 
     except CvBridgeError as e:
         print(e)
     
 def depth_camera_callback(data):
+    global depth_image
     try:
         depth_image = CvBridge().imgmsg_to_cv2(data,"32FC1")
+       
        
     except CvBridgeError as e:
         print(e)
@@ -95,9 +100,13 @@ if __name__ == '__main__':
     
     rospy.init_node('find_bowl')
 
-    print("This works!")
+    #print("This works!")
+    #cv2.imshow("bgr", bgr_image)
+    #cv2.imshow("depth", depth_image)
+    #cv2.waitKey(0)
     if(search):
         print "searching"
+        
 
         #put code here to find bowl in 3D and publish coordinates 
 
