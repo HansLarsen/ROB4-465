@@ -116,7 +116,7 @@ generate_messages(
 catkin_package(
 #   INCLUDE_DIRS /usr/include
 #  LIBRARIES autonomous_eating
-   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime cv_bridge image_transport
+   CATKIN_DEPENDS roscpp rospy sensor_msgs std_msgs message_runtime cv_bridge image_transport
 #  DEPENDS system_lib
 )
 
@@ -182,7 +182,9 @@ install(PROGRAMS
   scripts/find_bowl.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-  
+install(PROGRAMS
+  scripts/main_node.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
