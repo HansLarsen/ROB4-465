@@ -58,12 +58,8 @@ def find_biggest_contour(image):
     #cv2.circle(image, center, radius, color, thickness)
 
 def bowl_finder(image):
-    #resize so all picture are same size
+    
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    max_dimension = max(image.shape)
-    scale = 700/max_dimension
-    image = cv2.resize(image, None, fx = scale, fy = scale)
-
     #blur
 
     image_blur = cv2.GaussianBlur(image,(7,7), 0)
@@ -120,19 +116,25 @@ if __name__ == '__main__':
     if(search == False):
         print "searching!"
         #bgr2_image = cv2.imread("/home/ubuntu/Desktop/mine//Bowl_Movements_138.jpg")
-        c, i = bowl_finder(bgr_image)
-        d = depth_image[c]
-        #print(depth_image[c])
-        #print(c)
+        try: 
+            c, i = bowl_finder(bgr_image)
+            d = depth_image[c]
+            #print(depth_image[c])
+            #print(c)
 
-        #cv2.imshow("pic", bgr_image)
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
-        data_to_send = Float32MultiArray() 
-        array = [c[0],c[1], d]
-        data_to_send.data = array 
-        pub_pixel.publish(data_to_send)
-    
+            #cv2.imshow("pic", bgr_image)
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
+            image_send = Image()
+            data_to_send = Float32MultiArray() 
+            image_send.data = i
+            array = [c[0],c[1], d]
+            data_to_send.data = array 
+            pub_pixel.publish(data_to_send)
+            pubimg.publish(image_send)
+        
+        except:
+            print("error maybe no bowl")
     
         
     rospy.spin()
