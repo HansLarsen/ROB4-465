@@ -130,6 +130,8 @@ int main( int argc, char* argv[] )
   int depthLandmarkX[n_usedPoints];
   int depthLandmarkY[n_usedPoints];
   int depthLandmarkZ[n_usedPoints];
+  float mouthMidPointInFront[3];
+  float disFromFace = 5;
   Mat A(3,faces.landmarks.size(),CV_8UC1);
   Mat B(1,faces.landmarks.size(),CV_8UC1);
 
@@ -178,8 +180,26 @@ int main( int argc, char* argv[] )
           }
         }        
       }
-      Mat k = (A.t() * A).inv() * A.t() * B.t();
-      // a = k.col[0], b = k.col[1] and c = k.col[2]
+      
+      Mat K = (A.t() * A).inv() * A.t() * B.t();
+      // a = K.at<float>(0,0), b = K.at<float>(0,1) and c = K.at<float>(0,2)
+
+      // calculating xyz of first mouth corner projected onto plane
+      float k1 = (-(K.at<float>(0,0) * depthLandmarkX[62]) - (K.at<float>(0,1) * depthLandmarkY[62]) - (K.at<float>(0,2) * depthLandmarkZ[62])) / ((K.at<float>(0,0) * K.at<float>(0,0)) + (K.at<float>(0,1) * K.at<float>(0,1)) + (K.at<float>(0,2) * K.at<float>(0,2)));
+      float x1 = (K.at<float>(0,0) * k1) + depthLandmarkX[62];
+      float y1 = (K.at<float>(0,1) * k1) + depthLandmarkY[62];
+      float z1 = (K.at<float>(0,2) * k1) + depthLandmarkZ[62];
+      // calculating xyz of second mouth corner projected onto plane 
+      float k2 = (-(K.at<float>(0,0) * depthLandmarkX[66]) - (K.at<float>(0,1) * depthLandmarkY[66]) - (K.at<float>(0,2) * depthLandmarkZ[66])) / ((K.at<float>(0,0) * K.at<float>(0,0)) + (K.at<float>(0,1) * K.at<float>(0,1)) + (K.at<float>(0,2) * K.at<float>(0,2)));
+      float x2 = (K.at<float>(0,0) * k2) + depthLandmarkX[66];
+      float y2 = (K.at<float>(0,1) * k2) + depthLandmarkY[66];
+      float z2 = (K.at<float>(0,2) * k2) + depthLandmarkZ[66];
+      
+      // calculating xyz of the middle of the mouth projected onto the plane and pulling it out in front of the mouth (middle point + vector)
+      mouthMidPointInFront[0] = ((x1 + x2) / 2) + (K.at<float>(0,0) * disFromFace);
+      mouthMidPointInFront[1] = ((y1 + y2) / 2) + (K.at<float>(0,1) * disFromFace);
+      mouthMidPointInFront[2] = ((z1 + z2) / 2) + (K.at<float>(0,2) * disFromFace);
+
 
       //publish stuff here, add the publisher before the while loop (around line 130)
       //...
