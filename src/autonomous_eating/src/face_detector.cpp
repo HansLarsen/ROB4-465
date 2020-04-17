@@ -49,6 +49,7 @@ faceData Face_worker::detectFace(Mat frame)
   {
     ROS_ERROR_STREAM("EMPTY FACE FRAME, in: Face_worker::detectFace");// << "--(!) No captured frame -- Break!\n";
   }
+  GaussianBlur(frame, frame, Size(5,5),0);
   Mat frame_gray;
   cvtColor( frame, frame_gray, COLOR_BGR2GRAY );
 
@@ -81,15 +82,15 @@ faceData Face_worker::detectFace(Mat frame)
   {
     for ( size_t i = 0; i < faces.size(); i++ )
     {
-        rectangle(frame_gray, faces[i].tl(), faces[i].br(), Scalar(255,0,255), 4);
+        rectangle(frame, faces[i].tl(), faces[i].br(), Scalar(255,0,255), 4);
         for(int j = 0; j < landmarks[i].size(); j++)
         {
             Point2f point = landmarks.at(i).at(j);
-            ellipse(frame_gray, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
+            ellipse(frame, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
         }
     }
     //-- Show image
-    imshow( "Capture - Face detection", frame_gray );
+    imshow( "Capture - Face detection", frame );
     waitKey(1);
   }
   
@@ -119,8 +120,8 @@ int main( int argc, char* argv[] )
   Face_worker faceworker;
   faceworker.init(face_classifier_filename,face_landmark_filename, debug);
 
-  ros::Subscriber color_image_raw_sub = n.subscribe("/camera/color/image_raw", 5, &image_raw_callback);
-  ros::Subscriber depth_image_raw_sub = n.subscribe("/camera/depth/image_raw", 5, &depth_raw_callback);
+  ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
+  ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
 
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
@@ -141,16 +142,17 @@ int main( int argc, char* argv[] )
       new_depth_img = false;
       new_color_img = false;
       faces = faceworker.detectFace(color_image);
-      imshow("depth", depth_image);
+      if(debug)
+        imshow("depth", depth_image);
       
-      //fit a plane to the face:
       if(faces.faces.size() > 1)// we have multiple faces, skip until only one face is detected
       {
         if(debug)
           ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
         continue;
       }
-      
+      /*
+      //fit a plane to the face:
       // ensure coordinates fit in depth_image even if resolution is not 1:1
       for (size_t i = 0; i < n_usedPoints; i++)
       {
@@ -201,6 +203,7 @@ int main( int argc, char* argv[] )
 
       //publish stuff here, add the publisher before the while loop (around line 130)
       //...
+      */
     }
     ros::spinOnce();
   }
