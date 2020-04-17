@@ -35,10 +35,13 @@ def depth_camera_callback(data): #converts the given image from camera into a CV
         print(e)
 
 def cordinatecallback(data):  #recieves 3D cordinates and publishes them on /bowl_cords
-    msg = Float32MultiArray()
-    array = [data.data[0], data.data[1], data.data[2]]
-    msg.data = array
-    pub_bowl.publish(msg)
+    if data.data[2] !=0:
+        msg = Float32MultiArray()
+        array = [data.data[0], data.data[1], data.data[2]]
+        msg.data = array
+        pub_bowl.publish(msg)
+    else: 
+        print "object is out of range"
     
 
 
@@ -56,7 +59,7 @@ def draw_center(image, center): #draws the cirkel on picture
     color = (0, 0, 0)
     thickness = 2
     cv2.circle(image, center, radius, color, thickness)
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     return image
 
 def bowl_finder(image): #finds the center coordinats of the bowl
@@ -99,9 +102,7 @@ def bowl_finder(image): #finds the center coordinats of the bowl
     center = (int(M["m10"]/M["m00"]), int(M["m01"]/M["m00"]) )
     #cx = int(M["m10"]/M["m00"])
     #cy = int(M["m01"]/M["m00"])
-    #draw_center(image, center)
-    #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    return center #, image
+    return center 
 
 #publishers
 pub_img = rospy.Publisher('/gui_figure', Image, queue_size=1)
@@ -117,7 +118,7 @@ sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecall
 
 if __name__ == '__main__':
     
-    search = False
+    search = True
     
     rospy.init_node('find_bowl')
     
@@ -152,7 +153,8 @@ if __name__ == '__main__':
                 pub_img.publish(image_msg)
                 
             else:
-                image_to_publish = CvBridge().cv2_to_imgmsg(bgr_image, "rgb8")
+                image_p = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+                image_to_publish = CvBridge().cv2_to_imgmsg(image_p, "rgb8")
                 pub_img.publish(image_to_publish)
             
         else:
