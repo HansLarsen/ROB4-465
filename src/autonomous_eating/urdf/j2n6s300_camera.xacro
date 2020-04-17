@@ -31,7 +31,7 @@
   <joint name="connect_root_and_world" type="fixed">
     <child link="root" />
     <parent link="world" />
-    <origin xyz="0 0 0" rpy="0 0 0" />    
+    <origin xyz="0.3 1.05 0.75" rpy="0 0 0" />    
   </joint> 
 
   <!--<joint name="connect_link_and_camera" type="fixed">
