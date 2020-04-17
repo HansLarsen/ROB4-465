@@ -5,6 +5,7 @@ import moveit_msgs.msg
 import geometry_msgs.msg
 import tf2_ros
 import tf2_msgs.msg
+import tf2_geometry_msgs
 import sys
 import copy
 from std_msgs.msg import String
@@ -78,19 +79,46 @@ class MoveitApp():
     def move_to_callback(self, data, topic):
         goal_transform = []
         if (data.data=="mouth"):
+            self.goto_pose(self.face_cords.x, self.face_cords.y, self.face_cords.z)
+        elif (data.data=="mouth2"):
             self.group.set_pose_target(self.camera_transform + self.face_cords)
+            self.transmit_moving(True)
+            self.group.go(wait=True)
+            self.transmit_moving(False)
         elif (data.data == "bowl_search_pos"):
             self.group.set_pose_target(self.bowl_transform)
+            self.transmit_moving(True)
+            self.group.go(wait=True)
+            self.transmit_moving(False)
         elif (data.data == "scoop_bowl"):
             rospy.logerr("Scooping isnt implemented")
             return
         elif (data.data == "face_seach_pos"):
             self.group.set_pose_target(self.camera_transform)
+            self.transmit_moving(True)
+            self.group.go(wait=True)
+            self.transmit_moving(False)
 
-        self.transmit_moving(True)
-        self.group.go(wait=True)
-        self.transmit_moving(False)
+    def goto_pose(self, x, y, z):
+        target_pose = geometry_msgs.msg.Pose()
+
+        target_pose.position.x = data.x_p1
+        target_pose.position.y = data.y_p1
+        target_pose.position.z = data.z_p1
+        try:
+            self.camera_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraAttachFrame, rospy.Time(0))
+
+            target_pose.orientation = self.camera_transform.transform.rotation
             
+            target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.camera_transform)
+
+            self.group.set_pose_target(target_transformed_pose)
+            self.group.go(wait=True)
+            return True
+
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+            rospy.logerr("Failed to lookup transform")
+            return False
 
     def move_xy_callback(self, data, topic):
         newSearchPos = copy.copy(self.bowl_transform)
@@ -107,18 +135,31 @@ class MoveitApp():
     def face_cords_callback(self, data, topic):
         self.face_cords = data.data
 
+    def flip_quart(self, quard):
+        quard.x = -quard.x
+        quard.y = -quard.y
+        quard.z = -quard.z
+
     def move_capture(self, data, topic):
         try:
             #First frame, end frame
             trans = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraAttachFrame, rospy.Time(0))
 
-            if (data.data == 0):
+            if (data == 0):
                 self.camera_transform.position = trans.transform.translation
-                self.camera_transform.orientation = trans.transform.rotation
+                self.camera_transform.orientation = self.flip_quart(trans.transform.rotation)
                 rospy.loginfo("Saved face capture position")
-            elif (data.data == 1):
+                print(self.camera_transform.transform.translation.x)
+                print(self.camera_transform.transform.translation.y)
+                print(self.camera_transform.transform.translation.z)
+
+                print(self.camera_transform.transform.rotation.x)
+                print(self.camera_transform.transform.rotation.y)
+                print(self.camera_transform.transform.rotation.z)
+                print(self.camera_transform.transform.rotation.w)
+            elif (data == 1):
                 self.bowl_transform.position = trans.transform.translation
-                self.bowl_transform.orientation = trans.transform.rotation
+                self.bowl_transform.orientation = self.flip_quart(trans.transform.rotation)
                 rospy.loginfo("Saved bowl capature position")
 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
