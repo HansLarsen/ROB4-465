@@ -21,16 +21,35 @@ class MoveitApp():
     def __init__(self):
         self.robotName = "j2n6s300"
         self.group_name = "arm"
-        self.rootFrame = 'root'
-        self.cameraAttachFrame = 'j2n6s300_link_6'
+        self.rootFrame = 'j2n6s300_link_base'
+        self.cameraAttachFrame = '2n6s300_end_effector'
         self.cameraNameFrame = 'r200_realsense'
         self.movement_factor = 0.1
 
         self.camera_transform = geometry_msgs.msg.Pose()
         self.bowl_transform = geometry_msgs.msg.Pose()
 
+        self.camera_transform.position.x = -0.39632042996
+        self.camera_transform.position.y = -0.284433199086
+        self.camera_transform.position.z = 0.254760879476
+
+        self.camera_transform.orientation.x = 0.50128698525
+        self.camera_transform.orientation.y = -0.507185315115
+        self.camera_transform.orientation.z = 0.492299056014
+        self.camera_transform.orientation.w = -0.499115271253
+
+        self.bowl_transform.position.x = 0.171847766393
+        self.bowl_transform.position.y = -0.0334121324459
+        self.bowl_transform.position.z = 0.676046167945
+
+        self.bowl_transform.orientation.x = 0.353257970291
+        self.bowl_transform.orientation.y = 0.0944187047201
+        self.bowl_transform.orientation.z = 0.930160990485
+        self.bowl_transform.orientation.w = 0.0330824183502
+
+
         self.display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
-                                            moveit_msgs.msg.DisplayTrajectory)
+                                            moveit_msgs.msg.DisplayTrajectory, queue_size=20)
 
         self.status_publisher = rospy.Publisher('/status_jaco',
                                             Int32MultiArray, queue_size=20)
@@ -72,11 +91,16 @@ class MoveitApp():
                     self.face_cords_callback,
                     self.robotName)
 
-        rospy.sleep(1000)
-        self.move_capture(0, 0)
-        self.move_capture(1, 0)
+        self.group.set_pose_reference_frame(self.rootFrame)
+        self.group.set_end_effector_link(self.cameraAttachFrame)
+
+        rospy.loginfo("============ Reference frame: ")
+        rospy.loginfo(self.group.get_pose_reference_frame())
+        rospy.loginfo(self.group.get_end_effector_link())
 
     def move_to_callback(self, data, topic):
+        self.group.stop()
+        self.group.clear_pose_targets()
         goal_transform = []
         if (data.data=="mouth"):
             self.goto_pose(self.face_cords.x, self.face_cords.y, self.face_cords.z)
@@ -93,7 +117,7 @@ class MoveitApp():
         elif (data.data == "scoop_bowl"):
             rospy.logerr("Scooping isnt implemented")
             return
-        elif (data.data == "face_seach_pos"):
+        elif (data.data == "face_search_pos"):
             self.group.set_pose_target(self.camera_transform)
             self.transmit_moving(True)
             self.group.go(wait=True)
@@ -135,11 +159,6 @@ class MoveitApp():
     def face_cords_callback(self, data, topic):
         self.face_cords = data.data
 
-    def flip_quart(self, quard):
-        quard.x = -quard.x
-        quard.y = -quard.y
-        quard.z = -quard.z
-
     def move_capture(self, data, topic):
         try:
             #First frame, end frame
@@ -147,19 +166,20 @@ class MoveitApp():
 
             if (data.data == 0):
                 self.camera_transform.position = trans.transform.translation
-                self.camera_transform.orientation = self.flip_quart(trans.transform.rotation)
+                self.camera_transform.orientation = trans.transform.rotation
                 rospy.loginfo("Saved face capture position")
-                print(self.camera_transform.transform.position.x)
-                print(self.camera_transform.transform.position.y)
-                print(self.camera_transform.transform.position.z)
 
-                print(self.camera_transform.transform.orientation.x)
-                print(self.camera_transform.transform.orientation.y)
-                print(self.camera_transform.transform.orientation.z)
-                print(self.camera_transform.transform.orientation.w)
+                print(self.camera_transform.position.x)
+                print(self.camera_transform.position.y)
+                print(self.camera_transform.position.z)
+
+                print(self.camera_transform.orientation.x)
+                print(self.camera_transform.orientation.y)
+                print(self.camera_transform.orientation.z)
+                print(self.camera_transform.orientation.w)
             elif (data.data == 1):
                 self.bowl_transform.position = trans.transform.translation
-                self.bowl_transform.orientation = self.flip_quart(trans.transform.rotation)
+                self.bowl_transform.orientation = trans.transform.rotation
                 rospy.loginfo("Saved bowl capature position")
 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
