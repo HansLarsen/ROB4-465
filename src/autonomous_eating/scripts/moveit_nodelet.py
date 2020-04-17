@@ -145,19 +145,19 @@ class MoveitApp():
             #First frame, end frame
             trans = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraAttachFrame, rospy.Time(0))
 
-            if (data == 0):
+            if (data.data == 0):
                 self.camera_transform.position = trans.transform.translation
                 self.camera_transform.orientation = self.flip_quart(trans.transform.rotation)
                 rospy.loginfo("Saved face capture position")
-                print(self.camera_transform.transform.translation.x)
-                print(self.camera_transform.transform.translation.y)
-                print(self.camera_transform.transform.translation.z)
+                print(self.camera_transform.transform.position.x)
+                print(self.camera_transform.transform.position.y)
+                print(self.camera_transform.transform.position.z)
 
-                print(self.camera_transform.transform.rotation.x)
-                print(self.camera_transform.transform.rotation.y)
-                print(self.camera_transform.transform.rotation.z)
-                print(self.camera_transform.transform.rotation.w)
-            elif (data == 1):
+                print(self.camera_transform.transform.orientation.x)
+                print(self.camera_transform.transform.orientation.y)
+                print(self.camera_transform.transform.orientation.z)
+                print(self.camera_transform.transform.orientation.w)
+            elif (data.data == 1):
                 self.bowl_transform.position = trans.transform.translation
                 self.bowl_transform.orientation = self.flip_quart(trans.transform.rotation)
                 rospy.loginfo("Saved bowl capature position")
