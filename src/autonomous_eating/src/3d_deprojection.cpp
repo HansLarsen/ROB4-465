@@ -2,47 +2,66 @@
 #include "librealsense/rs.h"
 #include "librealsense/rsutil.h"
 #include "std_msgs/String.h"
+#include "sensor_msgs/CameraInfo.h"
+#include <std_msgs/Float64.h>
+#include <std_msgs/Float32MultiArray.h>
 
 class MyDeprojector {
-    const rs_intrinsics * intrinsicMatrix;
+    ros::NodeHandle* n;
+    rs_intrinsics intrinsicMatrix;
     ros::Publisher * returnPub;
+    float pixel_array[2];
+    ros::Subscriber sub;
+    ros::Publisher pub_cords;
 
     public:
     MyDeprojector(ros::NodeHandle * n) {
-        //Topic is wrong
-        n->subscribe("/realsense_f200/depth/camerainfo", 1000, &MyDeprojector::cordinatecallback, this);
-        n->subscribe("/realsense_f200/depth/camerainfo", 1000, &MyDeprojector::intrinsiccallback, this);
+        this->n = n;
+        sub = n->subscribe("/camera/depth/camera_info", 1000, &MyDeprojector::intrinsiccallback, this);
+        pub_cords = n->advertise<std_msgs::Float32MultiArray>("/3D_cordinates",1);
 
     }
     //message types are wrong
-    void cordinatecallback(const std_msgs::String::ConstPtr& msg)
+    void cordinatecallback(const std_msgs::Float32MultiArray::ConstPtr& msg)
     {
-      //todo: get intrinsics from the topic.
-
       //pixel location i.e. x and y
       float pixels [2] = {msg->data[0], msg->data[1]};
       //todo: depth is the pixel value on the raw depth image
       float depth = msg->data[2];
       float cords [3] = {0, 0, 0};
+      rs_deproject_pixel_to_point(cords, &intrinsicMatrix, pixels, depth);
 
-      rs_deproject_pixel_to_point(cords, intrinsicMatrix, pixels, depth);
-
-      //retun via returnPub
+      std_msgs::Float32MultiArray fma;
+      fma.data.push_back(cords[0]);
+      fma.data.push_back(cords[1]);
+      fma.data.push_back(cords[2]);
+      pub_cords.publish(fma);
     }
-    //message types are wrong
-    void intrinsiccallback(const std_msgs::String::ConstPtr& msg)
+    
+    void intrinsiccallback(const sensor_msgs::CameraInfo::ConstPtr& camInfo_msg)
     {
-      //todo: construct intrinsic matrix.
+      intrinsicMatrix.fx = camInfo_msg->K[0];
+      intrinsicMatrix.fy = camInfo_msg->K[4];
+      for(int i = 0;i<5;i++){
+      intrinsicMatrix.coeffs[i] = camInfo_msg->D[i];
+      }
+      intrinsicMatrix.height = camInfo_msg->height;
+      intrinsicMatrix.width = camInfo_msg->width;
+      intrinsicMatrix.model = rs_distortion::RS_DISTORTION_NONE; 
+      intrinsicMatrix.ppx = camInfo_msg->K[2];
+      intrinsicMatrix.ppy = camInfo_msg->K[5];
+      sub = this->n->subscribe("/pixel_Cords", 1000, &MyDeprojector::cordinatecallback, this);
     }
 };
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "listener");
-
+  ros::init(argc, argv, "deprojection");
   ros::NodeHandle * n = new ros::NodeHandle();
-
+  
   MyDeprojector runningNode = MyDeprojector(n);
+
+  
 
   ros::spin();
 

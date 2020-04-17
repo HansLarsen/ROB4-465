@@ -9,6 +9,7 @@ import sys
 import copy
 from std_msgs.msg import String
 from std_msgs.msg import Int32MultiArray, Int32
+from autonomous_eating.msg import face_cords
 from sensor_msgs.msg import Joy
 from tf.transformations import quaternion_from_euler
 from moveit_commander.conversions import pose_to_list
@@ -66,7 +67,7 @@ class MoveitApp():
                     self.robotName)
 
         rospy.Subscriber('/face_cords',
-                    Int32MultiArray,
+                    face_cords,
                     self.face_cords_callback,
                     self.robotName)
 

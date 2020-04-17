@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+
+from sensor_msgs.msg import Image as ROS_Image
+
 #packages for the GUI
 from Tkinter import *
 from ttk import *
@@ -7,6 +10,9 @@ from PIL import ImageTk, Image
 
 import rospkg
 import rospy
+from cv_bridge import CvBridge
+import cv2 as cv2
+
 #import msg's from our package
 from autonomous_eating.msg import gui_status
 from autonomous_eating.msg import gui_mode
@@ -24,6 +30,12 @@ class GUIApp():
   def gui_status_callback(self, data):
     status = (data.jaco_status, data.camera_status, data.main_status, data.moving_status)
     self.updateStatusText(status)
+
+  def gui_figure_callback(self, data):
+    bridge = CvBridge()
+    self.cv_img = bridge.imgmsg_to_cv2(data)
+    self.pil_img = ImageTk.PhotoImage(image=Image.fromarray(self.cv_img))
+    self.figureCanvas.create_image(0,0, anchor=NW, image=self.pil_img, state=NORMAL)
 
   #updates image of itci with the red circle showing tongue position
   def updateItciImg(self, frame, x=25,y=25):
@@ -74,6 +86,15 @@ class GUIApp():
     self.activationBar.grid(column=1,row=2)
     self.updateAcitvationBar()
 
+    #add figure to show on the right (from /gui_figure topic)
+    self.figureCanvas = Canvas(self.frame, width = 500, height = 500)
+    self.figureCanvas.grid(column=2, row=0, rowspan=2)
+
+    rospy.Subscriber("/gui_status", gui_status, self.gui_status_callback)
+    rospy.Subscriber("/gui_mode", gui_mode, self.gui_mode_callback)
+    rospy.Subscriber("/gui_figure", ROS_Image, self.gui_figure_callback)
+
+
 
 #start of script, set up GUI:
 root = Tk()
@@ -81,8 +102,5 @@ app = GUIApp(root)
 
 #init ros:
 rospy.init_node('display_node')
-rospy.Subscriber("/gui_status", gui_status, app.gui_status_callback)
-rospy.Subscriber("/gui_mode", gui_mode, app.gui_mode_callback)
- 
 #loop using Tk instead of ros::spin, does the same thing, but keeps the GUI updating
 root.mainloop()
