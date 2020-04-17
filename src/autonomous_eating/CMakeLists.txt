@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
   librealsense
+  gazebo_ros
 )
 
 find_package(OpenCV REQUIRED)
@@ -116,7 +117,7 @@ generate_messages(
 catkin_package(
 #   INCLUDE_DIRS /usr/include
 #  LIBRARIES autonomous_eating
-   CATKIN_DEPENDS roscpp rospy sensor_msgs std_msgs message_runtime cv_bridge image_transport
+   CATKIN_DEPENDS roscpp rospy sensor_msgs message_runtime cv_bridge image_transport gazebo_ros
 #  DEPENDS system_lib
 )
 

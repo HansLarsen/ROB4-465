@@ -62,9 +62,9 @@ def draw_center(image, center): #draws the cirkel on picture
 def bowl_finder(image): #finds the center coordinats of the bowl
     #resize so all picture are same size
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    max_dimension = max(image.shape)
-    scale = 700/max_dimension
-    image = cv2.resize(image, None, fx = scale, fy = scale)
+    #max_dimension = max(image.shape)
+    #scale = 700/max_dimension
+    #image = cv2.resize(image, None, fx = scale, fy = scale)
 
     #blur
 
