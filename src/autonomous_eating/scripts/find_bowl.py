@@ -15,6 +15,7 @@ search = False
 def bool_callback(data):
     global search
     search = data.data
+    print(search)
     
 
 
@@ -50,12 +51,12 @@ def find_biggest_contour(image):
 
     return biggest_contour
 
-#def draw_center(image, center):
+def draw_center(image, center):
 
-    #radius = 200
-    #color = (0, 0, 0)
-    #thickness = 2
-    #cv2.circle(image, center, radius, color, thickness)
+    radius = 200
+    color = (0, 0, 0)
+    thickness = 2
+    cv2.circle(image, center, radius, color, thickness)
 
 def bowl_finder(image):
     #resize so all picture are same size
@@ -97,7 +98,7 @@ def bowl_finder(image):
     center = (int(M["m10"]/M["m00"]), int(M["m01"]/M["m00"]) )
     #cx = int(M["m10"]/M["m00"])
     #cy = int(M["m01"]/M["m00"])
-    #draw_center(image, center)
+    draw_center(image, center)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     return center, image
 
@@ -116,23 +117,25 @@ sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecall
 if __name__ == '__main__':
     
     rospy.init_node('find_bowl')
+    while not rospy.is_shutdown():
     
-    if(search == False):
-        print "searching!"
-        #bgr2_image = cv2.imread("/home/ubuntu/Desktop/mine//Bowl_Movements_138.jpg")
-        c, i = bowl_finder(bgr_image)
-        d = depth_image[c]
-        #print(depth_image[c])
-        #print(c)
+        if(search == True):
+            print "searching!"
+            #bgr2_image = cv2.imread("/home/ubuntu/Desktop/mine//Bowl_Movements_138.jpg")
+            
+            c, i = bowl_finder(bgr_image)
+            d = depth_image[c]
+            print(depth_image[c])
+            print(c)
 
-        #cv2.imshow("pic", bgr_image)
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
-        data_to_send = Float32MultiArray() 
-        array = [c[0],c[1], d]
-        data_to_send.data = array 
-        pub_pixel.publish(data_to_send)
-    
-    
+            #cv2.imshow("pic", bgr_image)
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
+            data_to_send = Float32MultiArray() 
+            array = [c[0],c[1], d]
+            data_to_send.data = array 
+            pub_pixel.publish(data_to_send)
         
-    rospy.spin()
+        
+        
+        #rospy.spin()
