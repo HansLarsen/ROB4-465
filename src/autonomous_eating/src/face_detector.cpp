@@ -183,15 +183,15 @@ int main( int argc, char* argv[] )
       // a = K.at<float>(0,0), b = K.at<float>(0,1) and c = K.at<float>(0,2)
 
       // calculating xyz of first mouth corner projected onto plane
-      float k1 = (-(K.at<float>(0,0) * depthLandmarkX[61]) - (K.at<float>(0,1) * depthLandmarkY[61]) - (K.at<float>(0,2) * depthLandmarkZ[61])) / ((K.at<float>(0,0) * K.at<float>(0,0)) + (K.at<float>(0,1) * K.at<float>(0,1)) + (K.at<float>(0,2) * K.at<float>(0,2)));
-      float x1 = (K.at<float>(0,0) * k1) + depthLandmarkX[61];
-      float y1 = (K.at<float>(0,1) * k1) + depthLandmarkY[61];
-      float z1 = (K.at<float>(0,2) * k1) + depthLandmarkZ[61];
+      float k1 = (-(K.at<float>(0,0) * depthLandmarkX[62]) - (K.at<float>(0,1) * depthLandmarkY[62]) - (K.at<float>(0,2) * depthLandmarkZ[62])) / ((K.at<float>(0,0) * K.at<float>(0,0)) + (K.at<float>(0,1) * K.at<float>(0,1)) + (K.at<float>(0,2) * K.at<float>(0,2)));
+      float x1 = (K.at<float>(0,0) * k1) + depthLandmarkX[62];
+      float y1 = (K.at<float>(0,1) * k1) + depthLandmarkY[62];
+      float z1 = (K.at<float>(0,2) * k1) + depthLandmarkZ[62];
       // calculating xyz of second mouth corner projected onto plane 
-      float k2 = (-(K.at<float>(0,0) * depthLandmarkX[65]) - (K.at<float>(0,1) * depthLandmarkY[65]) - (K.at<float>(0,2) * depthLandmarkZ[65])) / ((K.at<float>(0,0) * K.at<float>(0,0)) + (K.at<float>(0,1) * K.at<float>(0,1)) + (K.at<float>(0,2) * K.at<float>(0,2)));
-      float x2 = (K.at<float>(0,0) * k2) + depthLandmarkX[65];
-      float y2 = (K.at<float>(0,1) * k2) + depthLandmarkY[65];
-      float z2 = (K.at<float>(0,2) * k2) + depthLandmarkZ[65];
+      float k2 = (-(K.at<float>(0,0) * depthLandmarkX[66]) - (K.at<float>(0,1) * depthLandmarkY[66]) - (K.at<float>(0,2) * depthLandmarkZ[66])) / ((K.at<float>(0,0) * K.at<float>(0,0)) + (K.at<float>(0,1) * K.at<float>(0,1)) + (K.at<float>(0,2) * K.at<float>(0,2)));
+      float x2 = (K.at<float>(0,0) * k2) + depthLandmarkX[66];
+      float y2 = (K.at<float>(0,1) * k2) + depthLandmarkY[66];
+      float z2 = (K.at<float>(0,2) * k2) + depthLandmarkZ[66];
       
       // calculating xyz of the middle of the mouth projected onto the plane and pulling it out in front of the mouth (middle point + vector)
       mouthMidPointInFront[0] = ((x1 + x2) / 2) + (K.at<float>(0,0) * disFromFace);
