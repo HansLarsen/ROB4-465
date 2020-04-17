@@ -1,0 +1,140 @@
+Script started on Tue 14 Apr 2020 02:53:16 PM CEST
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ cd scrips
+bash: cd: scrips: No such file or directory
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ di
+The program 'di' is currently not installed. You can install it by typing:
+sudo apt install di
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ dir
+build  devel  Scripts  src  typescript
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ cd Scripts/
+]0;ubuntu@ubuntu: ~/Desktop/catkin_ws/Scriptsubuntu@ubuntu:~/Desktop/catkin_ws/Scripts$ dir
+Bowlfinder_visualtest
+]0;ubuntu@ubuntu: ~/Desktop/catkin_ws/Scriptsubuntu@ubuntu:~/Desktop/catkin_ws/Scripts$ cd ..
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ cd[K[Ksrc/autonomous_eating/
+bash: src/autonomous_eating/: Is a directory
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ kat[K[K[Kcatkin_bui[K[K[Kmake
+Base path: /home/ubuntu/Desktop/catkin_ws
+Source space: /home/ubuntu/Desktop/catkin_ws/src
+Build space: /home/ubuntu/Desktop/catkin_ws/build
+Devel space: /home/ubuntu/Desktop/catkin_ws/devel
+Install space: /home/ubuntu/Desktop/catkin_ws/install
+Multiple packages found with the same name "j2n6s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2n6s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/j2n6s300_ikfast
+Multiple packages found with the same name "j2n6s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/j2n6s300_moveit_config
+- kinova_moveit/robot_configs/j2n6s300_moveit_config
+Multiple packages found with the same name "j2s6s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s6s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/j2s6s300_ikfast
+Multiple packages found with the same name "j2s6s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/j2s6s300_moveit_config
+- kinova_moveit/robot_configs/j2s6s300_moveit_config
+Multiple packages found with the same name "j2s7s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s7s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/j2s7s300_ikfast
+Multiple packages found with the same name "j2s7s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/j2s7s300_moveit_config
+- kinova_moveit/robot_configs/j2s7s300_moveit_config
+Multiple packages found with the same name "kinova_arm_moveit_demo":
+- kinova-ros/kinova_moveit/kinova_arm_moveit_demo
+- kinova_moveit/kinova_arm_moveit_demo
+Multiple packages found with the same name "kinova_bringup":
+- kinova-ros/kinova_bringup
+- kinova_bringup
+Multiple packages found with the same name "kinova_control":
+- kinova-ros/kinova_control
+- kinova_control
+Multiple packages found with the same name "kinova_demo":
+- kinova-ros/kinova_demo
+- kinova_demo
+Multiple packages found with the same name "kinova_description":
+- kinova-ros/kinova_description
+- kinova_description
+Multiple packages found with the same name "kinova_driver":
+- kinova-ros/kinova_driver
+- kinova_driver
+Multiple packages found with the same name "kinova_gazebo":
+- kinova-ros/kinova_gazebo
+- kinova_gazebo
+Multiple packages found with the same name "kinova_msgs":
+- kinova-ros/kinova_msgs
+- kinova_msgs
+Multiple packages found with the same name "m1n6s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/m1n6s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/m1n6s300_ikfast
+Multiple packages found with the same name "m1n6s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/m1n6s300_moveit_config
+- kinova_moveit/robot_configs/m1n6s300_moveit_config
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ source devel/setup.bash 
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ catkin_make
+Base path: /home/ubuntu/Desktop/catkin_ws
+Source space: /home/ubuntu/Desktop/catkin_ws/src
+Build space: /home/ubuntu/Desktop/catkin_ws/build
+Devel space: /home/ubuntu/Desktop/catkin_ws/devel
+Install space: /home/ubuntu/Desktop/catkin_ws/install
+Multiple packages found with the same name "j2n6s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2n6s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/j2n6s300_ikfast
+Multiple packages found with the same name "j2n6s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/j2n6s300_moveit_config
+- kinova_moveit/robot_configs/j2n6s300_moveit_config
+Multiple packages found with the same name "j2s6s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s6s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/j2s6s300_ikfast
+Multiple packages found with the same name "j2s6s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/j2s6s300_moveit_config
+- kinova_moveit/robot_configs/j2s6s300_moveit_config
+Multiple packages found with the same name "j2s7s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s7s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/j2s7s300_ikfast
+Multiple packages found with the same name "j2s7s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/j2s7s300_moveit_config
+- kinova_moveit/robot_configs/j2s7s300_moveit_config
+Multiple packages found with the same name "kinova_arm_moveit_demo":
+- kinova-ros/kinova_moveit/kinova_arm_moveit_demo
+- kinova_moveit/kinova_arm_moveit_demo
+Multiple packages found with the same name "kinova_bringup":
+- kinova-ros/kinova_bringup
+- kinova_bringup
+Multiple packages found with the same name "kinova_control":
+- kinova-ros/kinova_control
+- kinova_control
+Multiple packages found with the same name "kinova_demo":
+- kinova-ros/kinova_demo
+- kinova_demo
+Multiple packages found with the same name "kinova_description":
+- kinova-ros/kinova_description
+- kinova_description
+Multiple packages found with the same name "kinova_driver":
+- kinova-ros/kinova_driver
+- kinova_driver
+Multiple packages found with the same name "kinova_gazebo":
+- kinova-ros/kinova_gazebo
+- kinova_gazebo
+Multiple packages found with the same name "kinova_msgs":
+- kinova-ros/kinova_msgs
+- kinova_msgs
+Multiple packages found with the same name "m1n6s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/m1n6s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/m1n6s300_ikfast
+Multiple packages found with the same name "m1n6s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/m1n6s300_moveit_config
+- kinova_moveit/robot_configs/m1n6s300_moveit_config
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ rosrun fac[K[K[Kaur[Ktonomous_eating find_bowl.py [K[K[K[K[K[K[K[K[K[K[K[Kind_bowl.py [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kcatkin_makesource devel/setup.bash 
+]0;ubuntu@ubuntu: ~/Desktop/catkin_wsubuntu@ubuntu:~/Desktop/catkin_ws$ source devel/setup.bash [13Pcatkin_make
+Base path: /home/ubuntu/Desktop/catkin_ws
+Source space: /home/ubuntu/Desktop/catkin_ws/src
+Build space: /home/ubuntu/Desktop/catkin_ws/build
+Devel space: /home/ubuntu/Desktop/catkin_ws/devel
+Install space: /home/ubuntu/Desktop/catkin_ws/install
+Multiple packages found with the same name "j2n6s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2n6s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/j2n6s300_ikfast
+Multiple packages found with the same name "j2n6s300_moveit_config":
+- kinova-ros/kinova_moveit/robot_configs/j2n6s300_moveit_config
+- kinova_moveit/robot_configs/j2n6s300_moveit_config
+Multiple packages found with the same name "j2s6s300_ikfast":
+- kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s6s300_ikfast
+- kinova_moveit/inverse_kinematics_plugins/ikfast/j2s6s300_ikfast
+Multiple packages found with the same n

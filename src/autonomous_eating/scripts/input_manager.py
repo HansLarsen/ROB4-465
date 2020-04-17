@@ -6,29 +6,28 @@ from sensor_msgs.msg import Joy
 from std_msgs.msg import Int32MultiArray
 from std_msgs.msg import String
 from geometry_msgs.msg import Pose2D
+from autonomous_eating.msg import command_msg
 
-numb_but = 4
-input_commands = [0 for x in range(3+numb_but)]
-msgs = Int32MultiArray()
+msg = command_msg()
 
 def joy_callback(data):
-    input_commands[0] = int(data.axes[0]*100)
-    input_commands[1] = int(data.axes[1]*100)
-    input_commands[2] = int(data.axes[4]*100)
+    msg.x = int(data.axes[0]*100)
+    msg.y = int(data.axes[1]*100)
+    msg.z = int(data.axes[4]*100)
 
-    for i in range(numb_but):
-        input_commands[i+3] = int(data.buttons[i])
+    msg.button1 = int(data.buttons[0])
+    msg.button2 = int(data.buttons[1])
+    msg.button3 = int(data.buttons[2])
+    msg.mode_select = int(data.buttons[3])
 
-    msgs.data = input_commands
-    pub.publish(msgs)
+    pub.publish(msg)
 
 def au_position_callback(data):
-    input_commands[0] = int(data.x)
-    input_commands[1] = int(data.y)
-    input_commands[2] = int(data.theta)
+    msg.x = int(data.x)
+    msg.y = int(data.y)
+    msg.z = int(data.theta)
 
-    msgs.data = input_commands
-    pub.publish(msgs)
+    pub.publish(msg)
 
 def pushed_buttons_callback(data):
     rospy.loginfo("pushed_buttons_callback activated")
@@ -53,12 +52,11 @@ if __name__ == '__main__':
     use_joy = rospy.get_param('joy')
 
 
-    pub = rospy.Publisher('input_commands', Int32MultiArray, queue_size=10)
+    pub = rospy.Publisher('input_commands', command_msg, queue_size=10)
 
     if use_joy:
         rospy.loginfo("Use Joy: True")
         rospy.Subscriber("joy", Joy, joy_callback)
-        
     
     if not use_joy:
         rospy.loginfo("Use Joy: False")

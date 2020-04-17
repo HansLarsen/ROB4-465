@@ -130,6 +130,14 @@ int main( int argc, char* argv[] )
 
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
+
+  int n_usedPoints = faces.landmarks.size()-17;
+  int depthLandmarkX[n_usedPoints];
+  int depthLandmarkY[n_usedPoints];
+  int depthLandmarkZ[n_usedPoints];
+  Mat A(3,faces.landmarks.size(),CV_8UC1);
+  Mat B(1,faces.landmarks.size(),CV_8UC1);
+
   while (ros::ok()){
 
     if(new_color_img && new_depth_img)
@@ -145,15 +153,36 @@ int main( int argc, char* argv[] )
           ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
         continue;
       }
-      // JONAS WRITE HERE YOUR STUFF AND STUFFZ
-      // ==> faces.landmarks has all the points
-      // faces.landmarks.size() <== amount of landmarks (68)
-      // x and y position of first landmark:
-      //faces.landmarks[0].at(0).x
-      //faces.landmarks[0].at(0).y
-
-
-
+      
+      // ensure coordinates fit in depth_image even if resolution is not 1:1
+      for (size_t i = 0; i < n_usedPoints; i++)
+      {
+        depthLandmarkX[i]=(faces.landmarks[0].at(i+17).x / color_image.cols)*depth_image.cols;
+        depthLandmarkY[i]=(faces.landmarks[0].at(i+17).y / color_image.rows)*depth_image.rows;
+        depthLandmarkZ[i]=(int)depth_image.at<uchar>(depthLandmarkZ[i], depthLandmarkY[i]);
+      }
+      // The equation for a plane is: ax+by+c=z. And we have local x y z above
+      // To find a b c we use formula Ak=B, where x is a array of a b c
+      // A is [xi, yi, 1] and B is [zi]
+      
+      for (size_t x = 0; x < 3; x++){
+        for (size_t y = 0; y < n_usedPoints; y++){        
+          switch (x){          
+            case 0:
+              A.at<uchar>(Point(x,y)) = depthLandmarkX[y];
+              B.at<uchar>(Point(x,y)) = depthLandmarkZ[y];
+              break;            
+            case 1:
+              A.at<uchar>(Point(x,y)) = depthLandmarkY[y];
+              break;            
+            case 2:
+              A.at<uchar>(Point(x,y)) = 1;
+              break;
+          }
+        }        
+      }
+      Mat k = (A.t() * A).inv() * A.t() * B.t();
+      // a = k.col[0], b = k.col[1] and c = k.col[2]
 
       //publish stuff here, add the publisher before the while loop (around line 130)
       //...
