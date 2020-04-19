@@ -53,13 +53,15 @@ def find_biggest_contour(image): #figures out which of the found contours is the
 
     return biggest_contour
 
-def draw_center(image, center): #draws the cirkel on picture
+def draw_square(image, biggest_contour): #draws circle on picture
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    radius = 200
+    #radius = 200
     color = (0, 0, 0)
     thickness = 2
-    cv2.circle(image, center, radius, color, thickness)
+    #cv2.circle(image, center, radius, color, thickness)
     #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    rect = cv2.boundingRect(biggest_contour)
+    cv2.rectangle(image,(rect[0],rect[1]),(rect[0]+rect[2],rect[1]+rect[3]),color,thickness)
     return image
 
 def bowl_finder(image): #finds the center coordinats of the bowl
@@ -147,8 +149,8 @@ if __name__ == '__main__':
                 #print("error maybe no bowl")
 
             if ran == True:
-                global c
-                image_to_publish = draw_center(bgr_image, c)
+                global biggest_contour
+                image_to_publish = draw_square(bgr_image, biggest_contour)
                 image_msg = CvBridge().cv2_to_imgmsg(image_to_publish, "rgb8")
                 pub_img.publish(image_msg)
                 
