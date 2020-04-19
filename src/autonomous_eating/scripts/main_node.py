@@ -150,14 +150,12 @@ class MoveitApp():
                     self.current_mode = 2
 
                     self.capture_mode = False
-                    self.robot_goto("mouth")
+                    self.robot_goto("bowl_search_pos")
 
                     rospy.sleep(1)
 
                     while (self.gui_status_message.moving_status == "Moving"):
                         rospy.spin()
-
-                    self.robot_goto("mouth2")
 
                 elif (self.current_mode == 2): #Find Face
                     self.current_mode = 3
@@ -173,9 +171,22 @@ class MoveitApp():
                     
                 elif (self.current_mode == 3): #Shove food face
                     self.current_mode = 4
+
+
+                    self.capture_mode = False
+                    self.robot_goto("mouth")
+
+                    rospy.sleep(1)
+
+                    while (self.gui_status_message.moving_status == "Moving"):
+                        rospy.spin()
+
+                    self.robot_goto("mouth2")
                 
                 elif (self.current_mode == 4):
                     self.current_mode = 0
+
+                    self.robot_goto("mouth2")
                 
 
     def updater(self):
