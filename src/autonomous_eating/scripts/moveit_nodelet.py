@@ -132,11 +132,11 @@ class MoveitApp():
         try:
             target_transformed_pose = geometry_msgs.msg.Pose()
             if (cameraTransformTrue == True):
-                self.camera_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0))
+                self.camera_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0), rospy.Duration(5.0))
                 target_pose.orientation = self.camera_transform.transform.rotation
                 target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.camera_transform)
             else:
-                self.end_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0))
+                self.end_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0), rospy.Duration(5.0))
                 target_pose.orientation = self.end_transform.transform.rotation
                 target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.end_transform)
             
@@ -169,7 +169,8 @@ class MoveitApp():
     def move_capture(self, data, topic):
         try:
             #First frame, end frame
-            trans = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0))
+            self.tfBuffer
+            trans = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0), rospy.Duration(5.0))
 
             if (data.data == 0):
                 self.camera_transform.position = trans.transform.translation
