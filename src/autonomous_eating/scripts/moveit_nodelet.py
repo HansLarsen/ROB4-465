@@ -8,6 +8,7 @@ import tf2_msgs.msg
 import tf2_geometry_msgs
 import sys
 import copy
+import numpy as np
 from std_msgs.msg import String
 from std_msgs.msg import Int32MultiArray, Int32, Float32MultiArray
 from autonomous_eating.msg import face_cords
@@ -160,7 +161,7 @@ class MoveitApp():
         self.transmit_moving(False)
 
     def bowl_cords_callback(self, data, topic):
-        self.bowl_cords = data.data
+        self.bowl_cords = np.asarray(data.data)
 
     def face_cords_callback(self, data, topic):
         self.face_cords = data.data
