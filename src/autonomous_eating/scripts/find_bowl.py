@@ -78,7 +78,7 @@ def bowl_finder(image): #finds the center coordinats of the bowl
 
     #threshold
     min_red = np.array([0, 170, 40])
-    max_red = np.array([20, 256,256])
+    max_red = np.array([5, 256,256])
 
     #color threshold
     filter1 = cv2.inRange(hsv_image_blur, min_red, max_red)
