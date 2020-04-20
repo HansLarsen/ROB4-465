@@ -124,7 +124,7 @@ if __name__ == '__main__':
     data_color = None
     data_depth = None
 
-    while data_color or data_depth is None:
+    while data_color or data_depth is None: #checks if camera is publishing
         try:
             data_color = rospy.wait_for_message("r200/camera/color/image_raw", Image, timeout= 5)
             data_depth = rospy.wait_for_message("r200/camera/depth/image_raw", Image, timeout= 5)
@@ -146,35 +146,34 @@ if __name__ == '__main__':
            
             try: 
                 global c
-                c = bowl_finder(bgr_image)
-
-                d = depth_image[c]
+                c = bowl_finder(bgr_image)      #tries to find bowl and gets center coordinates
+                d = depth_image[c]                      #gets depth
+                
                 data_to_send = Float32MultiArray() 
                 array = [c[0],c[1], d]
                 data_to_send.data = array 
-                pub_pixel.publish(data_to_send)
+                pub_pixel.publish(data_to_send)         #sends center and depth
                 if debug == True:
                     print "found it!"
-                ran = True
+                ran = True                              #it has found the bowl and published it
 
             except:
                 if debug == True:
                     print "did not find bowl"
-                #print("error maybe no bowl")
-
-            if ran == True:
+                
+            if ran == True:                                     #if bowl was found, it publishes the camerafeed with marking of object
                 global biggest_contour
                 image_to_publish = draw_square(bgr_image, biggest_contour)
                 image_msg = CvBridge().cv2_to_imgmsg(image_to_publish, "rgb8")
                 pub_img.publish(image_msg)
                 
             else:
-                image_p = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+                image_p = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)        #if it was not found publish regular camera feed
                 image_to_publish = CvBridge().cv2_to_imgmsg(image_p, "rgb8")
                 pub_img.publish(image_to_publish)
             
         else:
-            if debug == True:
+            if debug == True:                                   #if we are not in bowl searhing position it does nothing
                 print "not searching"        
 
         
