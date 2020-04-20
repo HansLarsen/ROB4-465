@@ -9,6 +9,7 @@ import tf2_geometry_msgs
 import sys
 import copy
 import numpy as np
+import time
 from std_msgs.msg import String
 from std_msgs.msg import Int32MultiArray, Int32, Float32MultiArray
 from autonomous_eating.msg import face_cords
@@ -25,7 +26,7 @@ class MoveitApp():
         self.rootFrame = 'j2n6s300_link_base'
         self.endEffectFrame = 'j2n6s300_end_effector'
         self.cameraNameFrame = 'r200_realsense'
-        self.movement_factor = 0.1
+        self.movement_factor = 0.001
 
         self.camera_transform = geometry_msgs.msg.Pose()
         self.bowl_transform = geometry_msgs.msg.Pose()
@@ -98,6 +99,8 @@ class MoveitApp():
         self.face_cords = face_cords()
         self.bowl_cords = [0, 0, 0]
 
+        self.planning_time = time.time()
+
         rospy.loginfo("============ Reference frame: ")
         rospy.loginfo(self.group.get_pose_reference_frame())
         rospy.loginfo(self.group.get_end_effector_link())
@@ -152,6 +155,12 @@ class MoveitApp():
             return False
 
     def move_xy_callback(self, data, topic):
+
+        if (time.time() - self.planning_time > 10):
+            self.planning_time = time.time()
+        else:
+            return
+
         newSearchPos = copy.copy(self.bowl_transform)
         newSearchPos.position.x = self.bowl_transform.position.x + float(data.data[0]) * self.movement_factor
         newSearchPos.position.y = self.bowl_transform.position.y + float(data.data[1]) * self.movement_factor

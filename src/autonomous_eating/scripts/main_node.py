@@ -56,8 +56,6 @@ class MoveitApp():
         self.command_message = data
 
         if (self.capture_mode):
-            if time.time() - self.previouse_time > 10:
-                self.previouse_time = time.time()
                 self.publish_move_XY() 
 
     def jaco_status_callback(self, data):
@@ -121,24 +119,21 @@ class MoveitApp():
 
     def runtime_loop(self):
         while(rospy.is_shutdown() == False):
-            
-            if (self.old_mode_state != self.command_message.mode_select):
-                self.old_mode_state = self.command_message.mode_select
-                rospy.loginfo("Currentmode is:") 
-                rospy.loginfo(str(self.current_mode))
-            elif time.time() - self.previouse_time_th1 < 1.0:
-                continue
-
             self.previouse_time_th1 = time.time()
 
-            if (self.command_message.mode_select == True):
+            if (self.old_mode_state != self.command_message.mode_select):
+                self.old_mode_state = self.command_message.mode_select
+
+                if(self.old_mode_state == False):
+                    continue
+
                 rospy.loginfo("Got press")
                 if (self.current_mode == 0): #Find Bowl
                     self.current_mode = 1
 
                     rospy.loginfo("Going to the bowl_search_pos and capture mode")
                     
-                    self.robot_goto()
+                    self.robot_goto("bowl_search_pos")
                     self.capture_mode = True
 
                     rospy.sleep(1)
@@ -164,7 +159,7 @@ class MoveitApp():
                 elif (self.current_mode == 2): #Find Face
                     self.current_mode = 3
 
-                    self.robot_goto("face_seach_pos")
+                    self.robot_goto("face_search_pos")
 
                     rospy.loginfo("Finding the face")
                     
@@ -194,9 +189,12 @@ class MoveitApp():
                 elif (self.current_mode == 4):
                     self.current_mode = 0
 
-                    self.robot_goto("mouth2")
+                    self.robot_goto("mouth")
 
                     rospy.loginfo("Retracting from the mouth")
+            
+            elif time.time() - self.previouse_time_th1 < 1.0:
+                continue
                 
 
     def updater(self):
