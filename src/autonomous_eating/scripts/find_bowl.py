@@ -120,7 +120,7 @@ debug = False
 
 if __name__ == '__main__':
     rospy.init_node('find_bowl')
-    search = True
+    search = False
     data_color = None
     data_depth = None
 
