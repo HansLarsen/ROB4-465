@@ -116,13 +116,20 @@ color_sub = rospy.Subscriber("/r200/camera/color/image_raw", Image, color_camera
 depth_sub = rospy.Subscriber("/r200/camera/depth/image_raw", Image, depth_camera_callback)
 sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecallback)
 
-
+debug = False   
 
 if __name__ == '__main__':
-    
-    search = True
-    
     rospy.init_node('find_bowl')
+    search = True
+    data = None
+
+    while data is None:
+        try:
+            data = rospy.wait_for_message("r200/camera/color/image_raw", Image, timeout= 5)
+        except:
+            pass
+    
+
     
     while not rospy.is_shutdown():
         
@@ -130,7 +137,8 @@ if __name__ == '__main__':
 
        
         if(search == True):             #checks if we should find the bowl
-            print "searching! ",
+            if debug == True:
+                print "searching! ",
            
             try: 
                 global c
@@ -141,11 +149,13 @@ if __name__ == '__main__':
                 array = [c[0],c[1], d]
                 data_to_send.data = array 
                 pub_pixel.publish(data_to_send)
-                print "found it!"
+                if debug == True:
+                    print "found it!"
                 ran = True
 
             except:
-                print "did not find bowl"
+                if debug == True:
+                    print "did not find bowl"
                 #print("error maybe no bowl")
 
             if ran == True:
@@ -160,7 +170,8 @@ if __name__ == '__main__':
                 pub_img.publish(image_to_publish)
             
         else:
-            print "not searching"        
+            if debug == True:
+                print "not searching"        
 
         
         
