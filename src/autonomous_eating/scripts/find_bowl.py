@@ -35,13 +35,16 @@ def depth_camera_callback(data): #converts the given image from camera into a CV
         print(e)
 
 def cordinatecallback(data):  #recieves 3D cordinates and publishes them on /bowl_cords
+    global object_out_of_range
     if data.data[2] !=0:
         msg = Float32MultiArray()
         array = [data.data[0], data.data[1], data.data[2]]
         msg.data = array
         pub_bowl.publish(msg)
+        object_out_of_range = False
     else: 
-        print "object is out of range"
+        #print "object is out of range"
+        object_out_of_range = True
     
 
 
@@ -112,28 +115,34 @@ pub_bowl = rospy.Publisher('/bowl_cords', Float32MultiArray, queue_size=1)
 pub_pixel = rospy.Publisher('/pixel_Cords', Float32MultiArray, queue_size=1)
 #subscribers
 sub_bool = rospy.Subscriber("/find_bowl_trigger", Bool, bool_callback)
-color_sub = rospy.Subscriber("/r200/camera/color/image_raw", Image, color_camera_calback)
-depth_sub = rospy.Subscriber("/r200/camera/depth/image_raw", Image, depth_camera_callback)
+color_sub = rospy.Subscriber("/camera/color/image_raw", Image, color_camera_calback)
+depth_sub = rospy.Subscriber("/camera/depth/image_raw", Image, depth_camera_callback)
 sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecallback)
 
 debug = False   
-search = False
+search = True
+object_out_of_range = True 
+found_data = False
+UsingSimulatedCam = True
+
 data_color = None
 data_depth = None
 
+
+
 if __name__ == '__main__':
     rospy.init_node('find_bowl')
-    found_data = False
+    
 
     while not found_data: #checks if camera is publishing
         try:
-            data_color = rospy.wait_for_message("r200/camera/color/image_raw", Image, timeout= 5)
-            data_depth = rospy.wait_for_message("r200/camera/depth/image_raw", Image, timeout= 5)
+            data_color = rospy.wait_for_message("/camera/color/image_raw", Image, timeout= 5)
+            data_depth = rospy.wait_for_message("/camera/depth/image_raw", Image, timeout= 5)
             if data_color is not None and data_depth is not None:
                 found_data = True
-                print("found_data")
         except:
-            print("excepting")
+            if debug == True:
+                print("excepting")
             if data_color is None:
                 rospy.loginfo("Did not find color camera")
             if data_depth is None:
@@ -166,7 +175,7 @@ if __name__ == '__main__':
                 if debug == True:
                     print "did not find bowl"
                 
-            if ran == True:                                     #if bowl was found, it publishes the camerafeed with marking of object
+            if ran == True and object_out_of_range == False : #if bowl was found, it publishes the camerafeed with marking of object                              
                 global biggest_contour
                 image_to_publish = draw_square(bgr_image, biggest_contour)
                 image_msg = CvBridge().cv2_to_imgmsg(image_to_publish, "rgb8")
