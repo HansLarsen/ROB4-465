@@ -94,7 +94,7 @@ def bowl_finder(image): #finds the center coordinats of the bowl
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15,15))
     morph_close = cv2.morphologyEx(filter, cv2.MORPH_CLOSE, kernel )
     morph_open = cv2.morphologyEx(morph_close, cv2.MORPH_OPEN, kernel)
-
+    global biggest_contour
     biggest_contour = find_biggest_contour(morph_open)
 
     #find center
@@ -112,8 +112,8 @@ pub_bowl = rospy.Publisher('/bowl_cords', Float32MultiArray, queue_size=1)
 pub_pixel = rospy.Publisher('/pixel_Cords', Float32MultiArray, queue_size=1)
 #subscribers
 sub_bool = rospy.Subscriber("/find_bowl_trigger", Bool, bool_callback)
-color_sub = rospy.Subscriber("/camera/color/image_raw", Image, color_camera_calback)
-depth_sub = rospy.Subscriber("/camera/depth/image_raw", Image, depth_camera_callback)
+color_sub = rospy.Subscriber("/r200/camera/color/image_raw", Image, color_camera_calback)
+depth_sub = rospy.Subscriber("/r200/camera/depth/image_raw", Image, depth_camera_callback)
 sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecallback)
 
 
