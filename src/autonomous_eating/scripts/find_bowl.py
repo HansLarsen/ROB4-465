@@ -121,15 +121,19 @@ debug = False
 if __name__ == '__main__':
     rospy.init_node('find_bowl')
     search = True
-    data = None
+    data_color = None
+    data_depth = None
 
-    while data is None:
+    while data_color or data_depth is None:
         try:
-            data = rospy.wait_for_message("r200/camera/color/image_raw", Image, timeout= 5)
+            data_color = rospy.wait_for_message("r200/camera/color/image_raw", Image, timeout= 5)
+            data_depth = rospy.wait_for_message("r200/camera/depth/image_raw", Image, timeout= 5)
         except:
-            pass
-    
-
+            if data_color is None:
+                rospy.loginfo("Did not find color camera")
+            if data_depth is None:
+                rospy.loginfo("Did not find depth camera")
+            
     
     while not rospy.is_shutdown():
         
