@@ -7,6 +7,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/face.hpp"
+#include "autonomous_eating/face_cords.h"
 #include <iostream>
 using namespace std;
 using namespace cv;
@@ -124,6 +125,7 @@ int main( int argc, char* argv[] )
   ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
   ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
   ros::ServiceClient deproject_client = n.serviceClient<autonomous_eating::deproject>("deproject_pixel_to_world");
+  ros::Publisher pub_cords = n.advertise<autonomous_eating::face_cords>("/face_cords",1);
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
 
@@ -133,8 +135,10 @@ int main( int argc, char* argv[] )
   int depthLandmarkZ[n_usedPoints];
   float mouthMidPointInFront[3];
   float disFromFace = 5;
+  float startingDis = 15;
   Mat A(3,faces.landmarks.size(),CV_8UC1);
   Mat B(1,faces.landmarks.size(),CV_8UC1);
+  autonomous_eating::face_cords face_cords_msg;
 
   while (ros::ok()){
 
@@ -154,51 +158,46 @@ int main( int argc, char* argv[] )
       }
       
 
-      autonomous_eating::deproject srv;
-      srv.request.x = 1;
-      srv.request.y = 1;
-      srv.request.z = 1;
-      if(deproject_client.call(srv))
-      {
-        //successfully called service
-        /*
-        srv.response.x 
-        srv.response.y
-        srv.response.z
-        */
-      }
-      else
-      {
-        //failed to call service
-      }
+      
 
-
-
-      /*
       //fit a plane to the face:
       // ensure coordinates fit in depth_image even if resolution is not 1:1
-      for (size_t i = 0; i < n_usedPoints; i++)
-      {
-        depthLandmarkX[i]=(faces.landmarks[0].at(i+17).x / color_image.cols)*depth_image.cols;
-        depthLandmarkY[i]=(faces.landmarks[0].at(i+17).y / color_image.rows)*depth_image.rows;
-        depthLandmarkZ[i]=(int)depth_image.at<uchar>(depthLandmarkZ[i], depthLandmarkY[i]);
+
+      autonomous_eating::deproject srv;
+      for (size_t i = 0; i < n_usedPoints; i++){
+        srv.request.x = (faces.landmarks[0].at(i+17).x / color_image.cols)*depth_image.cols;
+        srv.request.y = (faces.landmarks[0].at(i+17).y / color_image.rows)*depth_image.rows;
+        srv.request.z = depth_image.at<float>(depthLandmarkX[i],depthLandmarkY[i]);
+        
+        if(deproject_client.call(srv)){ //successfully called service
+    
+          depthLandmarkX[i] = srv.response.x;
+          depthLandmarkY[i] = srv.response.y;
+          depthLandmarkZ[i] = srv.response.z;
+          
+        }
+        else{ //failed to call service
+          ROS_INFO("FAILED TO CALL DEPROJECT SERVICE!");
+        }
       }
-      // The equation for a plane is: ax+by+c=z. And we have local x y z above
+
+
+      // The equation for a plane is: ax+by+c=z. And we have x y z above
       // To find a b c we use formula Ak=B, where x is a array of a b c
       // A is [xi, yi, 1] and B is [zi]
       
-      for (size_t x = 0; x < 3; x++){
-        for (size_t y = 0; y < n_usedPoints; y++){        
-          switch (x){          
+      for (size_t i = 0; i < 3; i++){
+        for (size_t j = 0; j < n_usedPoints; j++){        
+          switch (i){          
             case 0:
-              A.at<uchar>(Point(x,y)) = depthLandmarkX[y];
-              B.at<uchar>(Point(x,y)) = depthLandmarkZ[y];
+              A.at<uchar>(Point(i,j)) = depthLandmarkX[j];
+              B.at<uchar>(Point(i,j)) = depthLandmarkZ[j];
               break;            
             case 1:
-              A.at<uchar>(Point(x,y)) = depthLandmarkY[y];
+              A.at<uchar>(Point(i,j)) = depthLandmarkY[j];
               break;            
             case 2:
-              A.at<uchar>(Point(x,y)) = 1;
+              A.at<uchar>(Point(i,j)) = 1;
               break;
           }
         }        
@@ -219,14 +218,17 @@ int main( int argc, char* argv[] )
       float z2 = (K.at<float>(0,2) * k2) + depthLandmarkZ[66];
       
       // calculating xyz of the middle of the mouth projected onto the plane and pulling it out in front of the mouth (middle point + vector)
-      mouthMidPointInFront[0] = ((x1 + x2) / 2) + (K.at<float>(0,0) * disFromFace);
-      mouthMidPointInFront[1] = ((y1 + y2) / 2) + (K.at<float>(0,1) * disFromFace);
-      mouthMidPointInFront[2] = ((z1 + z2) / 2) + (K.at<float>(0,2) * disFromFace);
+      face_cords_msg.x_p1 = ((x1 + x2) / 2) + (K.at<float>(0,0) * disFromFace);
+      face_cords_msg.y_p1 = ((y1 + y2) / 2) + (K.at<float>(0,1) * disFromFace);
+      face_cords_msg.z_p1 = ((z1 + z2) / 2) + (K.at<float>(0,2) * disFromFace);
 
+      face_cords_msg.x_p2 = startingDis - disFromFace;
+      face_cords_msg.y_p2 = startingDis - disFromFace;
+      face_cords_msg.z_p2 = startingDis - disFromFace;
 
       //publish stuff here, add the publisher before the while loop (around line 130)
-      //...
-      */
+      pub_cords.publish(face_cords_msg);
+      
     }
     ros::spinOnce();
   }
