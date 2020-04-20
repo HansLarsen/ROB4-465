@@ -9,7 +9,7 @@ import tf2_geometry_msgs
 import sys
 import copy
 from std_msgs.msg import String
-from std_msgs.msg import Int32MultiArray, Int32
+from std_msgs.msg import Int32MultiArray, Int32, Float32MultiArray
 from autonomous_eating.msg import face_cords
 from sensor_msgs.msg import Joy
 from tf.transformations import quaternion_from_euler
@@ -29,14 +29,14 @@ class MoveitApp():
         self.camera_transform = geometry_msgs.msg.Pose()
         self.bowl_transform = geometry_msgs.msg.Pose()
 
-        self.camera_transform.position.x = -0.39632042996
-        self.camera_transform.position.y = -0.284433199086
-        self.camera_transform.position.z = 0.254760879476
+        self.camera_transform.position.x = -0.421324757876
+        self.camera_transform.position.y = -0.146568152514
+        self.camera_transform.position.z = 0.282542875551
 
-        self.camera_transform.orientation.x = 0.50128698525
-        self.camera_transform.orientation.y = -0.507185315115
-        self.camera_transform.orientation.z = 0.492299056014
-        self.camera_transform.orientation.w = -0.499115271253
+        self.camera_transform.orientation.x = 0.0187049271885
+        self.camera_transform.orientation.y = -0.745113187307
+        self.camera_transform.orientation.z = -0.666430957824
+        self.camera_transform.orientation.w = -0.0180621774537
 
         self.bowl_transform.position.x = 0.171847766393
         self.bowl_transform.position.y = -0.0334121324459
@@ -82,7 +82,7 @@ class MoveitApp():
                     self.robotName)
 
         rospy.Subscriber('/bowl_cords',
-                    Int32MultiArray,
+                    Float32MultiArray,
                     self.bowl_cords_callback,
                     self.robotName)
 
@@ -93,6 +93,9 @@ class MoveitApp():
 
         self.group.set_pose_reference_frame(self.rootFrame)
         self.group.set_end_effector_link(self.endEffectFrame)
+
+        self.face_cords = face_cords()
+        self.bowl_cords = Float32MultiArray()
 
         rospy.loginfo("============ Reference frame: ")
         rospy.loginfo(self.group.get_pose_reference_frame())

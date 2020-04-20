@@ -150,7 +150,7 @@ class MoveitApp():
                     self.current_mode = 2
 
                     self.capture_mode = False
-                    self.robot_goto("bowl_search_pos")
+                    self.robot_goto("scoop_bowl")
 
                     rospy.sleep(1)
 
