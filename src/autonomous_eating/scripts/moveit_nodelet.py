@@ -29,14 +29,14 @@ class MoveitApp():
         self.camera_transform = geometry_msgs.msg.Pose()
         self.bowl_transform = geometry_msgs.msg.Pose()
 
-        self.camera_transform.position.x = -0.39632042996
-        self.camera_transform.position.y = -0.284433199086
-        self.camera_transform.position.z = 0.254760879476
+        self.camera_transform.position.x = -0.421324757876
+        self.camera_transform.position.y = -0.146568152514
+        self.camera_transform.position.z = 0.282542875551
 
-        self.camera_transform.orientation.x = 0.50128698525
-        self.camera_transform.orientation.y = -0.507185315115
-        self.camera_transform.orientation.z = 0.492299056014
-        self.camera_transform.orientation.w = -0.499115271253
+        self.camera_transform.orientation.x = 0.0187049271885
+        self.camera_transform.orientation.y = -0.745113187307
+        self.camera_transform.orientation.z = -0.666430957824
+        self.camera_transform.orientation.w = -0.0180621774537
 
         self.bowl_transform.position.x = 0.171847766393
         self.bowl_transform.position.y = -0.0334121324459
