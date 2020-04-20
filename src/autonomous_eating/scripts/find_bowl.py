@@ -190,7 +190,8 @@ if __name__ == '__main__':
                 pub_bowl.publish(data_to_send)
                 
             else:
-                print("bowl out of range")
+                if debug:
+                    print("bowl not found")
                 image_p = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)        #if it was not found publish regular camera feed
                 image_to_publish = CvBridge().cv2_to_imgmsg(image_p, "rgb8")
                 pub_img.publish(image_to_publish)
