@@ -34,6 +34,9 @@ class GUIApp():
   def gui_figure_callback(self, data):
     bridge = CvBridge()
     self.cv_img = bridge.imgmsg_to_cv2(data)
+    width, height, dim = self.cv_img.shape
+    scale = (250000.0)/(width*height)
+    self.cv_img = cv2.resize(self.cv_img, (0,0), fx=scale, fy=scale)
     self.pil_img = ImageTk.PhotoImage(image=Image.fromarray(self.cv_img))
     self.figureCanvas.create_image(0,0, anchor=NW, image=self.pil_img, state=NORMAL)
 
