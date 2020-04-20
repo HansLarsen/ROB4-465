@@ -38,14 +38,14 @@ class MoveitApp():
         self.camera_transform.orientation.z = -0.666430957824
         self.camera_transform.orientation.w = -0.0180621774537
 
-        self.bowl_transform.position.x = 0.171847766393
-        self.bowl_transform.position.y = -0.0334121324459
-        self.bowl_transform.position.z = 0.676046167945
+        self.bowl_transform.position.x = 0.172054552405
+        self.bowl_transform.position.y = -0.319987002705
+        self.bowl_transform.position.z = 0.386660997851
 
-        self.bowl_transform.orientation.x = 0.353257970291
-        self.bowl_transform.orientation.y = 0.0944187047201
-        self.bowl_transform.orientation.z = 0.930160990485
-        self.bowl_transform.orientation.w = 0.0330824183502
+        self.bowl_transform.orientation.x = -0.622202411237
+        self.bowl_transform.orientation.y = 0.678180666678
+        self.bowl_transform.orientation.z = 0.313715889391
+        self.bowl_transform.orientation.w = -0.23348979322
 
 
         self.display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
