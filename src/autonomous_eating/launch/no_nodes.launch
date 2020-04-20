@@ -77,9 +77,9 @@
   <!-- ros-control Controller parameters-->  
   <rosparam file="$(find j2n6s300_moveit_config)/config/controllers_ros_control.yaml"/>
 
-  <!-- Run Rviz and load the default config to see the state of the move_group node 
+  <!-- Run Rviz and load the default config to see the state of the move_group node -->
   <include file="$(find j2n6s300_moveit_config)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
-  </include>-->
+  </include>
 </launch>

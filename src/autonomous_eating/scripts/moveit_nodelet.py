@@ -10,6 +10,7 @@ import sys
 import copy
 import numpy as np
 import time
+from visualization_msgs.msg import Marker
 from std_msgs.msg import String
 from std_msgs.msg import Int32MultiArray, Int32, Float32MultiArray
 from autonomous_eating.msg import face_cords
@@ -25,7 +26,7 @@ class MoveitApp():
         self.group_name = "arm"
         self.rootFrame = 'j2n6s300_link_base'
         self.endEffectFrame = 'j2n6s300_end_effector'
-        self.cameraNameFrame = 'r200_realsense'
+        self.cameraNameFrame = 'rs200_camera'
         self.movement_factor = 0.001
 
         self.camera_transform = geometry_msgs.msg.Pose()
@@ -66,7 +67,7 @@ class MoveitApp():
         self.group_names = self.robot.get_group_names()
 
         self.tfBuffer = tf2_ros.Buffer()
-        self.listener = tf2_ros.TransformListener(self.tfBuffer)
+        self.tf_listener = tf2_ros.TransformListener(self.tfBuffer)
 
         rospy.Subscriber('/move_to',
                     String,
@@ -105,6 +106,33 @@ class MoveitApp():
         rospy.loginfo(self.group.get_pose_reference_frame())
         rospy.loginfo(self.group.get_end_effector_link())
 
+        # Set up our waypoint markers
+        marker_scale = 0.02
+        marker_lifetime = 0 # 0 is forever
+        marker_ns = 'waypoints'
+        marker_id = 0
+        marker_color = {'r': 1.0, 'g': 0.7, 'b': 1.0, 'a': 1.0}
+        
+        # Define a marker publisher.
+        self.marker_pub = rospy.Publisher('waypoint_markers', Marker, queue_size=5)
+
+        self.markers = Marker()
+        self.markers.ns = marker_ns
+        self.markers.id = marker_id
+        self.markers.type = Marker.SPHERE
+        self.markers.action = Marker.ADD
+        self.markers.lifetime = rospy.Duration(marker_lifetime)
+        self.markers.scale.x = marker_scale
+        self.markers.scale.y = marker_scale
+        self.markers.scale.z = 0.02
+        self.markers.color.r = marker_color['r']
+        self.markers.color.g = marker_color['g']
+        self.markers.color.b = marker_color['b']
+        self.markers.color.a = marker_color['a']
+
+        self.markers.header.frame_id = self.rootFrame
+        self.markers.header.stamp = rospy.Time.now()
+
     def move_to_callback(self, data, topic):
         self.group.stop()
         self.group.clear_pose_targets()
@@ -126,33 +154,43 @@ class MoveitApp():
             self.group.go(wait=True)
             self.transmit_moving(False)
 
-    def goto_pose_camera(self, x, y, z, cameraTransformTrue=True):
-        target_pose = geometry_msgs.msg.Pose()
+    def goto_pose_camera(self, x, y, z):
+        target_pose = geometry_msgs.msg.PoseStamped()
 
-        target_pose.position.x = x
-        target_pose.position.y = y
-        target_pose.position.z = z
-        try:
-            target_transformed_pose = geometry_msgs.msg.Pose()
-            if (cameraTransformTrue == True):
-                self.camera_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0), rospy.Duration(5.0))
-                target_pose.orientation = self.camera_transform.transform.rotation
+        target_pose.pose.position.x = x
+        target_pose.pose.position.y = y
+        target_pose.pose.position.z = z
+        target_pose.header.stamp = rospy.Time.now()
+        running_variable = True
+        while(not rospy.is_shutdown() and running_variable == True):
+            try:
+                target_transformed_pose = geometry_msgs.msg.PoseStamped()
+
+                self.camera_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0))
+
+                target_pose.pose.orientation = self.camera_transform.transform.rotation
+                target_pose.header.frame_id = self.cameraNameFrame
+                
                 target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.camera_transform)
-            else:
-                self.end_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0), rospy.Duration(5.0))
-                target_pose.orientation = self.end_transform.transform.rotation
-                target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.end_transform)
-            
 
-            self.group.set_pose_target(target_transformed_pose)
-            self.transmit_moving(True)
-            self.group.go(wait=True)
-            self.transmit_moving(False)
-            return True
+                self.markers.pose.position = target_transformed_pose.pose.position
+                self.marker_pub.publish(self.markers)
 
-        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-            rospy.logerr("Failed to lookup transform")
-            return False
+
+                self.group.set_pose_target(target_transformed_pose)
+                self.transmit_moving(True)
+                self.group.go(wait=True)
+                self.transmit_moving(False)
+                running_variable = False
+
+                rospy.loginfo("Succede at lookup")
+
+            except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+                rospy.spin()
+                rospy.loginfo("Failed lookup")
+                continue
+
+        return True
 
     def move_xy_callback(self, data, topic):
 
@@ -178,8 +216,7 @@ class MoveitApp():
     def move_capture(self, data, topic):
         try:
             #First frame, end frame
-            self.tfBuffer
-            trans = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0), rospy.Duration(5.0))
+            trans = self.tfBuffer.lookup_transform(self.endEffectFrame, self.rootFrame, rospy.Time(0))
 
             if (data.data == 0):
                 self.camera_transform.position = trans.transform.translation
