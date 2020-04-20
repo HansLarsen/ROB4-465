@@ -109,7 +109,7 @@ void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 int main( int argc, char* argv[] )
 {
   string param;
-  bool debug = true;
+  bool debug = false;
 
   ros::init(argc, argv, "face_detector_node");
   ros::NodeHandle n;
