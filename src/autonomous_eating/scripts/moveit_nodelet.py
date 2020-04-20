@@ -9,7 +9,7 @@ import tf2_geometry_msgs
 import sys
 import copy
 from std_msgs.msg import String
-from std_msgs.msg import Int32MultiArray, Int32
+from std_msgs.msg import Int32MultiArray, Int32, Float32MultiArray
 from autonomous_eating.msg import face_cords
 from sensor_msgs.msg import Joy
 from tf.transformations import quaternion_from_euler
@@ -82,7 +82,7 @@ class MoveitApp():
                     self.robotName)
 
         rospy.Subscriber('/bowl_cords',
-                    Int32MultiArray,
+                    Float32MultiArray,
                     self.bowl_cords_callback,
                     self.robotName)
 
@@ -95,7 +95,7 @@ class MoveitApp():
         self.group.set_end_effector_link(self.endEffectFrame)
 
         self.face_cords = face_cords()
-        self.bowl_cords = Int32MultiArray()
+        self.bowl_cords = Float32MultiArray()
 
         rospy.loginfo("============ Reference frame: ")
         rospy.loginfo(self.group.get_pose_reference_frame())
