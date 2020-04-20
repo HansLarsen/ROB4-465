@@ -31,8 +31,20 @@
   <joint name="connect_root_and_world" type="fixed">
     <child link="root" />
     <parent link="world" />
-    <origin xyz="0.3 1.05 0.75" rpy="0 0 0" />    
+    <origin xyz="0 0 0" rpy="0 0 0" />    
   </joint> 
+
+	<link name="arm_mount">
+  </link>
+
+	<joint name="arm_attach" type="fixed">
+    <child link="arm_mount" />
+    <parent link="root" />
+    <origin xyz="0.3 1.05 0.75" rpy="0 0 0" />
+  </joint>
+
+
+  <!--<xacro:j2n6s300  base_parent="arm_mount"/>-->
 
   <!--<joint name="connect_link_and_camera" type="fixed">
     <child link="camera_link" />
@@ -40,13 +52,12 @@
     <origin xyz="0 1 0" rpy="0 0 0" />    
   </joint> -->
 
-  <xacro:property name="robot_root" value="root" />
-
+  <xacro:property name="robot_root" value="arm_mount" />
   <xacro:j2n6s300  base_parent="${robot_root}"/>
 
-  <!-- Create camera instance -->
+  <!-- Create camera instance 
   <xacro:realsense-rs200 prefix="" parent="j2n6s300_link_6">
   <origin xyz="0.1 0 0" rpy="0 ${M_pi/2} 0"/>
-  </xacro:realsense-rs200>
+  </xacro:realsense-rs200>-->
 
 </robot>
