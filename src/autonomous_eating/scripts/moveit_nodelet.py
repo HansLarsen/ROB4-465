@@ -94,6 +94,9 @@ class MoveitApp():
         self.group.set_pose_reference_frame(self.rootFrame)
         self.group.set_end_effector_link(self.endEffectFrame)
 
+        self.face_cords = face_cords()
+        self.bowl_cords = Int32MultiArray()
+
         rospy.loginfo("============ Reference frame: ")
         rospy.loginfo(self.group.get_pose_reference_frame())
         rospy.loginfo(self.group.get_end_effector_link())
