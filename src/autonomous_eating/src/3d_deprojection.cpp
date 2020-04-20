@@ -5,6 +5,7 @@
 #include "sensor_msgs/CameraInfo.h"
 #include <std_msgs/Float64.h>
 #include <std_msgs/Float32MultiArray.h>
+#include "autonomous_eating/deproject.h"
 
 class MyDeprojector {
     ros::NodeHandle* n;
@@ -13,14 +14,40 @@ class MyDeprojector {
     float pixel_array[2];
     ros::Subscriber sub;
     ros::Publisher pub_cords;
+    ros::ServiceServer deproject_server;
+    bool hasIntrinsics;
 
     public:
     MyDeprojector(ros::NodeHandle * n) {
         this->n = n;
         sub = n->subscribe("/camera/depth/camera_info", 1000, &MyDeprojector::intrinsiccallback, this);
         pub_cords = n->advertise<std_msgs::Float32MultiArray>("/3D_cordinates",1);
-
+        deproject_server = n->advertiseService("deproject_pixel_to_world", &MyDeprojector::deproject_func, this);
+        hasIntrinsics = false;
     }
+
+    bool deproject_func(autonomous_eating::deproject::Request& req, autonomous_eating::deproject::Response &res)
+    {
+      if(hasIntrinsics)
+      {
+        //pixel location i.e. x and y
+        float pixels [2] = {req.x, req.y};
+        //todo: depth is the pixel value on the raw depth image
+        float depth = req.z;
+        float cords [3] = {0, 0, 0};
+        rs_deproject_pixel_to_point(cords, &intrinsicMatrix, pixels, depth);
+
+        res.x = cords[0];
+        res.y = cords[1];
+        res.z = cords[2];
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
     //message types are wrong
     void cordinatecallback(const std_msgs::Float32MultiArray::ConstPtr& msg)
     {
@@ -50,7 +77,8 @@ class MyDeprojector {
       intrinsicMatrix.model = rs_distortion::RS_DISTORTION_NONE; 
       intrinsicMatrix.ppx = camInfo_msg->K[2];
       intrinsicMatrix.ppy = camInfo_msg->K[5];
-      sub = this->n->subscribe("/pixel_Cords", 1000, &MyDeprojector::cordinatecallback, this);
+      sub = this->n->subscribe("/pixel_Cords", 10, &MyDeprojector::cordinatecallback, this);
+      hasIntrinsics = true;
     }
 };
 
