@@ -22,7 +22,7 @@ class MoveitApp():
         self.robotName = "j2n6s300"
         self.group_name = "arm"
         self.rootFrame = 'j2n6s300_link_base'
-        self.cameraAttachFrame = '2n6s300_end_effector'
+        self.endEffectFrame = 'j2n6s300_end_effector'
         self.cameraNameFrame = 'r200_realsense'
         self.movement_factor = 0.1
 
@@ -92,7 +92,7 @@ class MoveitApp():
                     self.robotName)
 
         self.group.set_pose_reference_frame(self.rootFrame)
-        self.group.set_end_effector_link(self.cameraAttachFrame)
+        self.group.set_end_effector_link(self.endEffectFrame)
 
         rospy.loginfo("============ Reference frame: ")
         rospy.loginfo(self.group.get_pose_reference_frame())
@@ -103,41 +103,44 @@ class MoveitApp():
         self.group.clear_pose_targets()
         goal_transform = []
         if (data.data=="mouth"):
-            self.goto_pose(self.face_cords.x, self.face_cords.y, self.face_cords.z)
+            self.goto_pose_camera(self.face_cords.x_p1, self.face_cords.y_p1, self.face_cords.z_p1)
         elif (data.data=="mouth2"):
-            self.group.set_pose_target(self.camera_transform + self.face_cords)
-            self.transmit_moving(True)
-            self.group.go(wait=True)
-            self.transmit_moving(False)
+            self.goto_pose_camera(self.face_cords.x_p2, self.face_cords.y_p2, self.face_cords.z_p2)
         elif (data.data == "bowl_search_pos"):
             self.group.set_pose_target(self.bowl_transform)
             self.transmit_moving(True)
             self.group.go(wait=True)
             self.transmit_moving(False)
         elif (data.data == "scoop_bowl"):
-            rospy.logerr("Scooping isnt implemented")
-            return
+            self.goto_pose_camera(self.bowl_cords[0], self.bowl_cords[1], self.bowl_cords[2])
         elif (data.data == "face_search_pos"):
             self.group.set_pose_target(self.camera_transform)
             self.transmit_moving(True)
             self.group.go(wait=True)
             self.transmit_moving(False)
 
-    def goto_pose(self, x, y, z):
+    def goto_pose_camera(self, x, y, z, cameraTransformTrue=True):
         target_pose = geometry_msgs.msg.Pose()
 
-        target_pose.position.x = data.x_p1
-        target_pose.position.y = data.y_p1
-        target_pose.position.z = data.z_p1
+        target_pose.position.x = x
+        target_pose.position.y = y
+        target_pose.position.z = z
         try:
-            self.camera_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraAttachFrame, rospy.Time(0))
-
-            target_pose.orientation = self.camera_transform.transform.rotation
+            target_transformed_pose = geometry_msgs.msg.Pose()
+            if (cameraTransformTrue == True):
+                self.camera_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0))
+                target_pose.orientation = self.camera_transform.transform.rotation
+                target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.camera_transform)
+            else:
+                self.end_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0))
+                target_pose.orientation = self.end_transform.transform.rotation
+                target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.end_transform)
             
-            target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.camera_transform)
 
             self.group.set_pose_target(target_transformed_pose)
+            self.transmit_moving(True)
             self.group.go(wait=True)
+            self.transmit_moving(False)
             return True
 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
@@ -162,7 +165,7 @@ class MoveitApp():
     def move_capture(self, data, topic):
         try:
             #First frame, end frame
-            trans = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraAttachFrame, rospy.Time(0))
+            trans = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0))
 
             if (data.data == 0):
                 self.camera_transform.position = trans.transform.translation
@@ -239,7 +242,7 @@ if __name__ == '__main__':
         rospy.spin()
         #try:
             #First frame, end frame
-        #    trans = tfBuffer.lookup_transform(rootFrame, cameraAttachFrame, rospy.Time(0))
+        #    trans = tfBuffer.lookup_transform(rootFrame, endEffectFrame, rospy.Time(0))
         #except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
         #    rate.sleep()
         #    rospy.logerr("Failed")
