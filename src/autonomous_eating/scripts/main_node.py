@@ -135,6 +135,8 @@ class MoveitApp():
                 rospy.loginfo("Got press")
                 if (self.current_mode == 0): #Find Bowl
                     self.current_mode = 1
+
+                    rospy.loginfo("Going to the bowl_search_pos and capture mode")
                     
                     self.robot_goto()
                     self.capture_mode = True
@@ -152,6 +154,8 @@ class MoveitApp():
                     self.capture_mode = False
                     self.robot_goto("scoop_bowl")
 
+                    rospy.loginfo("Scooping the bowl")
+
                     rospy.sleep(1)
 
                     while (self.gui_status_message.moving_status == "Moving"):
@@ -161,6 +165,8 @@ class MoveitApp():
                     self.current_mode = 3
 
                     self.robot_goto("face_seach_pos")
+
+                    rospy.loginfo("Finding the face")
                     
                     rospy.sleep(1)
 
@@ -176,6 +182,8 @@ class MoveitApp():
                     self.capture_mode = False
                     self.robot_goto("mouth")
 
+                    rospy.loginfo("Going to mouth")
+
                     rospy.sleep(1)
 
                     while (self.gui_status_message.moving_status == "Moving"):
@@ -187,6 +195,8 @@ class MoveitApp():
                     self.current_mode = 0
 
                     self.robot_goto("mouth2")
+
+                    rospy.loginfo("Retracting from the mouth")
                 
 
     def updater(self):
