@@ -82,4 +82,15 @@
     <arg name="config" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
+
+  <!-- start joy node and input_manager -->
+  <include file="$(find autonomous_eating)/launch/input_manager.launch"/>
+
+  <!-- start other stuff -->
+  <node pkg="autonomous_eating" type="face_detector" name="face_detector" output="screen"/>
+  <node pkg="autonomous_eating" type="gui.py" name="gui" output="screen"/>
+  <node pkg="autonomous_eating" type="main_node.py" name="main" output="screen"/>
+  <node pkg="autonomous_eating" type="moveit_nodelet.py" name="moveit_nodelet" output="screen"/>
+  <node pkg="autonomous_eating" type="find_bowl.py" name="find_bowl" output="screen"/>
+
 </launch>
