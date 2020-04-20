@@ -115,8 +115,8 @@ pub_bowl = rospy.Publisher('/bowl_cords', Float32MultiArray, queue_size=1)
 pub_pixel = rospy.Publisher('/pixel_Cords', Float32MultiArray, queue_size=1)
 #subscribers
 sub_bool = rospy.Subscriber("/find_bowl_trigger", Bool, bool_callback)
-color_sub = rospy.Subscriber("/camera/color/image_raw", Image, color_camera_calback)
-depth_sub = rospy.Subscriber("/camera/depth/image_raw", Image, depth_camera_callback)
+color_sub = rospy.Subscriber("/r200/camera/color/image_raw", Image, color_camera_calback)
+depth_sub = rospy.Subscriber("/r200/camera/depth/image_raw", Image, depth_camera_callback)
 sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecallback)
 
 debug = False   
@@ -136,8 +136,8 @@ if __name__ == '__main__':
 
     while not found_data: #checks if camera is publishing
         try:
-            data_color = rospy.wait_for_message("/camera/color/image_raw", Image, timeout= 5)
-            data_depth = rospy.wait_for_message("/camera/depth/image_raw", Image, timeout= 5)
+            data_color = rospy.wait_for_message("/r200/camera/color/image_raw", Image, timeout= 5)
+            data_depth = rospy.wait_for_message("/r200/camera/depth/image_raw", Image, timeout= 5)
             if data_color is not None and data_depth is not None:
                 found_data = True
         except:
