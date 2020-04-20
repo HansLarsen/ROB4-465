@@ -29,11 +29,14 @@ class GUIApp():
   #callback for gui_status
   def gui_status_callback(self, data):
     status = (data.jaco_status, data.camera_status, data.main_status, data.moving_status)
-    self.updateStatusText(status)
+    self.master.after(1,self.updateStatusText(status))
 
   def gui_figure_callback(self, data):
     bridge = CvBridge()
     self.cv_img = bridge.imgmsg_to_cv2(data)
+    self.master.after(1, self.update_fig_task)
+
+  def update_fig_task(self):
     width, height, dim = self.cv_img.shape
     scale = (250000.0)/(width*height)
     self.cv_img = cv2.resize(self.cv_img, (0,0), fx=scale, fy=scale)
@@ -71,6 +74,7 @@ class GUIApp():
     self.frame.pack()
     self.frame.style.theme_use("clam")
     master.title("Autonomous Eating")
+    self.master = master
 
     #add info panel on the left
     self.text = Text(self.frame, font=("Arial", 12), width = 50)
