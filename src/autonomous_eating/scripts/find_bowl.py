@@ -117,18 +117,23 @@ depth_sub = rospy.Subscriber("/r200/camera/depth/image_raw", Image, depth_camera
 sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecallback)
 
 debug = False   
+search = False
+data_color = None
+data_depth = None
 
 if __name__ == '__main__':
     rospy.init_node('find_bowl')
-    search = False
-    data_color = None
-    data_depth = None
+    found_data = False
 
-    while data_color or data_depth is None: #checks if camera is publishing
+    while not found_data: #checks if camera is publishing
         try:
             data_color = rospy.wait_for_message("r200/camera/color/image_raw", Image, timeout= 5)
             data_depth = rospy.wait_for_message("r200/camera/depth/image_raw", Image, timeout= 5)
+            if data_color is not None and data_depth is not None:
+                found_data = True
+                print("found_data")
         except:
+            print("excepting")
             if data_color is None:
                 rospy.loginfo("Did not find color camera")
             if data_depth is None:
