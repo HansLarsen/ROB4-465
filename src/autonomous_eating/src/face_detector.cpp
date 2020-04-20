@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "ros/time.h"
+#include "autonomous_eating/deproject.h"
 #include "cv_bridge/cv_bridge.h"
 #include "sensor_msgs/Image.h"
 #include "opencv2/objdetect/objdetect.hpp"
@@ -122,7 +123,7 @@ int main( int argc, char* argv[] )
 
   ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
   ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
-
+  ros::ServiceClient deproject_client = n.serviceClient<autonomous_eating::deproject>("deproject_pixel_to_world");
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
 
@@ -151,6 +152,28 @@ int main( int argc, char* argv[] )
           ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
         continue;
       }
+      
+
+      autonomous_eating::deproject srv;
+      srv.request.x = 1;
+      srv.request.y = 1;
+      srv.request.z = 1;
+      if(deproject_client.call(srv))
+      {
+        //successfully called service
+        /*
+        srv.response.x 
+        srv.response.y
+        srv.response.z
+        */
+      }
+      else
+      {
+        //failed to call service
+      }
+
+
+
       /*
       //fit a plane to the face:
       // ensure coordinates fit in depth_image even if resolution is not 1:1
