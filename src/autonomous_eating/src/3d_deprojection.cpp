@@ -20,14 +20,15 @@ class MyDeprojector {
     public:
     MyDeprojector(ros::NodeHandle * n) {
         this->n = n;
-        sub = n->subscribe("/camera/depth/camera_info", 1000, &MyDeprojector::intrinsiccallback, this);
+        sub = n->subscribe("/r200/camera/depth/camera_info", 1000, &MyDeprojector::intrinsiccallback, this);
         pub_cords = n->advertise<std_msgs::Float32MultiArray>("/3D_cordinates",1);
         deproject_server = n->advertiseService("deproject_pixel_to_world", &MyDeprojector::deproject_func, this);
+        ROS_INFO_STREAM("deproject-server running!");
         hasIntrinsics = false;
     }
 
     bool deproject_func(autonomous_eating::deproject::Request& req, autonomous_eating::deproject::Response &res)
-    {
+    {        
       if(hasIntrinsics)
       {
         //pixel location i.e. x and y
@@ -44,6 +45,7 @@ class MyDeprojector {
       }
       else
       {
+        ROS_INFO_STREAM("Failed to serve a client");
         return false;
       }
     }
@@ -67,11 +69,17 @@ class MyDeprojector {
     
     void intrinsiccallback(const sensor_msgs::CameraInfo::ConstPtr& camInfo_msg)
     {
+      ROS_INFO_STREAM("Recieving intrinsics");
       intrinsicMatrix.fx = camInfo_msg->K[0];
       intrinsicMatrix.fy = camInfo_msg->K[4];
+
+      //only when a distortion is applied
+      /*
       for(int i = 0;i<5;i++){
-      intrinsicMatrix.coeffs[i] = camInfo_msg->D[i];
+        intrinsicMatrix.coeffs[i] = camInfo_msg->D[i];
       }
+      */
+
       intrinsicMatrix.height = camInfo_msg->height;
       intrinsicMatrix.width = camInfo_msg->width;
       intrinsicMatrix.model = rs_distortion::RS_DISTORTION_NONE; 
@@ -79,6 +87,7 @@ class MyDeprojector {
       intrinsicMatrix.ppy = camInfo_msg->K[5];
       sub = this->n->subscribe("/pixel_Cords", 10, &MyDeprojector::cordinatecallback, this);
       hasIntrinsics = true;
+      ROS_INFO_STREAM("Recieved intrinsics");
     }
 };
 

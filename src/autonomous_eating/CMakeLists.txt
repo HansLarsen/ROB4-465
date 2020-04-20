@@ -66,11 +66,11 @@ add_message_files(
 )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
+add_service_files(
+  FILES
+  deproject.srv
 #   Service2.srv
-# )
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -131,9 +131,6 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
-
-add_executable(face_detector src/face_detector.cpp)
-target_link_libraries(face_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -246,3 +243,6 @@ target_link_libraries(camera_recorder ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_executable(deprojector src/3d_deprojection.cpp)
 target_link_libraries(deprojector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
+add_executable(face_detector src/face_detector.cpp)
+target_link_libraries(face_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})

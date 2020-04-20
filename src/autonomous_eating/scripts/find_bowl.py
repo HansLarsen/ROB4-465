@@ -6,10 +6,23 @@ import numpy as np
 from std_msgs.msg import Header
 from std_msgs.msg import Int32MultiArray, Float32MultiArray, Bool
 from sensor_msgs.msg import Image
+from autonomous_eating.srv import *
 from cv_bridge import CvBridge
 import image_geometry
 
+def deproject_func(x,y,z):
+    resp = deprojectResponse()
+    try:
+        service = rospy.ServiceProxy("deproject_pixel_to_world", deproject)
+        req = deprojectRequest()
+        req.x = x
+        req.y = y
+        req.z = z
+        resp = service(req)
+    except rospy.ServiceException, e:
+        print("Service call failed: %s" %e)
 
+    return resp
 
 def bool_callback(data): #finds out if we should find bowl
     global search
@@ -19,8 +32,6 @@ def color_camera_calback(data): #converts the given image from camera into a CV2
     global bgr_image
     try:
         bgr_image = CvBridge().imgmsg_to_cv2(data, "bgr8")
-
-
     except CvBridgeError as e:
         print(e)
     
@@ -29,8 +40,6 @@ def depth_camera_callback(data): #converts the given image from camera into a CV
     global depth_image
     try:
         depth_image = CvBridge().imgmsg_to_cv2(data,"32FC1")
-       
-       
     except CvBridgeError as e:
         print(e)
 
@@ -121,7 +130,7 @@ sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecall
 
 debug = False   
 search = True
-object_out_of_range = True 
+object_out_of_range = False 
 found_data = False
 UsingSimulatedCam = True
 
@@ -132,7 +141,6 @@ data_depth = None
 
 if __name__ == '__main__':
     rospy.init_node('find_bowl')
-    
 
     while not found_data: #checks if camera is publishing
         try:
@@ -148,25 +156,21 @@ if __name__ == '__main__':
             if data_depth is None:
                 rospy.loginfo("Did not find depth camera")
             
-    
     while not rospy.is_shutdown():
         
         ran = False                     #this is the bool that tells us if a red bowl is found
 
-       
         if(search == True):             #checks if we should find the bowl
             if debug == True:
                 print "searching! ",
            
             try: 
                 global c
-                c = bowl_finder(bgr_image)      #tries to find bowl and gets center coordinates
+                c = bowl_finder(bgr_image)          #tries to find bowl and gets center coordinates
                 d = depth_image[c]                      #gets depth
-                
-                data_to_send = Float32MultiArray() 
-                array = [c[0],c[1], d]
-                data_to_send.data = array 
-                pub_pixel.publish(data_to_send)         #sends center and depth
+        
+                resp = deproject_func(c[0],c[1], d)     #sends center and depth to get real coordinates
+
                 if debug == True:
                     print "found it!"
                 ran = True                              #it has found the bowl and published it
@@ -180,8 +184,14 @@ if __name__ == '__main__':
                 image_to_publish = draw_square(bgr_image, biggest_contour)
                 image_msg = CvBridge().cv2_to_imgmsg(image_to_publish, "rgb8")
                 pub_img.publish(image_msg)
+
+                data_to_send = Float32MultiArray() 
+                data_to_send.data = [resp.x, resp.y, resp.z]
+                pub_bowl.publish(data_to_send)
                 
             else:
+                if debug:
+                    print("bowl not found")
                 image_p = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)        #if it was not found publish regular camera feed
                 image_to_publish = CvBridge().cv2_to_imgmsg(image_p, "rgb8")
                 pub_img.publish(image_to_publish)
