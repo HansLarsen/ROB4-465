@@ -11,8 +11,8 @@ from cv_bridge import CvBridge
 import image_geometry
 
 def deproject_func(x,y,z):
-    rospy.wait_for_service()
-    resp = deprojectResponse("deproject_pixel_to_world")
+    rospy.wait_for_service("deproject_pixel_to_world")
+    resp = deprojectResponse()
     try:
         service = rospy.ServiceProxy("deproject_pixel_to_world", deproject)
         req = deprojectRequest()
