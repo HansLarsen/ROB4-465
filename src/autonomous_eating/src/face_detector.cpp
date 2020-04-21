@@ -218,13 +218,13 @@ int main( int argc, char* argv[] )
       float z2 = (K.at<float>(0,2) * k2) + depthLandmarkZ[66];
       
       // calculating xyz of the middle of the mouth projected onto the plane and pulling it out in front of the mouth (middle point + vector)
-      face_cords_msg.x_p1 = ((x1 + x2) / 2) + (K.at<float>(0,0) * disFromFace);
-      face_cords_msg.y_p1 = ((y1 + y2) / 2) + (K.at<float>(0,1) * disFromFace);
-      face_cords_msg.z_p1 = ((z1 + z2) / 2) + (K.at<float>(0,2) * disFromFace);
+      face_cords_msg.x_p1 = ((x1 + x2) / 2) + (K.at<float>(0,0) * startingDis);
+      face_cords_msg.y_p1 = ((y1 + y2) / 2) + (K.at<float>(0,1) * startingDis);
+      face_cords_msg.z_p1 = ((z1 + z2) / 2) + (K.at<float>(0,2) * startingDis);
 
-      face_cords_msg.x_p2 = startingDis - disFromFace;
-      face_cords_msg.y_p2 = startingDis - disFromFace;
-      face_cords_msg.z_p2 = startingDis - disFromFace;
+      face_cords_msg.x_p2 = ((x1 + x2) / 2) + (K.at<float>(0,0) * disFromFace);
+      face_cords_msg.y_p2 = ((y1 + y2) / 2) + (K.at<float>(0,1) * disFromFace);
+      face_cords_msg.z_p2 = ((z1 + z2) / 2) + (K.at<float>(0,2) * disFromFace);
 
       //publish stuff here, add the publisher before the while loop (around line 130)
       pub_cords.publish(face_cords_msg);
