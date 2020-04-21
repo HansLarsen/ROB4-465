@@ -19,7 +19,6 @@ import time
 class MoveitApp():
     def __init__(self):
         self.capture_mode = False
-        self.start_up = False
         self.current_mode = 0
 
         rospy.Subscriber('/input_commands',
@@ -115,11 +114,10 @@ class MoveitApp():
         if (bowlTrue):
             self.find_bowl_pub.publish(True)
         else:
-            self.find_face_pub.publish(True)
+            self.find_face_pub.publish(False)
 
     def runtime_loop(self):
         while(rospy.is_shutdown() == False):
-            self.previouse_time_th1 = time.time()
 
             if (self.old_mode_state != self.command_message.mode_select):
                 self.old_mode_state = self.command_message.mode_select
@@ -147,6 +145,9 @@ class MoveitApp():
                     self.current_mode = 2
 
                     self.capture_mode = False
+
+                    self.publish_capture_object(bowlTrue=False)
+
                     self.robot_goto("scoop_bowl")
 
                     rospy.loginfo("Scooping the bowl")
@@ -167,14 +168,10 @@ class MoveitApp():
 
                     while (self.gui_status_message.moving_status == "Moving"):
                         rospy.spin()
-
-                    self.publish_capture_object(bowlTrue=False)
                     
                 elif (self.current_mode == 3): #Shove food face
                     self.current_mode = 4
 
-
-                    self.capture_mode = False
                     self.robot_goto("mouth")
 
                     rospy.loginfo("Going to mouth")
