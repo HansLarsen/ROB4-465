@@ -44,18 +44,16 @@ def pushed_buttons_callback(data):
 if __name__ == '__main__':
     rospy.init_node('input_manager', anonymous=True)
 
-    use_joy = rospy.get_param('joy')
-
     pub = rospy.Publisher('input_commands', command_msg, queue_size=10)
 
-    if use_joy:
-        rospy.loginfo("Use Joy: True")
-        rospy.Subscriber("joy", Joy, joy_callback)
-    
-    if not use_joy:
-        rospy.loginfo("Use Joy: False")
+    if rospy.get_param('/itci', False):
+        rospy.loginfo("Use ITCI: True")
         rospy.Subscriber("/itci/au_position", Pose2D, au_position_callback)
         rospy.Subscriber("/itci/pushed_buttons", String, pushed_buttons_callback)
+  
+    else:
+        rospy.loginfo("Use ITCI: False")
+        rospy.Subscriber("joy", Joy, joy_callback)
 
     while not rospy.is_shutdown():
         rospy.spin()
