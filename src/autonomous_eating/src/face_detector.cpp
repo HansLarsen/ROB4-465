@@ -177,7 +177,7 @@ int main( int argc, char* argv[] )
           
         }
         else{ //failed to call service
-          ROS_INFO("FAILED TO CALL DEPROJECT SERVICE!");
+          ROS_WARN_STREAM("FAILED TO CALL DEPROJECT SERVICE!");
         }
       }
 

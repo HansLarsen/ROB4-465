@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/ubuntu/Desktop/catkin_ws/devel/include/**",
+                "/opt/ros/kinetic/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/i_tongue_pkg/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2n6s300_ikfast/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s6s300_ikfast/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s7s300_ikfast/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_moveit/kinova_arm_moveit_demo/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_driver/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/librealsense/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/m1n6s300_ikfast/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/realsense_camera/include/**",
+                "/home/ubuntu/Desktop/catkin_ws/src/realsense_gazebo_plugin/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
