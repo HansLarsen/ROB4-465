@@ -244,7 +244,7 @@ class MoveitApp():
     def transmit_moving(self, moving_boolean):
         msg = Int32MultiArray()
         #TODO: get jaco conencted status
-        msg.data.append(0)
+        msg.data.append(1)
         msg.data.append(moving_boolean)
         self.status_publisher.publish(msg)
 

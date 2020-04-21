@@ -200,7 +200,6 @@ class MoveitApp():
             rospy.sleep(1)
 
 if __name__ == '__main__':
-    moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('main_node')
 
     myMoveitApp = MoveitApp()
