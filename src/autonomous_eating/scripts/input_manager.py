@@ -47,12 +47,12 @@ if __name__ == '__main__':
     pub = rospy.Publisher('input_commands', command_msg, queue_size=10)
 
     if rospy.get_param('/itci', False):
-        rospy.loginfo("Use ITCI: True")
+        rospy.loginfo("Using ITCI")
         rospy.Subscriber("/itci/au_position", Pose2D, au_position_callback)
         rospy.Subscriber("/itci/pushed_buttons", String, pushed_buttons_callback)
   
     else:
-        rospy.loginfo("Use ITCI: False")
+        rospy.loginfo("Using Joy")
         rospy.Subscriber("joy", Joy, joy_callback)
 
     while not rospy.is_shutdown():

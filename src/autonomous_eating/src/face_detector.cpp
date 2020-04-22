@@ -130,14 +130,14 @@ int main( int argc, char* argv[] )
   ROS_INFO_STREAM("initialized, ready to find faces!");
 
   int n_usedPoints = faces.landmarks.size()-17;
-  int depthLandmarkX[n_usedPoints];
-  int depthLandmarkY[n_usedPoints];
-  int depthLandmarkZ[n_usedPoints];
+  float depthLandmarkX[n_usedPoints];
+  float depthLandmarkY[n_usedPoints];
+  float depthLandmarkZ[n_usedPoints];
   float mouthMidPointInFront[3];
   float disFromFace = 5;
   float startingDis = 15;
-  Mat A(3,faces.landmarks.size(),CV_8UC1);
-  Mat B(1,faces.landmarks.size(),CV_8UC1);
+  Mat A(3,faces.landmarks.size(),CV_32FC1);
+  Mat B(1,faces.landmarks.size(),CV_32FC1);
   autonomous_eating::face_cords face_cords_msg;
 
   while (ros::ok()){
@@ -156,18 +156,19 @@ int main( int argc, char* argv[] )
           ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
         continue;
       }
-      
+      if (faces.landmarks.size() == 0)
+        continue;
 
       
-
+      ROS_INFO_STREAM(faces.landmarks.size());
       //fit a plane to the face:
       // ensure coordinates fit in depth_image even if resolution is not 1:1
 
       autonomous_eating::deproject srv;
-      for (size_t i = 0; i < n_usedPoints; i++){
-        srv.request.x = (faces.landmarks[0].at(i+17).x / color_image.cols)*depth_image.cols;
-        srv.request.y = (faces.landmarks[0].at(i+17).y / color_image.rows)*depth_image.rows;
-        srv.request.z = depth_image.at<float>(depthLandmarkX[i],depthLandmarkY[i]);
+      for (size_t i = 17; i < faces.landmarks[0].size()-1; i++){
+        srv.request.x = ((float)faces.landmarks[0].at(0).x / (float)color_image.cols)*(float)depth_image.cols;
+        srv.request.y = ((float)faces.landmarks[0].at(0).y / (float)color_image.rows)*(float)depth_image.rows;
+        srv.request.z = (float)depth_image.at<uint16_t>(srv.request.x, srv.request.y);
         
         if(deproject_client.call(srv)){ //successfully called service
     
@@ -181,7 +182,7 @@ int main( int argc, char* argv[] )
         }
       }
 
-
+/*
       // The equation for a plane is: ax+by+c=z. And we have x y z above
       // To find a b c we use formula Ak=B, where x is a array of a b c
       // A is [xi, yi, 1] and B is [zi]
@@ -190,14 +191,14 @@ int main( int argc, char* argv[] )
         for (size_t j = 0; j < n_usedPoints; j++){        
           switch (i){          
             case 0:
-              A.at<uchar>(Point(i,j)) = depthLandmarkX[j];
-              B.at<uchar>(Point(i,j)) = depthLandmarkZ[j];
+              A.at<float>(Point(i,j)) = depthLandmarkX[j];
+              B.at<float>(Point(i,j)) = depthLandmarkZ[j];
               break;            
             case 1:
-              A.at<uchar>(Point(i,j)) = depthLandmarkY[j];
+              A.at<float>(Point(i,j)) = depthLandmarkY[j];
               break;            
             case 2:
-              A.at<uchar>(Point(i,j)) = 1;
+              A.at<float>(Point(i,j)) = 1;
               break;
           }
         }        
@@ -226,9 +227,9 @@ int main( int argc, char* argv[] )
       face_cords_msg.y_p2 = ((y1 + y2) / 2) + (K.at<float>(0,1) * disFromFace);
       face_cords_msg.z_p2 = ((z1 + z2) / 2) + (K.at<float>(0,2) * disFromFace);
 
-      //publish stuff here, add the publisher before the while loop (around line 130)
+      // publish face_cords here
       pub_cords.publish(face_cords_msg);
-      
+      */
     }
     ros::spinOnce();
   }
