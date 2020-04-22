@@ -30,7 +30,6 @@ class Face_worker
 public:
   void init(String face_cascade_filename, String landmark_model_filename, bool debug);
   faceData detectFace(Mat frame);
-  ~Face_worker();
 };
 
 void Face_worker::init(String face_cascade_filename, String landmark_model_filename, bool _debug)
@@ -99,18 +98,12 @@ faceData Face_worker::detectFace(Mat frame)
   return data;
 }
 
-Face_worker::~Face_worker()
-{
-  delete facemark;
-}
-
 void image_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 
 void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 
 int main( int argc, char* argv[] )
 {
-  string param;
   bool debug = false;
 
   ros::init(argc, argv, "face_detector_node");
