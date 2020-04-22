@@ -125,8 +125,8 @@ pub_bowl = rospy.Publisher('/bowl_cords', Float32MultiArray, queue_size=1)
 pub_pixel = rospy.Publisher('/pixel_Cords', Float32MultiArray, queue_size=1)
 #subscribers
 sub_bool = rospy.Subscriber("/find_bowl_trigger", Bool, bool_callback)
-color_sub = rospy.Subscriber("/r200/camera/color/image_raw", Image, color_camera_calback)
-depth_sub = rospy.Subscriber("/r200/camera/depth/image_raw", Image, depth_camera_callback)
+color_sub = rospy.Subscriber("r200/camera/color/image_raw", Image, color_camera_calback)
+depth_sub = rospy.Subscriber("r200/camera/depth/image_raw", Image, depth_camera_callback)
 #sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecallback)
 
 debug = False   
@@ -144,8 +144,8 @@ if __name__ == '__main__':
 
     while not found_data: #checks if camera is publishing
         try:
-            data_color = rospy.wait_for_message("/r200/camera/color/image_raw", Image, timeout= 5)
-            data_depth = rospy.wait_for_message("/r200/camera/depth/image_raw", Image, timeout= 5)
+            data_color = rospy.wait_for_message("r200/camera/color/image_raw", Image, timeout= 5)
+            data_depth = rospy.wait_for_message("r200/camera/depth/image_raw", Image, timeout= 5)
             if data_color is not None and data_depth is not None:
                 found_data = True
         except:
@@ -166,11 +166,16 @@ if __name__ == '__main__':
            
             try: 
                 global c
+                global object_out_of_range
                 
                 c = bowl_finder(bgr_image)          #tries to find bowl and gets center coordinates
                 d = depth_image[c]                      #gets depth
         
                 resp = deproject_func(c[0],c[1], d)     #sends center and depth to get real coordinates
+                if resp.z != 0 and resp.z < 1000:
+                    object_out_of_range = False
+                else:
+                    object_out_of_range = True
 
                 if debug == True:
                     print "found it!"
@@ -180,7 +185,7 @@ if __name__ == '__main__':
                 if debug == True:
                     print "did not find bowl"
                 
-            if ran == True: #if bowl was found, it publishes the camerafeed with marking of object                              
+            if ran == True and object_out_of_range == False: #if bowl was found, it publishes the camerafeed with marking of object                              
                 global biggest_contour
                 
                 image_to_publish = draw_square(bgr_image, biggest_contour)
