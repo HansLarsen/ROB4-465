@@ -212,7 +212,7 @@ class MoveitApp():
         self.bowl_cords = np.asarray(data.data)
 
     def face_cords_callback(self, data, topic):
-        self.face_cords = data.data
+        self.face_cords = data
 
     def move_capture(self, data, topic):
         try:

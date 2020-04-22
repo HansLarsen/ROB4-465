@@ -1,22 +1,21 @@
 <?xml version="1.0" ?>
 <sdf version="1.4">
-  <model name="bowl">
+  <model name="a_bowl">
     <link name="link">
       <inertial>
         <mass>0.1</mass>
       </inertial>
       <collision name="collision">
         <geometry>
-          <cylinder>
-            <radius>0.098</radius>
-            <length>0.035</length>
-          </cylinder>
+          <mesh>
+            <uri>model://a_bowl/meshes/bowl.dae</uri>
+          </mesh>
         </geometry>
       </collision>
       <visual name="visual">
         <geometry>
           <mesh>
-            <uri>model://bowl/meshes/bowl.dae</uri>
+            <uri>model://a_bowl/meshes/bowl.dae</uri>
           </mesh>
         </geometry>
       </visual>
