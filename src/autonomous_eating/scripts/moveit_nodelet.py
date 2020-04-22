@@ -26,7 +26,7 @@ class MoveitApp():
         self.group_name = "arm"
         self.rootFrame = 'j2n6s300_link_base'
         self.endEffectFrame = 'j2n6s300_end_effector'
-        self.cameraNameFrame = 'rs200_camera'
+        self.cameraNameFrame = 'color'
         self.movement_factor = 0.001
 
         self.camera_transform = geometry_msgs.msg.Pose()
@@ -161,36 +161,37 @@ class MoveitApp():
         target_pose.pose.position.y = y
         target_pose.pose.position.z = z
         target_pose.header.stamp = rospy.Time.now()
-        running_variable = True
-        while(not rospy.is_shutdown() and running_variable == True):
-            try:
-                target_transformed_pose = geometry_msgs.msg.PoseStamped()
 
-                camera_transforms = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0))
+        try:
+            target_transformed_pose = geometry_msgs.msg.PoseStamped()
 
-                target_pose.pose.orientation = camera_transforms.transform.rotation
-                target_pose.header.frame_id = self.cameraNameFrame
-                
-                target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, camera_transforms)
+            camera_transforms = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0))
 
-                self.markers.pose.position = target_transformed_pose.pose.position
-                self.marker_pub.publish(self.markers)
+            target_pose.pose.orientation = camera_transforms.transform.rotation
+            target_pose.header.frame_id = self.cameraNameFrame
+            
+            target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, camera_transforms)
+
+            self.markers.pose.position = target_transformed_pose.pose.position
+            self.marker_pub.publish(self.markers)
+
+            self.group.set_pose_target(target_transformed_pose.pose)
+            self.transmit_moving(True)
+            #self.group.go(wait=True)
+            self.transmit_moving(False)
+            running_variable = False
+
+            rospy.loginfo("Succede at lookup")
+
+            return True
+
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+            rospy.spin()
+            rospy.loginfo("Failed lookup")
+
+            return False
 
 
-                self.group.set_pose_target(target_transformed_pose.pose)
-                self.transmit_moving(True)
-                self.group.go(wait=True)
-                self.transmit_moving(False)
-                running_variable = False
-
-                rospy.loginfo("Succede at lookup")
-
-            except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-                rospy.spin()
-                rospy.loginfo("Failed lookup")
-                continue
-
-        return True
 
     def move_xy_callback(self, data, topic):
 

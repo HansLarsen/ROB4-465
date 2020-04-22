@@ -114,7 +114,19 @@ class MoveitApp():
         if (bowlTrue):
             self.find_bowl_pub.publish(True)
         else:
-            self.find_face_pub.publish(False)
+            self.find_bowl_pub.publish(False)
+
+    def timeout_check(self):
+        if (self.timeout_check_var - 0.1 < 0.0 < self.timeout_check_var + 0.1):
+            self.timeout_check_var = time.time()
+
+        elif (time.time() - self.timeout_check_var > 10.0):
+            self.timeout_check_var = 0.0
+            rospy.loginfo("Timeout on movement")
+            return False
+        else:
+            return True
+
 
     def runtime_loop(self):
         while(rospy.is_shutdown() == False):
@@ -136,7 +148,7 @@ class MoveitApp():
 
                     rospy.sleep(1)
 
-                    while (self.gui_status_message.moving_status == "Moving"):
+                    while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.spin()
 
                     self.publish_capture_object()
@@ -146,7 +158,11 @@ class MoveitApp():
 
                     self.capture_mode = False
 
-                    self.publish_capture_object(bowlTrue=False)
+                    self.publish_capture_object(False)
+
+                    rospy.sleep(5)
+
+                    rospy.loginfo("False")
 
                     self.robot_goto("scoop_bowl")
 
@@ -154,8 +170,10 @@ class MoveitApp():
 
                     rospy.sleep(1)
 
-                    while (self.gui_status_message.moving_status == "Moving"):
+                    while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.spin()
+
+                    rospy.loginfo("False")
 
                 elif (self.current_mode == 2): #Find Face
                     self.current_mode = 3
@@ -166,7 +184,7 @@ class MoveitApp():
                     
                     rospy.sleep(1)
 
-                    while (self.gui_status_message.moving_status == "Moving"):
+                    while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.spin()
                     
                 elif (self.current_mode == 3): #Shove food face
@@ -178,7 +196,7 @@ class MoveitApp():
 
                     rospy.sleep(1)
 
-                    while (self.gui_status_message.moving_status == "Moving"):
+                    while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.spin()
 
                     self.robot_goto("mouth2")
