@@ -166,18 +166,18 @@ class MoveitApp():
             try:
                 target_transformed_pose = geometry_msgs.msg.PoseStamped()
 
-                self.camera_transform = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0))
+                camera_transforms = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0))
 
-                target_pose.pose.orientation = self.camera_transform.transform.rotation
+                target_pose.pose.orientation = camera_transforms.transform.rotation
                 target_pose.header.frame_id = self.cameraNameFrame
                 
-                target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, self.camera_transform)
+                target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, camera_transforms)
 
                 self.markers.pose.position = target_transformed_pose.pose.position
                 self.marker_pub.publish(self.markers)
 
 
-                self.group.set_pose_target(target_transformed_pose)
+                self.group.set_pose_target(target_transformed_pose.pose)
                 self.transmit_moving(True)
                 self.group.go(wait=True)
                 self.transmit_moving(False)
