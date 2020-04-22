@@ -3,6 +3,7 @@
 #include "autonomous_eating/deproject.h"
 #include "cv_bridge/cv_bridge.h"
 #include "sensor_msgs/Image.h"
+#include "std_msgs/Bool.h"
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -14,7 +15,7 @@ using namespace cv;
 using namespace cv::face;
 
 Mat depth_image, color_image;
-bool new_color_img = false, new_depth_img = false;
+bool new_color_img = false, new_depth_img = false, find_face_trigger = false;
 struct faceData
 {
   std::vector<Rect> faces;
@@ -102,6 +103,8 @@ void image_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 
 void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 
+void find_face_callback(const std_msgs::BoolConstPtr &msg);
+
 int main( int argc, char* argv[] )
 {
   bool debug = false;
@@ -117,6 +120,7 @@ int main( int argc, char* argv[] )
 
   ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
   ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
+  ros::Subscriber find_face_sub = n.subscribe("/find_face_trigger", 5, &find_face_callback);
   ros::ServiceClient deproject_client = n.serviceClient<autonomous_eating::deproject>("deproject_pixel_to_world");
   ros::Publisher pub_cords = n.advertise<autonomous_eating::face_cords>("/face_cords",5);
   faceData faces;
@@ -137,7 +141,7 @@ int main( int argc, char* argv[] )
 
   while (ros::ok()){
 
-    if(new_color_img && new_depth_img)
+    if(new_color_img && new_depth_img && find_face_trigger)
     {
       new_depth_img = false;
       new_color_img = false;
@@ -263,4 +267,9 @@ void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg)
   }
   depth_image = cv_ptr->image;
   new_depth_img = true;
+}
+
+void find_face_callback(const std_msgs::BoolConstPtr &msg)
+{
+  find_face_trigger = msg->data;
 }
