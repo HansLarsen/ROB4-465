@@ -129,7 +129,8 @@ int main( int argc, char* argv[] )
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
 
-  int n_usedPoints = faces.landmarks.size()-17;
+  //total landmarks: 68, skip 17 first
+  int n_usedPoints = 68-17;
   float depthLandmarkX[n_usedPoints];
   float depthLandmarkY[n_usedPoints];
   float depthLandmarkZ[n_usedPoints];
@@ -165,9 +166,9 @@ int main( int argc, char* argv[] )
       // ensure coordinates fit in depth_image even if resolution is not 1:1
 
       autonomous_eating::deproject srv;
-      for (size_t i = 17; i < faces.landmarks[0].size()-1; i++){
-        srv.request.x = ((float)faces.landmarks[0].at(0).x / (float)color_image.cols)*(float)depth_image.cols;
-        srv.request.y = ((float)faces.landmarks[0].at(0).y / (float)color_image.rows)*(float)depth_image.rows;
+      for (size_t i = 17; i < 68; i++){
+        srv.request.x = ((float)faces.landmarks[0].at(i).x / (float)color_image.cols)*(float)depth_image.cols;
+        srv.request.y = ((float)faces.landmarks[0].at(i).y / (float)color_image.rows)*(float)depth_image.rows;
         srv.request.z = (float)depth_image.at<uint16_t>(srv.request.x, srv.request.y);
         
         if(deproject_client.call(srv)){ //successfully called service
