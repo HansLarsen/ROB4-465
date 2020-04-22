@@ -116,6 +116,13 @@ class MoveitApp():
         else:
             self.find_bowl_pub.publish(False)
 
+
+    def publish_face_capture_object(self, faceTrue=True):
+        if (faceTrue):
+            self.find_face_pub.publish(True)
+        else:
+            self.find_face_pub.publish(False)
+
     def timeout_check(self):
         if (self.timeout_check_var - 0.1 < 0.0 < self.timeout_check_var + 0.1):
             self.timeout_check_var = time.time()
@@ -162,8 +169,6 @@ class MoveitApp():
 
                     rospy.sleep(5)
 
-                    rospy.loginfo("False")
-
                     self.robot_goto("scoop_bowl")
 
                     rospy.loginfo("Scooping the bowl")
@@ -173,7 +178,7 @@ class MoveitApp():
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.spin()
 
-                    rospy.loginfo("False")
+                    rospy.loginfo("Finished scooping")
 
                 elif (self.current_mode == 2): #Find Face
                     self.current_mode = 3
@@ -186,9 +191,15 @@ class MoveitApp():
 
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.spin()
+
+                    self.publish_face_capture_object(True)
                     
                 elif (self.current_mode == 3): #Shove food face
                     self.current_mode = 4
+
+                    self.publish_face_capture_object(False)
+
+                    rospy.sleep(2)
 
                     self.robot_goto("mouth")
 
