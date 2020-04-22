@@ -58,18 +58,18 @@ def face_cords_callback(data):
 
 
 def bowl_cords_callback(data):
-
+    global marker
     marker3 = copy.deepcopy(marker)
-    marke3.header.stamp = rospy.Time.now()
-    marke3.pose.position.x = data.data[0]/1000
-    marke3.pose.position.y = data.data[1]/1000
+    marker3.header.stamp = rospy.Time.now()
+    marker3.pose.position.x = data.data[0]/1000
+    marker3.pose.position.y = data.data[1]/1000
     marker3.pose.position.z = data.data[2]/1000
     marker3.color.r = 1.0
     marker3.color.g = 0.0
     marker3.color.b = 0.0
     marker3.id = 2
 
-    markerArray.markers.append(marker2)
+    markerArray.markers.append(marker3)
     pub.publish(markerArray)
 
     markerArray.markers.pop(0)
