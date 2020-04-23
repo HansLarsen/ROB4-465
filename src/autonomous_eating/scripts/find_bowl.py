@@ -141,8 +141,9 @@ data_depth = None
 
 if __name__ == '__main__':
     rospy.init_node('find_bowl')
-
+    count = 0
     while not found_data: #checks if camera is publishing
+        
         try:
             data_color = rospy.wait_for_message("r200/camera/color/image_raw", Image, timeout= 5)
             data_depth = rospy.wait_for_message("r200/camera/depth/image_raw", Image, timeout= 5)
@@ -151,10 +152,14 @@ if __name__ == '__main__':
         except:
             if debug == True:
                 print("excepting")
-            if data_color is None:
-                rospy.loginfo("Did not find color camera")
-            if data_depth is None:
-                rospy.loginfo("Did not find depth camera")
+            if count < 3:
+                if data_color is None:
+                    rospy.loginfo("Did not find color camera")
+                if data_depth is None:
+                    rospy.loginfo("Did not find depth camera")
+            if count > 3:
+                continue
+            count = count + 1
             
     while not rospy.is_shutdown():
         

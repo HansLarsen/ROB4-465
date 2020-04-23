@@ -240,7 +240,7 @@ class MoveitApp():
                 elif (self.current_mode == 4):
                     self.current_mode = 0
 
-                    self.robot_goto("mouth")
+                    self.robot_goto("mouth3")
 
                     rospy.loginfo("Retracting from the mouth")
             
