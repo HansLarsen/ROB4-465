@@ -29,7 +29,7 @@
   <!-- <link name="camera_link"/>-->
 
   <link name="color_corrected_frame" />
-  <link name="end_effector_spoon" />
+  
   
   <joint name="connect_root_and_world" type="fixed">
     <child link="root" />
@@ -102,10 +102,6 @@
     <child link="end_effector_spoon" />
     <parent link="j2n6s300_end_effector" />
     <origin xyz="0 0 0.14" rpy="0 0 ${M_pi}"/>
-  <joint name="end_effector_spoon_joint" type="fixed">
-  <child link="end_effector_spoon" />
-  <parent link="j2n6s300_end_effector" />
-  <origin xyz="0 0 0.02" rpy="0 0 0"/>
   </joint>
 
 

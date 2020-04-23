@@ -83,32 +83,6 @@ class MyDeprojector {
       }
     }
 
-    bool deproject_func_array(autonomous_eating::deproject_array::Request& req, autonomous_eating::deproject_array::Response& res)
-    {        
-      if(hasIntrinsics)
-      {
-        for(int i = 0; i < req.layout.dim.size(); i++)
-        {
-          //pixel location i.e. x and y
-          float pixels [2] = {req.x[i], req.y[i]};
-          //todo: depth is the pixel value on the raw depth image
-          float depth = req.z[i];
-          float cords[3] = {0, 0, 0};
-          rs_deproject_pixel_to_point(cords, &intrinsicMatrix, pixels, depth);
-
-          res.x[i] = cords[0];
-          res.y[i] = cords[1];
-          res.z[i] = cords[2];
-        }
-        return true;
-      }
-      else
-      {
-        ROS_INFO_STREAM("Failed to serve a client");
-        return false;
-      }
-    }
-
     //message types are wrong
     void cordinatecallback(const std_msgs::Float32MultiArray::ConstPtr& msg)
     {
