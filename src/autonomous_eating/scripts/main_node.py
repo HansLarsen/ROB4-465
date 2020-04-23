@@ -12,6 +12,7 @@ from std_msgs.msg import String, Bool
 from std_msgs.msg import Int32MultiArray, Int32
 from autonomous_eating.msg import face_cords, gui_mode, gui_status, command_msg
 from enum import Enum
+from sensor_msgs.msg import Image
 import time
 
 #capture face -> capture bowl -> search bowl -> scoop -> search face -> shove
@@ -59,7 +60,7 @@ class MoveitApp():
         self.thread_runtime.start()
 
     def color_camera_calback(self, data):
-        self.gui_status_message.camera_status("Connected")
+        self.gui_status_message.camera_status = "Connected"
         self.color_sub.unregister()
 
     def input_commands_callback(self, data):
@@ -262,6 +263,8 @@ class MoveitApp():
                     self.current_mode = 0
 
                     self.robot_goto("mouth3")
+
+                    self.gui_status_message.main_status = "Waiting"
 
                     rospy.loginfo("Retracting from the mouth")
             
