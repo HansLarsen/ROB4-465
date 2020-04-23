@@ -69,6 +69,7 @@ add_message_files(
 add_service_files(
   FILES
   deproject.srv
+  deproject_array.srv
 #   Service2.srv
 )
 

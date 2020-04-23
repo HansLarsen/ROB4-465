@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include "ros/time.h"
-#include "autonomous_eating/deproject.h"
+#include "autonomous_eating/deproject_array.h"
 #include "cv_bridge/cv_bridge.h"
 #include "sensor_msgs/Image.h"
 #include "std_msgs/Bool.h"
@@ -125,7 +125,6 @@ void find_face_callback(const std_msgs::BoolConstPtr &msg);
 int main( int argc, char* argv[] )
 {
   bool debug = false;
-
   ros::init(argc, argv, "face_detector_node");
   ros::NodeHandle n;
 
@@ -138,7 +137,7 @@ int main( int argc, char* argv[] )
   ros::Subscriber color_image_raw_sub = n.subscribe("/r200/camera/color/image_raw", 5, &image_raw_callback);
   ros::Subscriber depth_image_raw_sub = n.subscribe("/r200/camera/depth/image_raw", 5, &depth_raw_callback);
   ros::Subscriber find_face_sub = n.subscribe("/find_face_trigger", 5, &find_face_callback);
-  ros::ServiceClient deproject_client = n.serviceClient<autonomous_eating::deproject>("deproject_pixel_to_world");
+  ros::ServiceClient deproject_client = n.serviceClient<autonomous_eating::deproject_array>("deproject_pixel_to_world_array");
   ros::Publisher pub_cords = n.advertise<autonomous_eating::face_cords>("/face_cords",5);
   ros::Publisher face_img_pub = n.advertise<sensor_msgs::Image>("/gui_figure", 5);
   faceData faces;
@@ -156,11 +155,16 @@ int main( int argc, char* argv[] )
   Mat B(n_usedPoints,1,CV_32FC1);
   Mat K(1,3,CV_32FC1);
   autonomous_eating::face_cords face_cords_msg;
-
+  int64 startElse, endElse, postDeproject, preDeproject, start; // debug timings
   while (ros::ok()){
 
     if(new_color_img && new_depth_img && find_face_trigger)
     {
+      if(debug)
+      {
+        start = getTickCount();
+        endElse = start;
+      }
       new_depth_img = false;
       new_color_img = false;
       faces = faceworker.detectFace(color_image);
@@ -188,29 +192,35 @@ int main( int argc, char* argv[] )
       if (faces.landmarks.size() == 0)
         continue;
 
-      
+      if(debug)
+        preDeproject = getTickCount();
       // ROS_INFO_STREAM("num of faces: " << faces.landmarks.size());
       // fit a plane to the face:
       // ensure coordinates fit in depth_image even if resolution is not 1:1
 
-      autonomous_eating::deproject srv;
+      autonomous_eating::deproject_array srv;
       for (size_t i = 17; i < 68; i++){
-        srv.request.x = ((float)faces.landmarks[0].at(i).x / (float)color_image.cols)*(float)depth_image.cols;
-        srv.request.y = ((float)faces.landmarks[0].at(i).y / (float)color_image.rows)*(float)depth_image.rows;
-        srv.request.z = (float)depth_image.at<uint16_t>(Point(srv.request.x, srv.request.y));
-        
-        if(deproject_client.call(srv)){ //successfully called service
-    
-          depthLandmarkX[i-17] = srv.response.x;
-          depthLandmarkY[i-17] = srv.response.y;
-          depthLandmarkZ[i-17] = srv.response.z;
-          
-        }
-        else{ //failed to call service
-          ROS_WARN_STREAM("FAILED TO CALL DEPROJECT SERVICE!");
+        srv.request.x.push_back(((float)faces.landmarks[0].at(i).x / (float)color_image.cols)*(float)depth_image.cols);
+        srv.request.y.push_back(((float)faces.landmarks[0].at(i).y / (float)color_image.rows)*(float)depth_image.rows);
+        srv.request.z.push_back((float)depth_image.at<uint16_t>(Point(srv.request.x[i-17], srv.request.y[i-17])));
+      }
+      cout << "about to call service" << endl;
+      if(deproject_client.call(srv)){ //successfully called service
+        cout << "successfully called service! " << endl;
+        for(int i = 0; i < srv.response.x.size(); i++)
+        {
+          depthLandmarkX[i] = srv.response.x[i];
+          depthLandmarkY[i] = srv.response.y[i];
+          depthLandmarkZ[i] = srv.response.z[i];
         }
       }
+      else{ //failed to call service
+        ROS_WARN_STREAM("FAILED TO CALL DEPROJECT SERVICE!");
+        continue;
+      }
 
+      if(debug)
+        postDeproject = getTickCount();
 
       // The equation for a plane is: ax+by+c=z. And we have x y z above
       // To find a b c we use formula Ak=B, where x is a array of a b c
@@ -262,7 +272,23 @@ int main( int argc, char* argv[] )
       // publish face_cords here
 
       pub_cords.publish(face_cords_msg);
-
+      if(debug)
+      {
+        auto end = getTickCount();
+        auto prepareTime = (preDeproject-start)/getTickFrequency();
+        auto deprojectTime = (postDeproject - preDeproject)/getTickFrequency();
+        auto mathTime = (end - postDeproject)/getTickFrequency();
+        auto otherTime = (endElse - startElse)/getTickFrequency();
+        auto loopTime = (end - startElse)/getTickFrequency();
+        cout << "Prepare time: " << prepareTime << endl
+            << "deproject time: " << deprojectTime << endl
+            << "mathTime: " << mathTime << endl
+            << "else time: " << otherTime << endl
+            << "total loop time: " << loopTime << endl << endl;
+      
+        startElse = end;
+      }
+      
     }
     ros::spinOnce();
   }
