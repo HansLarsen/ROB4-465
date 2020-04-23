@@ -234,9 +234,9 @@ class MoveitApp():
             end_effector = self.tfBuffer.lookup_transform(self.rootFrame, self.endEffectFrame, rospy.Time(0))
             spoon_effector = self.tfBuffer.lookup_transform(self.rootFrame, self.spoonEffector, rospy.Time(0))
 
-            pose_point_working.pose.position.x -= spoon_effector.transform.translation.x - end_effector.transform.translation.x
-            pose_point_working.pose.position.y -= spoon_effector.transform.translation.y - end_effector.transform.translation.y
-            pose_point_working.pose.position.z -= spoon_effector.transform.translation.z - end_effector.transform.translation.z
+            pose_point_working.pose.position.x += end_effector.transform.translation.x - spoon_effector.transform.translation.x 
+            pose_point_working.pose.position.y += end_effector.transform.translation.y - spoon_effector.transform.translation.y
+            pose_point_working.pose.position.z += end_effector.transform.translation.z - spoon_effector.transform.translation.z
 
             return pose_point_working
 
