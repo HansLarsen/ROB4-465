@@ -155,14 +155,14 @@ int main( int argc, char* argv[] )
   Mat B(n_usedPoints,1,CV_32FC1);
   Mat K(1,3,CV_32FC1);
   autonomous_eating::face_cords face_cords_msg;
-  int64 startElse, endElse; // debug timings
+  int64 startElse, endElse, postDeproject, preDeproject, start; // debug timings
   while (ros::ok()){
 
     if(new_color_img && new_depth_img && find_face_trigger)
     {
       if(debug)
       {
-        auto start = getTickCount();
+        start = getTickCount();
         endElse = start;
       }
       new_depth_img = false;
@@ -193,7 +193,7 @@ int main( int argc, char* argv[] )
         continue;
 
       if(debug)
-        auto preDeproject = getTickCount();
+        preDeproject = getTickCount();
       // ROS_INFO_STREAM("num of faces: " << faces.landmarks.size());
       // fit a plane to the face:
       // ensure coordinates fit in depth_image even if resolution is not 1:1
@@ -220,7 +220,7 @@ int main( int argc, char* argv[] )
       }
 
       if(debug)
-        auto postDeproject = getTickCount();
+        postDeproject = getTickCount();
 
       // The equation for a plane is: ax+by+c=z. And we have x y z above
       // To find a b c we use formula Ak=B, where x is a array of a b c
