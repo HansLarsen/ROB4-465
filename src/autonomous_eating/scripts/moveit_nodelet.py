@@ -138,9 +138,9 @@ class MoveitApp():
         self.group.clear_pose_targets()
         goal_transform = []
         if (data.data=="mouth"):
-            self.goto_pose_camera(self.face_cords.x_p1, self.face_cords.y_p1, self.face_cords.z_p1)
+            self.goto_pose_camera(self.face_cords.x_p1/1000.0, self.face_cords.y_p1/1000.0, self.face_cords.z_p1/1000.0)
         elif (data.data=="mouth2"):
-            self.goto_pose_camera(self.face_cords.x_p2, self.face_cords.y_p2, self.face_cords.z_p2)
+            self.goto_pose_camera(self.face_cords.x_p2/1000.0, self.face_cords.y_p2/1000.0, self.face_cords.z_p2/1000.0)
         elif (data.data == "bowl_search_pos"):
             self.group.set_pose_target(self.bowl_transform)
             self.transmit_moving(True)

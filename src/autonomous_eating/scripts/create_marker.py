@@ -45,6 +45,7 @@ def face_cords_callback(data):
     
     marker2.header.stamp = rospy.Time.now()
     marker2.pose.position.x = data.x_p2/1000
+    marker2.pose.position.y = data.y_p2/1000.0
     marker2.pose.position.z = data.z_p2/1000
     marker2.color.r = 0.0
     marker2.color.g = 1.0
