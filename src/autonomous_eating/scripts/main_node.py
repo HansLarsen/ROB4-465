@@ -36,6 +36,7 @@ class MoveitApp():
         self.move_capture_pub = rospy.Publisher("/move_capture", Int32, queue_size=10)
         self.gui_status_pub = rospy.Publisher('/gui_status', gui_status, queue_size=10)
         self.gui_mode_pub = rospy.Publisher('/gui_mode', gui_mode, queue_size=10)
+        self.color_sub = rospy.Subscriber("r200/camera/color/image_raw", Image, self.color_camera_calback)
 
         self.old_mode_state = False
         self.old_mode_state1 = False
@@ -45,12 +46,21 @@ class MoveitApp():
         self.command_message = command_msg()
 
         self.gui_status_message = gui_status()
-        #rospy.Timer(1, self.updater)
+
+        self.gui_status_message.jaco_status = "Disconnected"
+        self.gui_status_message.moving_status = "Starting"
+        self.gui_status_message.main_status = "Starting"
+        self.gui_status_message.camera_status = "Starting"
+
         self.thread_pub = threading.Thread(target=self.updater)
         self.thread_runtime = threading.Thread(target=self.runtime_loop)
 
         self.thread_pub.start()
         self.thread_runtime.start()
+
+    def color_camera_calback(self, data):
+        self.gui_status_message.camera_status("Connected")
+        self.color_sub.unregister()
 
     def input_commands_callback(self, data):
         self.command_message = data
@@ -168,6 +178,7 @@ class MoveitApp():
                     self.current_mode = 1
 
                     rospy.loginfo("Going to the bowl_search_pos and capture mode")
+                    self.gui_status_message.main_status = "Going to bowl search position"
                     
                     self.robot_goto("bowl_search_pos")
                     self.capture_mode = True
@@ -179,9 +190,12 @@ class MoveitApp():
                         rospy.sleep(1)
 
                     self.publish_capture_object()
+                    self.gui_status_message.main_status = "Waiting, move arm to find bowl"
 
                 elif (self.current_mode == 1): #Scoop bowl
                     self.current_mode = 2
+
+                    self.gui_status_message.main_status = "Going for the scoop"
 
                     self.capture_mode = False
 
@@ -190,6 +204,8 @@ class MoveitApp():
                     rospy.sleep(5)
 
                     self.robot_goto("scoop_bowl")
+
+                    self.gui_status_message.main_status = "Retracting"
 
                     rospy.loginfo("Scooping the bowl")
 
@@ -202,10 +218,12 @@ class MoveitApp():
                     self.robot_goto("bowl_search_pos")
 
                     rospy.loginfo("Finished scooping")
+                    self.gui_status_message.main_status = "Waiting"
 
                 elif (self.current_mode == 2): #Find Face
                     self.current_mode = 3
 
+                    self.gui_status_message.main_status = "Searching for the face"
                     self.robot_goto("face_search_pos")
 
                     rospy.loginfo("Finding the face")
@@ -217,11 +235,13 @@ class MoveitApp():
                         rospy.sleep(1)
 
                     self.publish_face_capture_object(True)
+                    self.gui_status_message.main_status = "Waiting"
                     
                 elif (self.current_mode == 3): #Shove food face
                     self.current_mode = 4
 
                     self.publish_face_capture_object(False)
+                    self.gui_status_message.main_status = "Going to the mouth"
 
                     rospy.sleep(2)
 
@@ -236,6 +256,7 @@ class MoveitApp():
                         rospy.sleep(1)
 
                     self.robot_goto("mouth2")
+                    self.gui_status_message.main_status = "Waiting for retract command"
                 
                 elif (self.current_mode == 4):
                     self.current_mode = 0
