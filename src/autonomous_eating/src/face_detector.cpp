@@ -105,14 +105,15 @@ Mat Face_worker::drawFaces(Mat img, faceData data)
   Mat output;
   img.copyTo(output);
   for ( size_t i = 0; i < data.faces.size(); i++ )
+  {
+    rectangle(output, data.faces[i].tl(), data.faces[i].br(), Scalar(255,0,255), 4);
+    for(int j = 0; j < data.landmarks[i].size(); j++)
     {
-        rectangle(output, data.faces[i].tl(), data.faces[i].br(), Scalar(255,0,255), 4);
-        for(int j = 0; j < data.landmarks[i].size(); j++)
-        {
-            Point2f point = data.landmarks.at(i).at(j);
-            ellipse(output, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
-        }
+        Point2f point = data.landmarks.at(i).at(j);
+        ellipse(output, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
     }
+  }
+  return output;
 }
 
 void image_raw_callback(const sensor_msgs::ImageConstPtr& msg);
@@ -165,18 +166,15 @@ int main( int argc, char* argv[] )
       faces = faceworker.detectFace(color_image);
 
       Mat face_img = faceworker.drawFaces(color_image, faces);
-      /*
-      cv_bridge::CvImagePtr cv_ptr;
-      try
-      {
-        cv_ptr->image = face_img;
-        auto msg = cv_ptr->toImageMsg();
-        face_img_pub.publish(msg);
-      }
-      catch (cv_bridge::Exception& e)
-      {
-        ROS_ERROR("cv_bridge exception: %s", e.what());
-      }*/
+      cvtColor(face_img, face_img, COLOR_BGR2RGB);
+      cv_bridge::CvImage msg;
+      msg.encoding = "rgb8";
+      msg.header.frame_id = "none";
+      msg.header.seq = 0;
+      msg.header.stamp = ros::Time::now();
+      msg.image = face_img;
+      face_img_pub.publish(msg);
+
 
       if(debug)
         imshow("depth", depth_image);
@@ -191,7 +189,7 @@ int main( int argc, char* argv[] )
         continue;
 
       
-      ROS_INFO_STREAM("num of faces: " << faces.landmarks.size());
+      // ROS_INFO_STREAM("num of faces: " << faces.landmarks.size());
       // fit a plane to the face:
       // ensure coordinates fit in depth_image even if resolution is not 1:1
 
