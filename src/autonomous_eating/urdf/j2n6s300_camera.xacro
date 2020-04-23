@@ -71,9 +71,9 @@
 
   <link name="end_effector_spoon">
     <collision>
-      <origin xyz="0 0 -0.12" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://autonomous_eating/models/spoon_tool/meshes/spoon_toolv3.stl"/>
+	       <box size="0.01 0.01 0.01"/>
       </geometry>
     </collision>
 
