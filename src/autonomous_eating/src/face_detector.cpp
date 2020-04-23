@@ -30,6 +30,7 @@ class Face_worker
 
 public:
   void init(String face_cascade_filename, String landmark_model_filename, bool debug);
+  Mat drawFaces(Mat img, faceData data);
   faceData detectFace(Mat frame);
 };
 
@@ -99,6 +100,21 @@ faceData Face_worker::detectFace(Mat frame)
   return data;
 }
 
+Mat Face_worker::drawFaces(Mat img, faceData data)
+{
+  Mat output;
+  img.copyTo(output);
+  for ( size_t i = 0; i < data.faces.size(); i++ )
+    {
+        rectangle(output, data.faces[i].tl(), data.faces[i].br(), Scalar(255,0,255), 4);
+        for(int j = 0; j < data.landmarks[i].size(); j++)
+        {
+            Point2f point = data.landmarks.at(i).at(j);
+            ellipse(output, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
+        }
+    }
+}
+
 void image_raw_callback(const sensor_msgs::ImageConstPtr& msg);
 
 void depth_raw_callback(const sensor_msgs::ImageConstPtr& msg);
@@ -123,6 +139,7 @@ int main( int argc, char* argv[] )
   ros::Subscriber find_face_sub = n.subscribe("/find_face_trigger", 5, &find_face_callback);
   ros::ServiceClient deproject_client = n.serviceClient<autonomous_eating::deproject>("deproject_pixel_to_world");
   ros::Publisher pub_cords = n.advertise<autonomous_eating::face_cords>("/face_cords",5);
+  ros::Publisher face_img_pub = n.advertise<sensor_msgs::Image>("/gui_figure", 5);
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
 
@@ -146,6 +163,21 @@ int main( int argc, char* argv[] )
       new_depth_img = false;
       new_color_img = false;
       faces = faceworker.detectFace(color_image);
+
+      Mat face_img = faceworker.drawFaces(color_image, faces);
+      /*
+      cv_bridge::CvImagePtr cv_ptr;
+      try
+      {
+        cv_ptr->image = face_img;
+        auto msg = cv_ptr->toImageMsg();
+        face_img_pub.publish(msg);
+      }
+      catch (cv_bridge::Exception& e)
+      {
+        ROS_ERROR("cv_bridge exception: %s", e.what());
+      }*/
+
       if(debug)
         imshow("depth", depth_image);
       

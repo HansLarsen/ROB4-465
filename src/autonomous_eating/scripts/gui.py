@@ -38,8 +38,8 @@ class GUIApp():
 
   def update_fig_task(self):
     width, height, dim = self.cv_img.shape
-    scale = (250000.0)/(width*height)
-    self.cv_img = cv2.resize(self.cv_img, (0,0), fx=scale, fy=scale)
+    #scale = (250000.0)/(width*height)
+    self.cv_img = cv2.resize(self.cv_img, (640,480), fx=0, fy=0)
     self.pil_img = ImageTk.PhotoImage(image=Image.fromarray(self.cv_img))
     self.figureCanvas.create_image(0,0, anchor=NW, image=self.pil_img, state=NORMAL)
 
@@ -94,7 +94,7 @@ class GUIApp():
     self.updateAcitvationBar()
 
     #add figure to show on the right (from /gui_figure topic)
-    self.figureCanvas = Canvas(self.frame, width = 500, height = 500)
+    self.figureCanvas = Canvas(self.frame, width = 640, height = 480)
     self.figureCanvas.grid(column=2, row=0, rowspan=2)
 
     rospy.Subscriber("/gui_status", gui_status, self.gui_status_callback)
