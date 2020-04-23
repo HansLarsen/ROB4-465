@@ -138,16 +138,44 @@ class MoveitApp():
         self.group.clear_pose_targets()
         goal_transform = []
         if (data.data=="mouth"):
-            self.goto_pose_camera(self.face_cords.x_p1/1000.0, self.face_cords.y_p1/1000.0, self.face_cords.z_p1/1000.0)
+            self.target_transformed_pose = self.goto_pose_camera(self.face_cords.x_p1/1000.0, self.face_cords.y_p1/1000.0, self.face_cords.z_p1/1000.0)
+            self.target_transformed_pose2 = self.goto_pose_camera(self.face_cords.x_p2/1000.0, self.face_cords.y_p2/1000.0, self.face_cords.z_p2/1000.0)
+
+            self.markers.pose.position = self.target_transformed_pose.pose.position
+            self.marker_pub.publish(self.markers)
+
+            self.group.set_pose_target(self.target_transformed_pose.pose)
+            self.group.go(wait=True)
+            self.transmit_moving(False)
         elif (data.data=="mouth2"):
-            self.goto_pose_camera(self.face_cords.x_p2/1000.0, self.face_cords.y_p2/1000.0, self.face_cords.z_p2/1000.0)
+            self.markers.pose.position = self.target_transformed_pose2.pose.position
+            self.marker_pub.publish(self.markers)
+
+            self.group.set_pose_target(self.target_transformed_pose2.pose)
+            self.group.go(wait=True)
+            self.transmit_moving(False)
+
+        elif (data.data=="mouth3"):
+            self.markers.pose.position = self.target_transformed_pose.pose.position
+            self.marker_pub.publish(self.markers)
+
+            self.group.set_pose_target(self.target_transformed_pose.pose)
+            self.group.go(wait=True)
+            self.transmit_moving(False)
         elif (data.data == "bowl_search_pos"):
             self.group.set_pose_target(self.bowl_transform)
             self.transmit_moving(True)
             self.group.go(wait=True)
             self.transmit_moving(False)
         elif (data.data == "scoop_bowl"):
-            self.goto_pose_camera(self.bowl_cords[0]/1000.0, self.bowl_cords[1]/1000.0, self.bowl_cords[2]/1000.0, False)
+            target_transformed_pose = self.goto_pose_camera(self.bowl_cords[0]/1000.0, self.bowl_cords[1]/1000.0, self.bowl_cords[2]/1000.0, False)
+
+            self.markers.pose.position = target_transformed_pose.pose.position
+            self.marker_pub.publish(self.markers)
+
+            self.group.set_pose_target(target_transformed_pose.pose)
+            self.group.go(wait=True)
+            self.transmit_moving(False)
         elif (data.data == "face_search_pos"):
             self.group.set_pose_target(self.camera_transform)
             self.transmit_moving(True)
@@ -179,24 +207,17 @@ class MoveitApp():
             else:
                 target_transformed_pose.pose.orientation = copy.deepcopy(self.bowl_transform.orientation)
 
-            self.markers.pose.position = target_transformed_pose.pose.position
-            self.marker_pub.publish(self.markers)
-
-            self.group.set_pose_target(target_transformed_pose.pose)
-            self.group.go(wait=True)
-            self.transmit_moving(False)
-
             self.group.clear_pose_targets()
 
             rospy.loginfo("Succede at lookup")
 
-            return True
+            return target_transformed_pose
 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             rospy.spin()
             rospy.loginfo("Failed lookup")
-
-            return False
+            
+            return geometry_msgs.msg.PoseStamped()
 
 
 
