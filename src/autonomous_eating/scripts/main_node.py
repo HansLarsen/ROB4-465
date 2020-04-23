@@ -38,6 +38,7 @@ class MoveitApp():
         self.gui_mode_pub = rospy.Publisher('/gui_mode', gui_mode, queue_size=10)
 
         self.old_mode_state = False
+        self.old_mode_state1 = False
 
         self.previouse_time = time.time()
         self.previouse_time_th1 = time.time()
@@ -124,11 +125,7 @@ class MoveitApp():
             self.find_face_pub.publish(False)
 
     def timeout_check(self):
-        if (self.timeout_check_var - 0.1 < 0.0 < self.timeout_check_var + 0.1):
-            self.timeout_check_var = time.time()
-
-        elif (time.time() - self.timeout_check_var > 10.0):
-            self.timeout_check_var = 0.0
+        if (time.time() - self.timeout_check_var > 10.0):
             rospy.loginfo("Timeout on movement")
             return False
         else:
@@ -137,6 +134,28 @@ class MoveitApp():
 
     def runtime_loop(self):
         while(rospy.is_shutdown() == False):
+
+            if (self.old_mode_state1 != self.command_message.button1):
+                self.old_mode_state1 = self.command_message.button1
+
+                if(self.old_mode_state1 == False):
+                    continue
+
+                self.capture_mode = False
+
+                self.current_mode = 3
+
+                self.robot_goto("face_search_pos")
+
+                rospy.loginfo("Finding the face")
+                
+                rospy.sleep(1)
+
+                self.timeout_check_var = time.time()
+                while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
+                    rospy.sleep(1)
+
+                self.publish_face_capture_object(True)
 
             if (self.old_mode_state != self.command_message.mode_select):
                 self.old_mode_state = self.command_message.mode_select
@@ -155,8 +174,9 @@ class MoveitApp():
 
                     rospy.sleep(1)
 
+                    self.timeout_check_var = time.time()
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
-                        rospy.spin()
+                        rospy.sleep(1)
 
                     self.publish_capture_object()
 
@@ -173,10 +193,13 @@ class MoveitApp():
 
                     rospy.loginfo("Scooping the bowl")
 
-                    rospy.sleep(1)
+                    rospy.sleep(5)
 
+                    self.timeout_check_var = time.time()
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
-                        rospy.spin()
+                        rospy.sleep(1)
+
+                    self.robot_goto("bowl_search_pos")
 
                     rospy.loginfo("Finished scooping")
 
@@ -189,8 +212,9 @@ class MoveitApp():
                     
                     rospy.sleep(1)
 
+                    self.timeout_check_var = time.time()
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
-                        rospy.spin()
+                        rospy.sleep(1)
 
                     self.publish_face_capture_object(True)
                     
@@ -207,8 +231,9 @@ class MoveitApp():
 
                     rospy.sleep(1)
 
+                    self.timeout_check_var = time.time()
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
-                        rospy.spin()
+                        rospy.sleep(1)
 
                     self.robot_goto("mouth2")
                 
@@ -235,5 +260,4 @@ if __name__ == '__main__':
 
     #myMoveitApp.startup_capture()
 
-    while not rospy.is_shutdown():
-        rospy.spin()
+    rospy.spin()

@@ -147,15 +147,18 @@ class MoveitApp():
             self.group.go(wait=True)
             self.transmit_moving(False)
         elif (data.data == "scoop_bowl"):
-            self.goto_pose_camera(self.bowl_cords[0], self.bowl_cords[1], self.bowl_cords[2])
+            self.goto_pose_camera(self.bowl_cords[0]/1000.0, self.bowl_cords[1]/1000.0, self.bowl_cords[2]/1000.0, False)
         elif (data.data == "face_search_pos"):
             self.group.set_pose_target(self.camera_transform)
             self.transmit_moving(True)
             self.group.go(wait=True)
             self.transmit_moving(False)
 
-    def goto_pose_camera(self, x, y, z):
+    def goto_pose_camera(self, x, y, z, cameraOriTrue=True):
         target_pose = geometry_msgs.msg.PoseStamped()
+
+        self.transmit_moving(True)
+        rospy.sleep(2)
 
         target_pose.pose.position.x = x
         target_pose.pose.position.y = y
@@ -167,19 +170,23 @@ class MoveitApp():
 
             camera_transforms = self.tfBuffer.lookup_transform(self.rootFrame, self.cameraNameFrame, rospy.Time(0))
 
-            target_pose.pose.orientation = camera_transforms.transform.rotation
             target_pose.header.frame_id = self.cameraNameFrame
             
             target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, camera_transforms)
+
+            if (cameraOriTrue):
+                target_transformed_pose.pose.orientation = copy.deepcopy(self.camera_transform.orientation)
+            else:
+                target_transformed_pose.pose.orientation = copy.deepcopy(self.bowl_transform.orientation)
 
             self.markers.pose.position = target_transformed_pose.pose.position
             self.marker_pub.publish(self.markers)
 
             self.group.set_pose_target(target_transformed_pose.pose)
-            self.transmit_moving(True)
-            #self.group.go(wait=True)
+            self.group.go(wait=True)
             self.transmit_moving(False)
-            running_variable = False
+
+            self.group.clear_pose_targets()
 
             rospy.loginfo("Succede at lookup")
 
