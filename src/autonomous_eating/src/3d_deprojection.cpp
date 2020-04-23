@@ -6,6 +6,8 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/Float32MultiArray.h>
 #include "autonomous_eating/deproject.h"
+#include "autonomous_eating/deproject_array.h"
+#include "opencv2/opencv.hpp"
 
 class MyDeprojector {
     ros::NodeHandle* n;
@@ -14,6 +16,7 @@ class MyDeprojector {
     float pixel_array[2];
     ros::Subscriber sub;
     ros::Publisher pub_cords;
+    ros::ServiceServer deproject_array_server;
     ros::ServiceServer deproject_server;
     bool hasIntrinsics;
 
@@ -23,6 +26,7 @@ class MyDeprojector {
         sub = n->subscribe("/r200/camera/depth/camera_info", 1000, &MyDeprojector::intrinsiccallback, this);
         pub_cords = n->advertise<std_msgs::Float32MultiArray>("/3D_cordinates",1);
         deproject_server = n->advertiseService("deproject_pixel_to_world", &MyDeprojector::deproject_func, this);
+        deproject_array_server = n->advertiseService("deproject_pixel_to_world_array", &MyDeprojector::deproject_func_array, this);
         ROS_INFO_STREAM("deproject-server running!");
         hasIntrinsics = false;
     }
@@ -31,6 +35,7 @@ class MyDeprojector {
     {        
       if(hasIntrinsics)
       {
+        auto start = cv::getTickCount();
         //pixel location i.e. x and y
         float pixels [2] = {req.x, req.y};
         //todo: depth is the pixel value on the raw depth image
@@ -41,6 +46,34 @@ class MyDeprojector {
         res.x = cords[0];
         res.y = cords[1];
         res.z = cords[2];
+        auto end = cv::getTickCount();
+        std::cout << "Deproject calculation time: " << ((end-start)/cv::getTickFrequency())*1000 << std::endl;
+        return true;
+      }
+      else
+      {
+        ROS_INFO_STREAM("Failed to serve a client");
+        return false;
+      }
+    }
+
+    bool deproject_func_array(autonomous_eating::deproject_array::Request& req, autonomous_eating::deproject_array::Response& res)
+    {        
+      if(hasIntrinsics)
+      {
+        for(int i = 0; i < req.layout.dim.size(); i++)
+        {
+          //pixel location i.e. x and y
+          float pixels [2] = {req.x[i], req.y[i]};
+          //todo: depth is the pixel value on the raw depth image
+          float depth = req.z[i];
+          float cords[3] = {0, 0, 0};
+          rs_deproject_pixel_to_point(cords, &intrinsicMatrix, pixels, depth);
+
+          res.x[i] = cords[0];
+          res.y[i] = cords[1];
+          res.z[i] = cords[2];
+        }
         return true;
       }
       else
