@@ -204,9 +204,9 @@ int main( int argc, char* argv[] )
         srv.request.y.push_back(((float)faces.landmarks[0].at(i).y / (float)color_image.rows)*(float)depth_image.rows);
         srv.request.z.push_back((float)depth_image.at<uint16_t>(Point(srv.request.x[i-17], srv.request.y[i-17])));
       }
-      cout << "about to call service" << endl;
+      //cout << "about to call service" << endl;
       if(deproject_client.call(srv)){ //successfully called service
-        cout << "successfully called service! " << endl;
+        //cout << "successfully called service! " << endl;
         for(int i = 0; i < srv.response.x.size(); i++)
         {
           depthLandmarkX[i] = srv.response.x[i];

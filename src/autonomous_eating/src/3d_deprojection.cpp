@@ -35,7 +35,6 @@ class MyDeprojector {
     {        
       if(hasIntrinsics)
       {
-        auto start = cv::getTickCount();
         //pixel location i.e. x and y
         float pixels [2] = {req.x, req.y};
         //todo: depth is the pixel value on the raw depth image
@@ -46,8 +45,6 @@ class MyDeprojector {
         res.x = cords[0];
         res.y = cords[1];
         res.z = cords[2];
-        auto end = cv::getTickCount();
-        std::cout << "Deproject calculation time: " << ((end-start)/cv::getTickFrequency())*1000 << std::endl;
         return true;
       }
       else
