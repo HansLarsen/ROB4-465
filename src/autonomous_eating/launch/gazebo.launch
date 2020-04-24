@@ -94,4 +94,7 @@
   <node pkg="autonomous_eating" type="deprojector" name="deprojecter" output="screen"/>
   <node pkg="autonomous_eating" type="find_bowl.py" name="find_bowl" output="screen"/>
 
+  <!--  force robot into starting position  -->
+  <node pkg="autonomous_eating" type="robot_pos_fix.py" name="robot_pos_fix"/>
+
 </launch>

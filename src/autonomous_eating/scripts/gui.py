@@ -2,6 +2,7 @@
 
 
 from sensor_msgs.msg import Image as ROS_Image
+from std_msgs.msg import Bool
 
 #packages for the GUI
 from Tkinter import *
@@ -35,6 +36,18 @@ class GUIApp():
     bridge = CvBridge()
     self.cv_img = bridge.imgmsg_to_cv2(data)
     self.master.after(1, self.update_fig_task)
+
+  def find_face_trigger_callback(self, data):
+    self.find_face_trigger = data.data;
+
+  def find_bowl_trigger_callback(self, data):
+    self.find_bowl_trigger = data.data;
+
+  def r200_camera_callback(self, data):
+    if not self.find_face_trigger and not self.find_bowl_trigger:
+      bridge = CvBridge()
+      self.cv_img = bridge.imgmsg_to_cv2(data)
+      self.master.after(1, self.update_fig_task)
 
   def update_fig_task(self):
     width, height, dim = self.cv_img.shape
@@ -76,6 +89,10 @@ class GUIApp():
     master.title("Autonomous Eating")
     self.master = master
 
+    #bools for find_face and find_bowl triggers:
+    self.find_bowl_trigger = False
+    self.find_face_trigger = False
+
     #add info panel on the left
     self.text = Text(self.frame, font=("Arial", 12), width = 50)
     self.text.grid(column=0, row=0)
@@ -100,6 +117,10 @@ class GUIApp():
     rospy.Subscriber("/gui_status", gui_status, self.gui_status_callback)
     rospy.Subscriber("/gui_mode", gui_mode, self.gui_mode_callback)
     rospy.Subscriber("/gui_figure", ROS_Image, self.gui_figure_callback)
+    rospy.Subscriber("/find_face_trigger", Bool, self.find_face_trigger_callback)
+    rospy.Subscriber("/find_bowl_trigger", Bool, self.find_bowl_trigger_callback)
+    rospy.Subscriber("/r200/camera/color/image_raw", ROS_Image, self.r200_camera_callback)
+
 
 
 
