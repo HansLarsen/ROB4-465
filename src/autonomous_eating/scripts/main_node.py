@@ -41,6 +41,7 @@ class MoveitApp():
 
         self.old_mode_state = False
         self.old_mode_state1 = False
+        self.old_mode_state2 = False
 
         self.previouse_time = time.time()
         self.previouse_time_th1 = time.time()
@@ -146,7 +147,60 @@ class MoveitApp():
     def runtime_loop(self):
         while(rospy.is_shutdown() == False):
 
-            if (self.old_mode_state1 != self.command_message.button1):
+            if (self.old_mode_state2 != self.command_message.button2):
+                self.old_mode_state2 = self.command_message.button2
+
+                if(self.old_mode_state2 == False):
+                    continue
+                
+                if (self.current_mode == 0): #Find Bowl
+                    self.current_mode = 1
+
+                    rospy.loginfo("Going to the bowl_search_pos and capture mode")
+                    self.gui_status_message.main_status = "Going to bowl search position"
+                    
+                    self.robot_goto("bowl_search_pos")
+                    self.capture_mode = True
+
+                    rospy.sleep(1)
+
+                    self.timeout_check_var = time.time()
+                    while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
+                        rospy.sleep(1)
+
+                    self.publish_capture_object()
+                    self.gui_status_message.main_status = "Waiting, move arm to find bowl"
+
+                elif (self.current_mode == 1): #Scoop bowl
+                    self.current_mode = 0
+
+                    self.gui_status_message.main_status = "Going for the scoop"
+
+                    self.capture_mode = False
+
+                    self.publish_capture_object(False)
+
+                    rospy.sleep(5)
+
+                    self.robot_goto("scoop_bowl")
+
+                    self.gui_status_message.main_status = "Retracting"
+
+                    rospy.loginfo("Scooping the bowl")
+
+                    rospy.sleep(5)
+
+                    self.timeout_check_var = time.time()
+                    while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
+                        rospy.sleep(1)
+
+                    self.robot_goto("bowl_search_pos")
+
+                    rospy.loginfo("Finished scooping")
+                    self.gui_status_message.main_status = "Waiting"
+
+
+            elif (self.old_mode_state1 != self.command_message.button1):
                 self.old_mode_state1 = self.command_message.button1
 
                 if(self.old_mode_state1 == False):
@@ -168,7 +222,7 @@ class MoveitApp():
 
                 self.publish_face_capture_object(True)
 
-            if (self.old_mode_state != self.command_message.mode_select):
+            elif (self.old_mode_state != self.command_message.mode_select):
                 self.old_mode_state = self.command_message.mode_select
 
                 if(self.old_mode_state == False):
