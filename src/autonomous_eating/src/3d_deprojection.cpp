@@ -35,7 +35,6 @@ class MyDeprojector {
     {        
       if(hasIntrinsics)
       {
-        auto start = cv::getTickCount();
         //pixel location i.e. x and y
         float pixels [2] = {req.x, req.y};
         //todo: depth is the pixel value on the raw depth image
@@ -46,8 +45,6 @@ class MyDeprojector {
         res.x = cords[0];
         res.y = cords[1];
         res.z = cords[2];
-        auto end = cv::getTickCount();
-        std::cout << "Deproject calculation time: " << ((end-start)/cv::getTickFrequency())*1000 << std::endl;
         return true;
       }
       else
@@ -61,8 +58,9 @@ class MyDeprojector {
     {        
       if(hasIntrinsics)
       {
-        for(int i = 0; i < req.layout.dim.size(); i++)
+        for(int i = 0; i < req.x.size(); i++)
         {
+          //std::cout << "req.x.size(): " << req.x.size() << std::endl;
           //pixel location i.e. x and y
           float pixels [2] = {req.x[i], req.y[i]};
           //todo: depth is the pixel value on the raw depth image
@@ -70,9 +68,9 @@ class MyDeprojector {
           float cords[3] = {0, 0, 0};
           rs_deproject_pixel_to_point(cords, &intrinsicMatrix, pixels, depth);
 
-          res.x[i] = cords[0];
-          res.y[i] = cords[1];
-          res.z[i] = cords[2];
+          res.x.push_back(cords[0]);
+          res.y.push_back(cords[1]);
+          res.z.push_back(cords[2]);
         }
         return true;
       }
