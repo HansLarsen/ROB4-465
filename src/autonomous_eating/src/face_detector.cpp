@@ -204,11 +204,14 @@ int main( int argc, char* argv[] )
         srv.request.y.push_back(((float)faces.landmarks[0].at(i).y / (float)color_image.rows)*(float)depth_image.rows);
         srv.request.z.push_back((float)depth_image.at<uint16_t>(Point(srv.request.x[i-17], srv.request.y[i-17])));
       }
+      //cout << "srv.request.layout.x.size(): " << srv.request.x.size() << endl;
       //cout << "about to call service" << endl;
       if(deproject_client.call(srv)){ //successfully called service
         //cout << "successfully called service! " << endl;
+        //cout << "srv.response.x.size(): " << srv.response.x.size() << endl;
         for(int i = 0; i < srv.response.x.size(); i++)
         {
+          //cout << "i: " << i << ", x: " << srv.response.x[i] << endl;
           depthLandmarkX[i] = srv.response.x[i];
           depthLandmarkY[i] = srv.response.y[i];
           depthLandmarkZ[i] = srv.response.z[i];
