@@ -82,4 +82,7 @@
     <arg name="config" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
+
+  <!--  force robot into starting position  -->
+  <node pkg="autonomous_eating" type="robot_pos_fix.py" name="robot_pos_fix"/>
 </launch>
