@@ -66,7 +66,7 @@ def find_biggest_contour(image): #figures out which of the found contours is the
 
     return biggest_contour
 
-def draw_square(image, biggest_contour): #draws circle on picture
+def draw_square(image, biggest_contour, center): #draws circle on picture
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     #radius = 200
     color = (0, 0, 0)
@@ -75,6 +75,7 @@ def draw_square(image, biggest_contour): #draws circle on picture
     #image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     rect = cv2.boundingRect(biggest_contour)
     cv2.rectangle(image,(rect[0],rect[1]),(rect[0]+rect[2],rect[1]+rect[3]),color,thickness)
+    cv2.circle(image, (center[0], center[1]), 3, (255, 255, 255), -1)
     return image
 
 def bowl_finder(image): #finds the center coordinats of the bowl
@@ -177,7 +178,7 @@ if __name__ == '__main__':
                 d = depth_image[c]                      #gets depth
         
                 resp = deproject_func(c[0],c[1], d)     #sends center and depth to get real coordinates
-                if resp.z != 0 and resp.z < 1000:
+                if resp.z != 0: # and resp.z < 1000:
                     object_out_of_range = False
                 else:
                     object_out_of_range = True
@@ -192,8 +193,9 @@ if __name__ == '__main__':
                 
             if ran == True and object_out_of_range == False: #if bowl was found, it publishes the camerafeed with marking of object                              
                 global biggest_contour
+                global c
                 
-                image_to_publish = draw_square(bgr_image, biggest_contour)
+                image_to_publish = draw_square(bgr_image, biggest_contour, c)
                 image_msg = CvBridge().cv2_to_imgmsg(image_to_publish, "rgb8")
                 pub_img.publish(image_msg)
 
