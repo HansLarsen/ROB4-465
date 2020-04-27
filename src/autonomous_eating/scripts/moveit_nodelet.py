@@ -182,8 +182,45 @@ class MoveitApp():
             self.markers.pose.position = target_transformed_pose.pose.position
             self.marker_pub.publish(self.markers)
 
-            self.group.set_pose_target(target_transformed_pose.pose)
+            target_transformed_pose_new = self.transform_spoon_end_effector(target_transformed_pose)
+
+            if (target_transformed_pose_new.pose.position.x > 0):
+                target_transformed_pose_new.pose.position.x = target_transformed_pose_new.pose.position.x - 0.02
+            else:
+                target_transformed_pose_new.pose.position.x = target_transformed_pose_new.pose.position.x + 0.02
+
+            if (target_transformed_pose_new.pose.position.y < 0):
+                target_transformed_pose_new.pose.position.y = target_transformed_pose_new.pose.position.y - 0.02
+            else:
+                target_transformed_pose_new.pose.position.y = target_transformed_pose_new.pose.position.y + 0.02
+            
+
+            self.group.set_pose_target(target_transformed_pose_new.pose)
             self.group.go(wait=True)
+        
+            if (target_transformed_pose_new.pose.position.x > 0):
+                target_transformed_pose_new.pose.position.x = target_transformed_pose_new.pose.position.x + 0.04
+            else:
+                target_transformed_pose_new.pose.position.x = target_transformed_pose_new.pose.position.x - 0.04
+
+            if (target_transformed_pose_new.pose.position.y < 0):
+                target_transformed_pose_new.pose.position.y = target_transformed_pose_new.pose.position.y + 0.04
+            else:
+                target_transformed_pose_new.pose.position.y = target_transformed_pose_new.pose.position.y - 0.04
+            
+            self.group.set_pose_target(target_transformed_pose_new.pose)
+            self.group.go(wait=True)
+
+            if (target_transformed_pose_new.pose.position.z > 0):
+                target_transformed_pose_new.pose.position.z = target_transformed_pose_new.pose.position.z + 0.1
+            else:
+                target_transformed_pose_new.pose.position.z = target_transformed_pose_new.pose.position.z - 0.1
+
+            target_transformed_pose_new.pose.orientation = self.camera_transform.orientation
+            
+            self.group.set_pose_target(target_transformed_pose_new.pose)
+            self.group.go(wait=True)
+            
             self.transmit_moving(False)
         elif (data.data == "face_search_pos"):
             self.group.set_pose_target(self.camera_transform)

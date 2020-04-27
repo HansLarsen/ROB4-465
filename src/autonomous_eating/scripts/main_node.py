@@ -194,8 +194,6 @@ class MoveitApp():
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.sleep(1)
 
-                    self.robot_goto("bowl_search_pos")
-
                     rospy.loginfo("Finished scooping")
                     self.gui_status_message.main_status = "Waiting"
 
@@ -264,13 +262,13 @@ class MoveitApp():
 
                     rospy.loginfo("Scooping the bowl")
 
-                    rospy.sleep(5)
+                    rospy.sleep(15)
 
                     self.timeout_check_var = time.time()
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.sleep(1)
 
-                    self.robot_goto("bowl_search_pos")
+                    self.robot_goto("face_search_pos")
 
                     rospy.loginfo("Finished scooping")
                     self.gui_status_message.main_status = "Waiting"
@@ -279,7 +277,7 @@ class MoveitApp():
                     self.current_mode = 3
 
                     self.gui_status_message.main_status = "Searching for the face"
-                    self.robot_goto("face_search_pos")
+                    #self.robot_goto("face_search_pos")
 
                     rospy.loginfo("Finding the face")
                     
