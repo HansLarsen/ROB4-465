@@ -189,7 +189,7 @@ class MoveitApp():
             else:
                 target_transformed_pose_new.pose.position.x = target_transformed_pose_new.pose.position.x + 0.02
 
-            if (target_transformed_pose_new.pose.position.y < 0):
+            if (target_transformed_pose_new.pose.position.y > 0):
                 target_transformed_pose_new.pose.position.y = target_transformed_pose_new.pose.position.y - 0.02
             else:
                 target_transformed_pose_new.pose.position.y = target_transformed_pose_new.pose.position.y + 0.02
@@ -203,7 +203,7 @@ class MoveitApp():
             else:
                 target_transformed_pose_new.pose.position.x = target_transformed_pose_new.pose.position.x - 0.04
 
-            if (target_transformed_pose_new.pose.position.y < 0):
+            if (target_transformed_pose_new.pose.position.y > 0):
                 target_transformed_pose_new.pose.position.y = target_transformed_pose_new.pose.position.y + 0.04
             else:
                 target_transformed_pose_new.pose.position.y = target_transformed_pose_new.pose.position.y - 0.04
