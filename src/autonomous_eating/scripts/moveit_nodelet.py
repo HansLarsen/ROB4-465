@@ -211,11 +211,10 @@ class MoveitApp():
             self.group.set_pose_target(target_transformed_pose_new.pose)
             self.group.go(wait=True)
 
-            if (target_transformed_pose_new.pose.position.z > 0):
-                target_transformed_pose_new.pose.position.z = target_transformed_pose_new.pose.position.z + 0.1
-            else:
-                target_transformed_pose_new.pose.position.z = target_transformed_pose_new.pose.position.z - 0.1
+            rospy.sleep(2)
 
+            target_transformed_pose_new.pose.position.z = target_transformed_pose_new.pose.position.z + 0.1
+  
             target_transformed_pose_new.pose.orientation = self.camera_transform.orientation
             
             self.group.set_pose_target(target_transformed_pose_new.pose)
