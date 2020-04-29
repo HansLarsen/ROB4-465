@@ -28,7 +28,7 @@ class MoveitApp():
         self.endEffectFrame = 'j2n6s300_end_effector'
         self.cameraNameFrame = 'color_corrected_frame'
         self.spoonEffector = 'end_effector_spoon'
-        self.movement_factor = 0.001
+        self.movement_factor = 0.002
 
         self.camera_transform = geometry_msgs.msg.Pose()
         self.bowl_transform = geometry_msgs.msg.Pose()
@@ -287,6 +287,9 @@ class MoveitApp():
         if (time.time() - self.planning_time > 10):
             self.planning_time = time.time()
         else:
+            return
+
+        if (data.data[0] == 0 and data.data[1] == 0):
             return
 
         newSearchPos = copy.copy(self.bowl_transform)
