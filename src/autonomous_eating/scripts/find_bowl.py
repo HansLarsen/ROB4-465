@@ -178,7 +178,7 @@ if __name__ == '__main__':
                 d = depth_image[c[1],c[0]]                      #gets depth
         
                 resp = deproject_func(c[0],c[1], d)     #sends center and depth to get real coordinates
-                if resp.z != 0: # and resp.z < 1000:
+                if resp.z != 0 and resp.z < 1500:
                     object_out_of_range = False
                 else:
                     object_out_of_range = True
