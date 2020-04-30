@@ -138,7 +138,9 @@ class MoveitApp():
         self.group.stop()
         self.group.clear_pose_targets()
         goal_transform = []
-        if (data.data=="mouth"):
+        if (data.data=="stop"):
+            self.group.stop()
+        elif (data.data=="mouth"):
             self.target_transformed_pose = self.goto_pose_camera(self.face_cords.x_p1/1000.0, self.face_cords.y_p1/1000.0, self.face_cords.z_p1/1000.0)
             self.target_transformed_pose2 = self.goto_pose_camera(self.face_cords.x_p2/1000.0, self.face_cords.y_p2/1000.0, self.face_cords.z_p2/1000.0)
 
@@ -158,8 +160,7 @@ class MoveitApp():
             new_target = self.transform_spoon_end_effector(self.target_transformed_pose2)
 
             self.group.set_pose_target(new_target.pose)
-            self.group.go(wait=True)
-            self.transmit_moving(False)
+            self.group.go(wait=False)
 
         elif (data.data=="mouth3"):
             self.markers.pose.position = self.target_transformed_pose.pose.position

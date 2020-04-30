@@ -42,6 +42,8 @@ class MoveitApp():
         self.old_mode_state = False
         self.old_mode_state1 = False
         self.old_mode_state2 = False
+        self.old_mode_state3 = False
+        self.mouth_mode = False
 
         self.previouse_time = time.time()
         self.previouse_time_th1 = time.time()
@@ -146,6 +148,14 @@ class MoveitApp():
 
     def runtime_loop(self):
         while(rospy.is_shutdown() == False):
+            if (self.mouth_mode == True):
+                if (self.old_mode_state3 != self.command_message.button3):
+                    self.old_mode_state3 = self.command_message.button3
+
+                    if (self.old_mode_state3 == True):
+                        self.robot_goto("mouth2")
+                    else:
+                        self.robot_goto("stop")
 
             if (self.old_mode_state2 != self.command_message.button2):
                 self.old_mode_state2 = self.command_message.button2
@@ -230,6 +240,8 @@ class MoveitApp():
                 if (self.current_mode == 0): #Find Bowl
                     self.current_mode = 1
 
+                    self.mouth_mode = False
+
                     rospy.loginfo("Going to the bowl_search_pos and capture mode")
                     self.gui_status_message.main_status = "Going to bowl search position"
                     
@@ -246,7 +258,7 @@ class MoveitApp():
                     self.gui_status_message.main_status = "Waiting, move arm to find bowl"
 
                 elif (self.current_mode == 1): #Scoop bowl
-                    self.current_mode = 2
+                    #self.current_mode = 2
 
                     self.gui_status_message.main_status = "Going for the scoop"
 
@@ -273,7 +285,7 @@ class MoveitApp():
                     rospy.loginfo("Finished scooping")
                     self.gui_status_message.main_status = "Waiting"
 
-                elif (self.current_mode == 2): #Find Face
+                #elif (self.current_mode == 2): #Find Face
                     self.current_mode = 3
 
                     self.gui_status_message.main_status = "Searching for the face"
@@ -291,7 +303,7 @@ class MoveitApp():
                     self.gui_status_message.main_status = "Waiting"
                     
                 elif (self.current_mode == 3): #Shove food face
-                    self.current_mode = 4
+                    self.current_mode = 0
 
                     self.publish_face_capture_object(False)
                     self.gui_status_message.main_status = "Going to the mouth"
@@ -308,17 +320,20 @@ class MoveitApp():
                     while (self.gui_status_message.moving_status == "Moving" and self.timeout_check()):
                         rospy.sleep(1)
 
-                    self.robot_goto("mouth2")
-                    self.gui_status_message.main_status = "Waiting for retract command"
+                    self.mouth_mode = True
+                    self.gui_status_message.main_status = "Waiting for button 3"
+
+                    #self.robot_goto("mouth2")
+                    #self.gui_status_message.main_status = "Waiting for retract command"
                 
-                elif (self.current_mode == 4):
-                    self.current_mode = 0
+                #elif (self.current_mode == 4):
+                #    self.current_mode = 0
 
-                    self.robot_goto("mouth3")
+                #    self.robot_goto("mouth3")
 
-                    self.gui_status_message.main_status = "Waiting"
+                #    self.gui_status_message.main_status = "Waiting"
 
-                    rospy.loginfo("Retracting from the mouth")
+                #   rospy.loginfo("Retracting from the mouth")
             
             elif time.time() - self.previouse_time_th1 < 1.0:
                 continue
