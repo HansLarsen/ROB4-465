@@ -3161,6 +3161,88 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
+      <model name='j2n6s300'>
+        <pose frame=''>1e-06 -2.7e-05 3.3e-05 -3.1e-05 -1e-06 0</pose>
+        <scale>1 1 1</scale>
+        <link name='j2n6s300_link_1'>
+          <pose frame=''>0.3 1.05 0.90675 3.14153 -2e-06 -3.14151</pose>
+          <velocity>-2.3e-05 0.000289 -1.8e-05 -0.003989 -0.000357 0.01336</velocity>
+          <acceleration>-0.002442 0.005174 -0.025718 -0.030877 -0.328405 -2.28006</acceleration>
+          <wrench>-0.001826 0.003869 -0.019229 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_2'>
+          <pose frame=''>0.3 1.05159 1.0255 -1.5709 -0.241309 -3.14149</pose>
+          <velocity>-0.000109 0.0009 -6.5e-05 -0.007545 -0.004761 0.013494</velocity>
+          <acceleration>-0.446145 0.828297 -0.010093 -2.50376 0.443678 -2.73151</acceleration>
+          <wrench>-0.441684 0.820014 -0.009992 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_3'>
+          <pose frame=''>0.39798 1.05155 1.42362 -1.56713 1.54004 0.003752</pose>
+          <velocity>-0.002037 0.005373 0.000412 -0.007677 -0.098458 0.012418</velocity>
+          <acceleration>-0.305749 0.301953 -0.448467 -2.53403 -0.858182 0.808944</acceleration>
+          <wrench>-0.206778 0.204211 -0.303299 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_4'>
+          <pose frame=''>0.190779 1.04013 1.41724 1.53557 0.508989 1.55372</pose>
+          <velocity>-0.002234 0.003759 -0.018239 -0.140231 -0.103789 0.011404</velocity>
+          <acceleration>-0.372118 -1.45109 -0.869934 3.04635 1.49985 -3.12951</acceleration>
+          <wrench>-0.158659 -0.618698 -0.370911 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_5'>
+          <pose frame=''>0.127663 1.02207 1.38295 -0.618493 0.328622 -0.41989</pose>
+          <velocity>0.00126 -0.001334 -0.021995 -0.206747 -0.156978 -0.099408</velocity>
+          <acceleration>-1.26893 -0.070259 -1.82287 2.11775 -0.837951 -1.46714</acceleration>
+          <wrench>-0.541032 -0.029956 -0.777213 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_6'>
+          <pose frame=''>0.09113 0.964613 1.35381 1.66568 -0.329262 2.72163</pose>
+          <velocity>9.1e-05 -0.00372 -0.015847 0.136485 0.671088 -0.172475</velocity>
+          <acceleration>-2.84166 0.442953 -3.06873 1.35527 -0.711142 -0.268873</acceleration>
+          <wrench>-3.38157 0.527114 -3.65179 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_finger_1'>
+          <pose frame=''>0.055777 0.858624 1.39444 -1.68979 -0.01131 -1.96945</pose>
+          <velocity>0.009539 -0.003442 -0.006479 0.086465 0.687642 -0.145262</velocity>
+          <acceleration>-2.33341 -0.682404 -6.12186 1.60371 0.817602 -0.417155</acceleration>
+          <wrench>-0.023334 -0.006824 -0.061219 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_finger_2'>
+          <pose frame=''>0.0195 0.868606 1.3458 1.05086 -0.15538 -1.92201</pose>
+          <velocity>-0.024147 0.009666 0.018361 0.642174 0.451085 -0.316456</velocity>
+          <acceleration>0.499454 1.36339 3.69594 0.982778 -0.025223 1.13621</acceleration>
+          <wrench>0.004995 0.013634 0.036959 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_finger_3'>
+          <pose frame=''>0.057969 0.85143 1.33141 1.42333 -0.167167 -1.94846</pose>
+          <velocity>-0.034 0.004931 -0.008993 -0.349977 0.876046 -0.099951</velocity>
+          <acceleration>-4.28395 2.06285 0.022207 -2.71407 0.590287 -2.37988</acceleration>
+          <wrench>-0.04284 0.020629 0.000222 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_finger_tip_1'>
+          <pose frame=''>0.039041 0.817973 1.39792 -1.70418 0.467947 -2.03124</pose>
+          <velocity>0.005893 -0.001382 0.001702 0.486389 0.522681 -0.204645</velocity>
+          <acceleration>-4.02025 -4.05433 -1.60852 -2.31006 -0.563907 -3.03807</acceleration>
+          <wrench>-0.040202 -0.040543 -0.016085 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_finger_tip_2'>
+          <pose frame=''>0.00301 0.827918 1.35004 1.05091 -0.155064 -1.92231</pose>
+          <velocity>-0.033272 0.011209 0.002807 0.501271 0.508878 -0.28189</velocity>
+          <acceleration>9.49598 -0.944676 19.3584 0.433665 0.715199 2.34805</acceleration>
+          <wrench>0.09496 -0.009447 0.193584 0 -0 0</wrench>
+        </link>
+        <link name='j2n6s300_link_finger_tip_3'>
+          <pose frame=''>0.041374 0.810801 1.3358 1.22837 -1.12466 -1.66205</pose>
+          <velocity>-0.033835 0.008123 0.019858 -0.001265 0.731431 -0.146174</velocity>
+          <acceleration>-4.73996 -1.29865 2.87763 -2.91325 0.57621 -3.08646</acceleration>
+          <wrench>-0.0474 -0.012986 0.028776 0 -0 0</wrench>
+        </link>
+        <link name='root'>
+          <pose frame=''>1e-06 -2.7e-05 3.3e-05 -3.1e-05 -1e-06 0</pose>
+          <velocity>-0.000151 0.001903 -0.002225 0.002185 0.000175 0</velocity>
+          <acceleration>0.00188 -0.000712 0.015331 0.008643 0.110689 1.7e-05</acceleration>
+          <wrench>0.00088 -0.000333 0.007173 0 -0 0</wrench>
+        </link>
+      </model>
     </state>
     <model name='a_bowl'>
       <link name='link'>
@@ -5050,6 +5132,1184 @@
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>-0.514059 1.16748 0.836823 0 -0 0</pose>
+    </model>
+    <model name='j2n6s300'>
+      <link name='root'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0.3 1.05 0.8755 0 -0 0</pose>
+          <mass>0.46784</mass>
+          <inertia>
+            <ixx>0.000951271</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000951271</iyy>
+            <iyz>5.55112e-17</iyz>
+            <izz>0.000374272</izz>
+          </inertia>
+        </inertial>
+        <collision name='root_fixed_joint_lump__j2n6s300_link_base_collision'>
+          <pose frame=''>0.3 1.05 0.75 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/base.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='root_fixed_joint_lump__j2n6s300_link_base_visual'>
+          <pose frame=''>0.3 1.05 0.75 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/base.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='connect_root_and_world' type='fixed'>
+        <child>root</child>
+        <parent>world</parent>
+      </joint>
+      <link name='j2n6s300_link_1'>
+        <pose frame=''>0.3 1.05 0.90675 3.14159 -0 3.14159</pose>
+        <inertial>
+          <pose frame=''>0 -0.002 -0.0605 0 -0 0</pose>
+          <mass>0.7477</mass>
+          <inertia>
+            <ixx>0.00152032</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00152032</iyy>
+            <iyz>0</iyz>
+            <izz>0.00059816</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_1_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/shoulder.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_1_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/shoulder.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2n6s300_link_1_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/ring_big.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_1' type='revolute'>
+        <child>j2n6s300_link_1</child>
+        <parent>root</parent>
+        <axis>
+          <xyz>0 0 -1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2n6s300_link_2'>
+        <pose frame=''>0.3 1.0516 1.0255 1.5708 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 -0.2065 -0.01 0 -0 0</pose>
+          <mass>0.99</mass>
+          <inertia>
+            <ixx>0.0105022</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000792</iyy>
+            <iyz>0</iyz>
+            <izz>0.0105022</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_2_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/arm.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_2_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/arm.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2n6s300_link_2_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/ring_big.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_2' type='revolute'>
+        <child>j2n6s300_link_2</child>
+        <parent>j2n6s300_link_1</parent>
+        <axis>
+          <xyz>0 -1 0</xyz>
+          <limit>
+            <lower>0.820305</lower>
+            <upper>5.46288</upper>
+            <effort>80</effort>
+            <velocity>0.628319</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2n6s300_link_3'>
+        <pose frame=''>0.3 1.0516 0.6155 1.5708 -0 3.14159</pose>
+        <inertial>
+          <pose frame=''>0 0.081 -0.0086 0 -0 0</pose>
+          <mass>0.6763</mass>
+          <inertia>
+            <ixx>0.00142022</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000304335</iyy>
+            <iyz>0</iyz>
+            <izz>0.00142022</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_3_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/forearm.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_3_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/forearm.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2n6s300_link_3_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/ring_big.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_3' type='revolute'>
+        <child>j2n6s300_link_3</child>
+        <parent>j2n6s300_link_2</parent>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0.331613</lower>
+            <upper>5.95157</upper>
+            <effort>40</effort>
+            <velocity>0.628319</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2n6s300_link_4'>
+        <pose frame=''>0.3 1.0402 0.8228 -3.14159 0 0</pose>
+        <inertial>
+          <pose frame=''>0 -0.037 -0.0642 0 -0 0</pose>
+          <mass>0.426367</mass>
+          <inertia>
+            <ixx>7.73497e-05</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.73497e-05</iyy>
+            <iyz>0</iyz>
+            <izz>0.0001428</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_4_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/wrist.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_4_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/wrist.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2n6s300_link_4_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/ring_small.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_4' type='revolute'>
+        <child>j2n6s300_link_4</child>
+        <parent>j2n6s300_link_3</parent>
+        <axis>
+          <xyz>0 0 -1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2n6s300_link_5'>
+        <pose frame=''>0.3 1.07723 0.88694 -2.0944 -0 3.14159</pose>
+        <inertial>
+          <pose frame=''>0 -0.037 -0.0642 0 -0 0</pose>
+          <mass>0.426367</mass>
+          <inertia>
+            <ixx>7.73497e-05</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.73497e-05</iyy>
+            <iyz>0</iyz>
+            <izz>0.0001428</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_5_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/wrist.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_5_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/wrist.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2n6s300_link_5_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/ring_small.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_5' type='revolute'>
+        <child>j2n6s300_link_5</child>
+        <parent>j2n6s300_link_4</parent>
+        <axis>
+          <xyz>0 -0.866025 -0.5</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2n6s300_link_6'>
+        <pose frame=''>0.3 1.11426 0.951079 -3.14159 0 0</pose>
+        <inertial>
+          <pose frame=''>0 0 -0.076807 0 -0 0</pose>
+          <mass>1.19</mass>
+          <inertia>
+            <ixx>0.00376517</ixx>
+            <ixy>-1.05879e-22</ixy>
+            <ixz>-8.19984e-11</ixz>
+            <iyy>0.00367837</iyy>
+            <iyz>2.18772e-35</iyz>
+            <izz>0.00233935</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_6_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/hand_3finger.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='j2n6s300_link_6_fixed_joint_lump__end_effector_spoon_collision_1'>
+          <pose frame=''>-0 0 -0.325 3.14159 0 -1.5707</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.01</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='j2n6s300_link_6_fixed_joint_lump__rs200_camera_collision_2'>
+          <pose frame=''>0.1 0 0 0 1.57075 0</pose>
+          <geometry>
+            <box>
+              <size>0.0078 0.13 0.0192</size>
+            </box>
+          </geometry>
+          <surface>
+            <contact>
+              <ode>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </ode>
+            </contact>
+            <friction>
+              <ode>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='j2n6s300_link_6_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/hand_3finger.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2n6s300_link_6_visual_1'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/ring_small.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2n6s300_link_6_fixed_joint_lump__end_effector_spoon_visual_2'>
+          <pose frame=''>0 0 -0.16 3.14159 0 -1.5707</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/models/spoon_tool/meshes/spoon_toolv3.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='j2n6s300_link_6_fixed_joint_lump__rs200_camera_visual_3'>
+          <pose frame=''>0.1 0 0 0 1.57075 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/realsense_gazebo_plugin/models/realsense_camera/meshes/realsense.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>__default__</uri>
+              <name>__default__</name>
+            </script>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+        <sensor name='color' type='camera'>
+          <camera name='rs200_camera'>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>RGB_INT8</format>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>100</far>
+            </clip>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.007</stddev>
+            </noise>
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>60</update_rate>
+          <visualize>1</visualize>
+          <pose frame=''>0.1 0 0 0 1.57075 0</pose>
+        </sensor>
+        <sensor name='ired1' type='camera'>
+          <camera name='rs200_camera'>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>L_INT8</format>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>100</far>
+            </clip>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.05</stddev>
+            </noise>
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>60</update_rate>
+          <visualize>0</visualize>
+          <pose frame=''>0.1 0 0 0 1.57075 0</pose>
+        </sensor>
+        <sensor name='ired2' type='camera'>
+          <camera name='rs200_camera'>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>L_INT8</format>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>100</far>
+            </clip>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.05</stddev>
+            </noise>
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>60</update_rate>
+          <visualize>0</visualize>
+          <pose frame=''>0.1 0 0 0 1.57075 0</pose>
+        </sensor>
+        <sensor name='depth' type='depth'>
+          <camera name='rs200_camera'>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>100</far>
+            </clip>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.1</stddev>
+            </noise>
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>60</update_rate>
+          <visualize>0</visualize>
+          <pose frame=''>0.1 0 0 0 1.57075 0</pose>
+        </sensor>
+      </link>
+      <joint name='j2n6s300_joint_6' type='revolute'>
+        <child>j2n6s300_link_6</child>
+        <parent>j2n6s300_link_5</parent>
+        <axis>
+          <xyz>0 0 -1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <provide_feedback>1</provide_feedback>
+          <ode>
+            <provide_feedback>1</provide_feedback>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='j2n6s300_link_finger_1'>
+        <pose frame=''>0.30279 1.083 1.06575 1.5708 -0.649262 -1.35961</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_finger_1_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_finger_1_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_finger_1' type='revolute'>
+        <child>j2n6s300_link_finger_1</child>
+        <parent>j2n6s300_link_6</parent>
+        <axis>
+          <xyz>-0.977783 -0.209619 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.51</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2n6s300_link_finger_tip_1'>
+        <pose frame=''>0.310517 1.04696 1.08996 1.5708 -0.649262 -1.35961</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_finger_tip_1_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_finger_tip_1_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_finger_tip_1' type='revolute'>
+        <child>j2n6s300_link_finger_tip_1</child>
+        <parent>j2n6s300_link_finger_1</parent>
+        <axis>
+          <xyz>-0.977783 -0.209619 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>2</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2n6s300_link_finger_2'>
+        <pose frame=''>0.32226 1.14133 1.0659 1.5708 -0.649262 1.38614</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_finger_2_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_finger_2_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_finger_2' type='revolute'>
+        <child>j2n6s300_link_finger_2</child>
+        <parent>j2n6s300_link_6</parent>
+        <axis>
+          <xyz>0.983 -0.183608 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.51</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2n6s300_link_finger_tip_2'>
+        <pose frame=''>0.329028 1.17757 1.09011 1.5708 -0.649262 1.38614</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_finger_tip_2_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_finger_tip_2_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_finger_tip_2' type='revolute'>
+        <child>j2n6s300_link_finger_tip_2</child>
+        <parent>j2n6s300_link_finger_2</parent>
+        <axis>
+          <xyz>0.983 -0.183608 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>2</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2n6s300_link_finger_3'>
+        <pose frame=''>0.27774 1.14133 1.0659 1.5708 -0.649262 1.75545</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_finger_3_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_finger_3_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_proximal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_finger_3' type='revolute'>
+        <child>j2n6s300_link_finger_3</child>
+        <parent>j2n6s300_link_6</parent>
+        <axis>
+          <xyz>0.983 0.183608 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.51</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='j2n6s300_link_finger_tip_3'>
+        <pose frame=''>0.270972 1.17757 1.09011 1.5708 -0.649262 1.75545</pose>
+        <inertial>
+          <pose frame=''>0.022 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>7.89997e-07</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>7.89997e-07</iyy>
+            <iyz>0</iyz>
+            <izz>8e-08</izz>
+          </inertia>
+        </inertial>
+        <collision name='j2n6s300_link_finger_tip_3_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='j2n6s300_link_finger_tip_3_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/ubuntu/Desktop/catkin_ws/src/kinova-ros/kinova_description/meshes/finger_distal.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='j2n6s300_joint_finger_tip_3' type='revolute'>
+        <child>j2n6s300_link_finger_tip_3</child>
+        <parent>j2n6s300_link_finger_3</parent>
+        <axis>
+          <xyz>0.983 0.183608 0</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>2</upper>
+            <effort>2</effort>
+            <velocity>1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
+        <robotNamespace>j2n6s300</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        <legacyModeNS>true</legacyModeNS>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2n6s300_joint_1_ft_sensor_topic</topicName>
+        <jointName>j2n6s300_joint_1</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2n6s300_joint_2_ft_sensor_topic</topicName>
+        <jointName>j2n6s300_joint_2</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2n6s300_joint_3_ft_sensor_topic</topicName>
+        <jointName>j2n6s300_joint_3</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2n6s300_joint_4_ft_sensor_topic</topicName>
+        <jointName>j2n6s300_joint_4</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2n6s300_joint_5_ft_sensor_topic</topicName>
+        <jointName>j2n6s300_joint_5</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='ft_sensor' filename='libgazebo_ros_ft_sensor.so'>
+        <updateRate>30.0</updateRate>
+        <topicName>j2n6s300_joint_6_ft_sensor_topic</topicName>
+        <jointName>j2n6s300_joint_6</jointName>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <static>0</static>
+      <plugin name='r200' filename='librealsense_gazebo_plugin.so'>
+        <prefix/>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <pose frame=''>0 0 0 0 -0 0</pose>
     </model>
   </world>
 </sdf>
