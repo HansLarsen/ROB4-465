@@ -194,8 +194,9 @@ int main( int argc, char* argv[] )
 
       if(debug)
         preDeproject = getTickCount();
-      // ROS_INFO_STREAM("num of faces: " << faces.landmarks.size());
+
       // fit a plane to the face:
+
       // ensure coordinates fit in depth_image even if resolution is not 1:1
 
       autonomous_eating::deproject_array srv;
@@ -204,14 +205,10 @@ int main( int argc, char* argv[] )
         srv.request.y.push_back(((float)faces.landmarks[0].at(i).y / (float)color_image.rows)*(float)depth_image.rows);
         srv.request.z.push_back((float)depth_image.at<uint16_t>(Point(srv.request.x[i-17], srv.request.y[i-17])));
       }
-      //cout << "srv.request.layout.x.size(): " << srv.request.x.size() << endl;
-      //cout << "about to call service" << endl;
+
       if(deproject_client.call(srv)){ //successfully called service
-        //cout << "successfully called service! " << endl;
-        //cout << "srv.response.x.size(): " << srv.response.x.size() << endl;
         for(int i = 0; i < srv.response.x.size(); i++)
         {
-          //cout << "i: " << i << ", x: " << srv.response.x[i] << endl;
           depthLandmarkX[i] = srv.response.x[i];
           depthLandmarkY[i] = srv.response.y[i];
           depthLandmarkZ[i] = srv.response.z[i];
@@ -225,9 +222,11 @@ int main( int argc, char* argv[] )
       if(debug)
         postDeproject = getTickCount();
 
-      // The equation for a plane is: ax+by+c=z. And we have x y z above
-      // To find a b c we use formula Ak=B, where x is a array of a b c
-      // A is [xi, yi, 1] and B is [zi]
+      // The equation for a plane is: ax+by+c=z. And we have already found x y z above
+      // To find a b c we use formula A*K=B, where 
+      // K is a 3 by 1 colum vector containing [a; b; c]
+      // A is a 51 by 3 matrix containing [xi, yi, 1] and 
+      // B is a 51 by 1 colum vector containing [zi]
 
       for (size_t i = 0; i < 3; i++){
         for (size_t j = 0; j < n_usedPoints; j++){        
