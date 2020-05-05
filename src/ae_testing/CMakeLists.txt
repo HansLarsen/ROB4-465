@@ -166,6 +166,11 @@ install(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 
+install(PROGRAMS
+  scripts/positions.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+
 #############
 ## Testing ##
 #############
