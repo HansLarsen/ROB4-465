@@ -170,6 +170,10 @@ install(PROGRAMS
   scripts/positions.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
+install(PROGRAMS
+  scripts/bowl_to_world.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
 
 #############
 ## Testing ##
