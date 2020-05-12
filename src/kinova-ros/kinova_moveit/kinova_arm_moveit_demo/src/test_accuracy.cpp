@@ -59,8 +59,8 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
 //    robot_state::RobotState& robot_state = planning_scene_->getCurrentStateNonConst();
 //    const robot_state::JointModelGroup *joint_model_group = robot_state.getJointModelGroup("arm");
 
-    group_ = new moveit::planning_interface::MoveGroupInterface("arm");
-    gripper_group_ = new moveit::planning_interface::MoveGroupInterface("gripper");
+    group_ = new moveit::planning_interface::MoveGroup("arm");
+    gripper_group_ = new moveit::planning_interface::MoveGroup("gripper");
 
     group_->setEndEffectorLink(robot_type_ + "_end_effector");
 
@@ -638,12 +638,12 @@ void PickPlace::check_constrain()
     }
 }
 
-void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroupInterface &group)
+void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
 {
     bool replan = true;
     int count = 0;
 
-    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+    moveit::planning_interface::MoveGroup::Plan my_plan;
 
     while (replan == true && ros::ok())
     {
@@ -659,7 +659,7 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroupInterface &gr
             plan_time = 20+count*10;
             ROS_INFO("Setting plan time to %f sec", plan_time);
             group.setPlanningTime(plan_time);
-            result_ = (group.plan(my_plan) == moveit_msgs::MoveItErrorCodes::SUCCESS);
+            result_ = (group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
             std::cout << "at attemp: " << count << std::endl;
             ros::WallDuration(0.1).sleep();
         }

@@ -24,7 +24,6 @@
 #include <kinova_msgs/HomeArm.h>
 #include <kinova_msgs/JointVelocity.h>
 #include <kinova_msgs/PoseVelocity.h>
-#include <kinova_msgs/PoseVelocityWithFingers.h>
 #include <kinova_msgs/JointTorque.h>
 #include <kinova_msgs/FingerPosition.h>
 #include <kinova_msgs/JointAngles.h>
@@ -68,8 +67,8 @@ class KinovaArm
 
     //Subscriber callbacks --------------------------------------------------------
     void jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel);
+    void fingerVelocityCallback(const kinova_msgs::FingerPositionConstPtr& finger_vel);
     void cartesianVelocityCallback(const kinova_msgs::PoseVelocityConstPtr& cartesian_vel);
-    void cartesianVelocityWithFingersCallback(const kinova_msgs::PoseVelocityWithFingersConstPtr& cartesian_vel_with_fingers);
     void jointTorqueSubscriberCallback(const kinova_msgs::JointTorqueConstPtr& joint_torque);
     void forceSubscriberCallback(const kinova_msgs::CartesianForceConstPtr& force);
 
@@ -77,6 +76,7 @@ class KinovaArm
     bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
     bool startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res);
     bool homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res);
+    bool restartAPIServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res);
     bool ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req,
                                        kinova_msgs::SetNullSpaceModeState::Response &res);
     bool addCartesianPoseToTrajectory(kinova_msgs::AddPoseToCartesianTrajectory::Request &req,
@@ -121,8 +121,8 @@ class KinovaArm
 
     // Publishers, subscribers, services
     ros::Subscriber joint_velocity_subscriber_;
+    ros::Subscriber finger_velocity_subscriber_;
     ros::Subscriber cartesian_velocity_subscriber_;
-    ros::Subscriber cartesian_velocity_with_fingers_subscriber_;
     ros::Subscriber joint_torque_subscriber_;
     ros::Subscriber cartesian_force_subscriber_;
 
@@ -139,6 +139,7 @@ class KinovaArm
     ros::ServiceServer stop_service_;
     ros::ServiceServer start_service_;
     ros::ServiceServer homing_service_;
+    ros::ServiceServer restarting_service_;
     ros::ServiceServer start_null_space_service_;
     ros::ServiceServer add_trajectory_;
     ros::ServiceServer clear_trajectories_;
@@ -177,6 +178,7 @@ class KinovaArm
 
     // State tracking or utility members
     AngularInfo joint_velocities_;
+    FingerAngles finger_velocities_;
     float l_joint_torque_[COMMAND_SIZE];
     float l_force_cmd_[COMMAND_SIZE];
     CartesianInfo cartesian_velocities_;

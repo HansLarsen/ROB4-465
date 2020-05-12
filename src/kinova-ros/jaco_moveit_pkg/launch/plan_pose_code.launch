@@ -1,0 +1,4 @@
+<launch>
+    <node name="planning" type="plan_pose.py" pkg="my_plan" output="screen" />
+    
+</launch>

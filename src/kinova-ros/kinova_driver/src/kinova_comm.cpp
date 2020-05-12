@@ -940,7 +940,7 @@ void KinovaComm::printAngles(const KinovaAngles &angles)
 
 /**
  * @brief This function sets the robotical arm in cartesian control mode if this is possible.
- * If robot is not in motion, change control model to Cartesian control
+ * If robot is not in motion, change control model to Angular control
  */
 void KinovaComm::setCartesianControl()
 {
@@ -954,7 +954,6 @@ void KinovaComm::setCartesianControl()
         return;
     }
     int result = kinova_api_.setCartesianControl();
-    ROS_WARN("%d", result);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not set Cartesian control", result);
@@ -1032,7 +1031,7 @@ void KinovaComm::getCartesianPosition(KinovaPose &position)
  * In KinovaPose, orientation is expressed in Euler-XYZ convention (Rot=Rx*Ry*Rz). However, in ROS by default using Euler-ZYX. tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
  * @param pose target pose of robot [X,Y,Z, ThetaX, ThetaY, ThetaZ], unit in meter and radians.
  * @param timeout default 0.0, not used.
- * @param push default false, does not erase previous trajectory point before new motion. If you want to erase all trajectory before request motion, set to true..
+ * @param push default true, errase all trajectory before request motion..
  */
 void KinovaComm::setCartesianPosition(const KinovaPose &pose, int timeout, bool push)
 {
@@ -1106,46 +1105,6 @@ void KinovaComm::setCartesianVelocities(const CartesianInfo &velocities)
 
     // confusingly, velocity is passed in the position struct
     kinova_velocity.Position.CartesianPosition = velocities;
-
-    int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not send advanced Cartesian velocity trajectory", result);
-    }
-}
-
-/**
- * @brief Linear and angular velocity control in Cartesian space
- * This function sends trajectory point(CARTESIAN_VELOCITY) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendAdvanceTrajectory() is called in api to complete the motion.
- * Definition of angular velocity "Omega" is based on the skew-symmetric matrices "S = R*R^(-1)", where "R" is the rotation matrix. angular velocity vector "Omega = [S(3,2); S(1,3); S(2,1)]".
- * @param velocities unit are meter/second for linear velocity and radians/second for "Omega".
- * @param fingers finger positions to reach at the same time as moving, in closure percentage
- */
-void KinovaComm::setCartesianVelocitiesWithFingers(const CartesianInfo &velocities, const FingerAngles& fingers)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    if (isStopped())
-    {
-        ROS_INFO("The cartesian velocities could not be set because the arm is stopped");
-        kinova_api_.eraseAllTrajectories();
-        return;
-    }
-
-    TrajectoryPoint kinova_velocity;
-    kinova_velocity.InitStruct();
-
-    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
-
-    //startAPI();
-    kinova_velocity.Position.Type = CARTESIAN_VELOCITY;
-
-    // confusingly, velocity is passed in the position struct
-    kinova_velocity.Position.CartesianPosition = velocities;
-
-    // Fill fingers
-    kinova_velocity.Position.Fingers = fingers;
-    kinova_velocity.Position.HandMode = POSITION_MODE;
 
     int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
     if (result != NO_ERROR_KINOVA)
@@ -1386,7 +1345,6 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     int control_type;
     result=kinova_api_.getControlType(control_type); // are we currently in angular or Cartesian mode? Response	0 = Cartesian control type, 1 = Angular control type.
 
-
     //initialize the trajectory point. same initialization for an angular or Cartesian point
     TrajectoryPoint kinova_point;
     kinova_point.InitStruct();
@@ -1450,6 +1408,7 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     {
         throw KinovaCommException("Could not send advanced finger trajectory", result);
     }
+
 }
 
 
@@ -1514,6 +1473,26 @@ void KinovaComm::homeArm(void)
     mycommand.ButtonValue[2] = 0;
     kinova_api_.sendJoystickCommand(mycommand);
     ROS_WARN("Homing arm timer out! If the arm is not in home position yet, please re-run home arm.");*/
+
+}
+
+/**
+ * @brief This function restarts the API by MOSTAFA
+ */
+void KinovaComm::restartAPI(void)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("Arm is stopped, cannot home");
+        return;
+    }
+    stopAPI();
+    ros::Duration(1.0).sleep();
+    startAPI();stopAPI();
+    ros::Duration(1.0).sleep();
+    startAPI();
 
 }
 
@@ -1651,6 +1630,117 @@ int KinovaComm::SetRedundantJointNullSpaceMotion(int state)
 int KinovaComm::SetRedundancyResolutionToleastSquares(int state)
 {
     //Not Available in API
+}
+
+/**
+ * @brief This function sets the finger velocity
+ * The new finger velocity, combined with current joint values are constructed as a trajectory point. sendAdvancedTrajectory() is called in api to complete the motion.
+ * @param fingers in degrees from 0 to about 6800
+ * @param timeout timeout default 0.0, not used.
+ * @param push default true, errase all trajectory before request motion.
+ *
+
+void KinovaComm::setFingerVelocities(const FingersPosition &finger_vel)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("The fingers could not be set because the arm is stopped");
+        return;
+    }
+
+    //initialize the trajectory point. same initialization for an angular or Cartesian point
+    TrajectoryPoint kinova_velocity;
+    kinova_velocity.InitStruct();
+
+    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
+
+    //startAPI();
+    kinova_velocity.Position.Type = ANGULAR_VELOCITY;
+
+    // confusingly, velocity is passed in the position struct
+    kinova_velocity.Position.HandMode = VELOCITY_MODE;
+    kinova_velocity.Position.Fingers = finger_vel;
+
+    int result = kinova_api_.sendBasicTrajectory(kinova_velocity);
+    ROS_INFO("2finger velocity call back is called");
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send advanced joint velocity trajectory", result);
+    }
+}
+^&*/
+void KinovaComm::setFingerVelocities(const FingersPosition &fingers)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("The fingers could not be set because the arm is stopped");
+        return;
+    }
+
+    int result = NO_ERROR_KINOVA;
+    int control_type;
+    result=kinova_api_.getControlType(control_type); // are we currently in angular or Cartesian mode? Response	0 = Cartesian control type, 1 = Angular control type.
+
+
+    //initialize the trajectory point. same initialization for an angular or Cartesian point
+    TrajectoryPoint kinova_point;
+    kinova_point.InitStruct();
+    memset(&kinova_point, 0, sizeof(kinova_point));  // zero structure
+
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get the current control type", result);
+    }
+    else
+    {
+        // Initialize Cartesian control of the fingers
+        kinova_point.Position.HandMode = VELOCITY_MODE;
+        kinova_point.Position.Fingers = fingers;
+        kinova_point.Position.Delay = 0.0;
+        kinova_point.LimitationsActive = 0;
+        if(control_type==0) //Cartesian
+        {
+                kinova_point.Position.Type = CARTESIAN_POSITION;
+                CartesianPosition pose;
+                memset(&pose, 0, sizeof(pose));  // zero structure
+                result = kinova_api_.getCartesianCommand(pose);
+                if (result != NO_ERROR_KINOVA)
+                {
+                        throw KinovaCommException("Could not get the Cartesian position", result);
+                }
+                kinova_point.Position.CartesianPosition=pose.Coordinates;
+        }
+        else if(control_type==1) //angular
+        {
+                kinova_point.Position.Type = ANGULAR_POSITION;
+                AngularPosition joint_angles;
+                memset(&joint_angles, 0, sizeof(joint_angles));  // zero structure
+                result = kinova_api_.getAngularCommand(joint_angles);
+                if (result != NO_ERROR_KINOVA)
+                {
+                        throw KinovaCommException("Could not get the angular position", result);
+                }
+                kinova_point.Position.Actuators = joint_angles.Actuators;
+        }
+        else
+        {
+                throw KinovaCommException("Wrong control type", result);
+        }
+    }
+
+
+    // getAngularPosition will cause arm drop
+    // result = kinova_api_.getAngularPosition(joint_angles);
+    ROS_INFO("3finger velocity call back is called");
+    result = kinova_api_.sendBasicTrajectory(kinova_point);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send advanced finger trajectory", result);
+    }
 }
 
 

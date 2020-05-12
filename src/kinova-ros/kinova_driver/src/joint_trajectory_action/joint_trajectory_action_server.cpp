@@ -291,6 +291,6 @@ int main(int argc, char** argv)
 
     kinova::JointTrajectoryActionController jtac(node, robot_name);
 
-    ros::waitForShutdown();
+    ros::spin();
     return 0;
 }

@@ -82,8 +82,6 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
     KinovaAngles current_joint_angles;
     ros::Time current_time = ros::Time::now();
 
-    bool action_is_over = false;
-
     try
     {
         arm_comm_.getJointAngles(current_joint_angles);
@@ -106,15 +104,15 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
         // Loop until the action completed, is preempted, or fails in some way.
         // timeout is left to the caller since the timeout may greatly depend on
         // the context of the movement.
-        while (!action_is_over)
+        while (true)
         {
             ros::spinOnce();
-	        if (arm_comm_.isStopped())
+	    if (arm_comm_.isStopped())
             {
                 result.angles = current_joint_angles.constructAnglesMsg();
                 action_server_.setAborted(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
-                action_is_over = true;
+                return;
             }
             else if (action_server_.isPreemptRequested() || !ros::ok())
             {
@@ -123,7 +121,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
-                action_is_over = true;
+                return;
             }
 
             arm_comm_.getJointAngles(current_joint_angles);
@@ -137,7 +135,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 result.angles = current_joint_angles.constructAnglesMsg();
                 action_server_.setSucceeded(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setSucceeded ");
-                action_is_over = true;
+                return;
             }
             else if (!last_nonstall_angles_.isCloseToOther(current_joint_angles, stall_threshold_))
             {
@@ -153,7 +151,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 {
                 	arm_comm_.stopAPI();
                 	arm_comm_.startAPI();
-		        }
+		}
                 //why preemted, if the robot is stalled, trajectory/action failed!
                 /*
                 action_server_.setPreempted(result);
@@ -161,7 +159,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 */
                 action_server_.setAborted(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", Trajectory command failed ");
-                action_is_over = true;
+                return;
             }
 
             ros::Rate(rate_hz_).sleep();
@@ -174,11 +172,6 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
         action_server_.setAborted(result);
         ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
     }
-
-    // Put back the arm in Cartesian position mode
-    KinovaPose pose;
-    arm_comm_.getCartesianPosition(pose);
-    arm_comm_.setCartesianPosition(pose, 0, false);
 }
 
 }  // namespace kinova

@@ -84,6 +84,7 @@ class KinovaComm
     void getForcesInfo(ForcesInfo &force_Info); // joint torque and end-effector wrench
     void getGripperStatus(Gripper &gripper_status); // most complete information of each fingers, including model, motion, force, limits, etc.
     void homeArm(void);
+    void restartAPI(void); //by MOSTAFA
     bool isHomed(void);
     void initFingers(void);
     void setEndEffectorOffset(unsigned int status, float x, float y, float z);
@@ -100,7 +101,8 @@ class KinovaComm
     void setJointAngles(const KinovaAngles &angles, double speedJoint123 = 20,
                         double speedJoint4567 = 20, int timeout = 0, bool push = true);
     void getJointVelocities(KinovaAngles &vels);
-    void setJointVelocities(const AngularInfo& joint_vel);    
+    void setJointVelocities(const AngularInfo& joint_vel);
+    void setFingerVelocities(const FingersPosition& finger_vel);
     void getJointAccelerations(AngularAcceleration &joint_acc);
     void getJointTorques(KinovaAngles &tqs);
     void getJointCurrent(AngularPosition &anguler_current);    
@@ -136,9 +138,8 @@ class KinovaComm
     //! \brief send Pose command to robot
     //! \arg position - Pose command
     //! \arg push - If true clears previous trajectories
-    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = false);
+    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
     void setCartesianVelocities(const CartesianInfo &velocities);
-    void setCartesianVelocitiesWithFingers(const CartesianInfo &velocities, const FingerAngles& fingers);
     float getMaxTranslationVelocity(void);
     void setMaxTranslationVelocity(const float &max_trans_vel);
     float getMaxOrientationVelocity(void);
