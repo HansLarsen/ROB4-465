@@ -8,6 +8,7 @@ import numpy as np
 from gazebo_msgs.srv import SetModelState
 from gazebo_msgs.srv import DeleteModel
 from gazebo_msgs.srv import SpawnModel
+from gazebo_msgs.srv import SetLightProperties
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Twist
 from tf.transformations import quaternion_from_euler
@@ -16,7 +17,7 @@ from autonomous_eating.msg import face_cords
 global face_coordinates
 face_coordinates = []
 
-def moveModel(position, r, p, y):
+def moveModel(model, position, r, p, y):
     rospy.wait_for_service('/gazebo/set_model_state')
     try:
         service = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
@@ -30,7 +31,7 @@ def moveModel(position, r, p, y):
         pose.orientation.z = quat[2]
         pose.orientation.w = quat[3]
         req = SetModelState()
-        req.model_name = 'human'
+        req.model_name = model
         req.pose = pose
         req.twist = twist
         req.reference_frame = ""
@@ -96,7 +97,7 @@ def face_cords_callback(data):
     face_coordinates.append(data)
 
 
-def runTest(og_pose):
+def runTest(og_pose, lights):
     up_down_range = 130 #75 degrees
     left_right_range = 156 # 90 degrees
     step = 10
@@ -104,39 +105,60 @@ def runTest(og_pose):
     rad2deg = 180.0/3.14
     sleepTime = 0.2
 
-    #used for plotting
-    y = []
-    x = []
 
-    dataArray = []
-    for up in range(-up_down_range, up_down_range, step):
-        #theta for up/down angle
-        theta_ud = up/scaling
-        data = []
-        #save y for graphing
-        y.append(theta_ud)
-        for lr in range(-left_right_range, left_right_range, step):
-            #empty face_coordinates list:
-            for a in face_coordinates:
-                face_coordinates.pop()
+    #loop through lighting settings:
+    dataArrayArray = []
+    for i in range(0,len(lights)):
+        chooseLight(lights, i)
+        print "lighting setting ",
+        print i
 
-            #theta for left/right angle
-            theta_lr = lr/scaling
-            #move the model
-            moveModel(og_pose.position, theta_ud, 0.0, theta_lr)
-            #give time to detect face
-            rospy.sleep(sleepTime)
-            #once we have slept, remove noice            
-            for point in face_coordinates:
-                if point.z_p1 > 1000:
-                    face_coordinates.pop(face_coordinates.index(point))
-                    #print("removed some noise")
+        dataArray = []
+        for up in range(-up_down_range, up_down_range, step):
+            #theta for up/down angle
+            theta_ud = up/scaling
+            data = []
+            #save y for graphing
+            for lr in range(-left_right_range, left_right_range, step):
+                #empty face_coordinates list:
+                for a in face_coordinates:
+                    face_coordinates.pop()
+
+                #theta for left/right angle
+                theta_lr = lr/scaling
+                #move the model
+                moveModel('human', og_pose.position, theta_ud, 0.0, theta_lr)
+
+                #give time to detect face
+                rospy.sleep(sleepTime)
+                
+                #once we have slept, remove noice            
+                for point in face_coordinates:
+                    if point.z_p1 > 1000:
+                        face_coordinates.pop(face_coordinates.index(point))
+                        #print("removed some noise")
+                
+                #save amount of detections
+                data.append(len(face_coordinates))
             
-            #save amount of detections
-            data.append(len(face_coordinates))
-        
-        dataArray.append(data)
-    
+            dataArray.append(data)
+
+        dataArrayArray.append(dataArray)
+
+    result = dataArrayArray[0]
+    for i in range(len(result)):
+        for j in range(len(result[0])):
+            result[i][j] = 0
+
+    for i in range(len(result)):
+        for j in range(len(result[0])):
+            a = 0
+            for l in range(len(dataArrayArray)):
+                a = a + dataArrayArray[l][i][j]
+            result[i][j] = a
+
+    print(result)
+
     #print "DataArray length:",
     #print len(dataArray)
 
@@ -144,21 +166,26 @@ def runTest(og_pose):
 
     #y = [0.1, 0.2, 0.3, 0.4, 0.5]
 
-    #save x for graphing
+    #used for plotting
+    y = []
+    x = []
     for lr in range(-left_right_range, left_right_range, step):
         x.append((lr/scaling)*rad2deg)
 
-    for i in range(0, len(y)):
-        y[i] = y[i]*rad2deg
+    for i in range(-up_down_range, up_down_range, step):
+        y.append((i/scaling)*rad2deg)
 
+
+    print len(x)
+    print len(y)
     #setup the 2D grid with Numpy
     x, y = np.meshgrid(x, y)
 
     #convert intensity (list of lists) to a numpy array for plotting
-    intensity = np.array(dataArray)
+    intensity = np.array(result)
 
     #plot as colormesh
-    plt.pcolormesh(x, y, intensity, vmax=8)
+    plt.pcolormesh(x, y, intensity, vmax=40)
     #need a colorbar to show the intensity scale
     plt.colorbar() 
     plt.xlabel('Horizontal rotation in degrees')
@@ -167,10 +194,30 @@ def runTest(og_pose):
     plt.savefig("/home/ubuntu/Desktop/catkin_ws/src/ae_testing/extra/face_detect_output/20")
     plt.show() 
 
+def setLight(light, r,g,b):
+    try:
+        service = rospy.ServiceProxy('/gazebo/set_light_properties', SetLightProperties)
 
+        req = SetLightProperties._request_class()
+        req.light_name = light
+        req.diffuse.r = r
+        req.diffuse.g = g
+        req.diffuse.b = b
+        req.diffuse.a = 0
+        req.attenuation_constant = 1
+        req.attenuation_linear = 1
+        req.attenuation_quadratic = 0
 
+        resp = service(req)
 
+    except rospy.ServiceException, e:
+        print("Service call failed: %s" %e)
 
+def chooseLight(lights, light):
+    for a in range(0,len(lights)):
+        setLight(lights[a], 0,0,0)
+
+    setLight(lights[light], 1,1,1)
 
 if __name__ == '__main__':
     rospy.init_node('human_pos_node')
@@ -178,13 +225,24 @@ if __name__ == '__main__':
     #deleteModel("human")
     #spawnSdfModel("/home/ubuntu/Desktop/catkin_ws/src/ae_testing/models/1/model.sdf", pose)
     #spawnUrdfModel("/home/ubuntu/Desktop/catkin_ws/src/ae_testing/urdf/1.urdf", pose)
+
+    lights = ['light1', 'light2','light3','light4','light5']
+
     og_pose = Pose()
     og_pose.position.x = -0.09
     og_pose.position.y = 1.44
     og_pose.position.z = 1.15
 
+    #light_pose = Pose()
+    #light_pose.position.x = 0.07
+    #light_pose.position.y = -1.54
+    #light_pose.position.z = 0.2
+    
     #deleteModel("human")
     #spawnSdfModel("/home/ubuntu/Desktop/catkin_ws/src/autonomous_eating/models/human1/model.sdf", og_pose)
-    runTest(og_pose)
+    runTest(og_pose, lights)
     #once done, return to original position:
-    moveModel(og_pose.position, 0, 0 ,0)
+
+    #setLight(lights[0], 0,0,0)
+    #chooseLight(lights, 0)
+    moveModel('human', og_pose.position, 0, 0 ,0)
