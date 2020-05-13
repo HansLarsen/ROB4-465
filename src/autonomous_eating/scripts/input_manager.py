@@ -39,6 +39,12 @@ def au_position_callback(data):
     msg.button3 = 0
     msg.mode_select = 0
 
+    gui_msg.selectness = (rospy.get_time() - buttonTime)*100
+    gui_msg.x = data.x
+    gui_msg.y = data.y
+    gui_msg.figure_num = 0
+    gui_msg.inputType = 1
+
     if msg.x < 3.5 and msg.y > 27:
         if buttonPressed == 1:
             if rospy.get_time() - buttonTime > 1:
@@ -73,6 +79,7 @@ def au_position_callback(data):
     else:
         buttonPressed = 0
         buttonTime = rospy.get_time()
+        gui_msg.selectness = 0
 
     if msg.y > 15:
         msg.x = 0
@@ -81,14 +88,8 @@ def au_position_callback(data):
         msg.x = (msg.x-5)*20
         msg.y = (msg.y-5)*20
 
-    gui_msg.selectness = (rospy.get_time() - buttonTime)*100
-    gui_msg.x = data.x
-    gui_msg.y = data.y
-    gui_msg.figure_num = 0
-    gui_msg.inputType = 1
-
     pub.publish(msg)
-    guiPub.publisher(gui_msg)
+    guiPub.publish(gui_msg)
 
 if __name__ == '__main__':
     rospy.init_node('input_manager', anonymous=True)
