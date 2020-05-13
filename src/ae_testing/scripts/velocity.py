@@ -118,7 +118,9 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(3)
 
     for xc in x_lines:
-        ax[0].vlines(xc, 0, 360, color='r')
+        ax[0].vlines(xc, 0, 250, color='r')
+        ax[1].vlines(xc, -140, -80, color='r')
+        ax[2].vlines(xc, -15, 5, color='r')
 
     ax[0].plot(x_vals, y_vals)
 
