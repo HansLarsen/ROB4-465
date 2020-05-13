@@ -14,7 +14,6 @@ find_package(catkin REQUIRED
              pluginlib
              cmake_modules
              geometric_shapes
-             eigen_conversions
 )
 
 find_package(Boost REQUIRED system filesystem date_time thread)
@@ -25,7 +24,6 @@ catkin_package(
     moveit_core
     moveit_ros_planning_interface
     interactive_markers
-    eigen_conversions
 )
 find_package(Eigen REQUIRED)
 

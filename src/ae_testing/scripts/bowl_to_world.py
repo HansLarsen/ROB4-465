@@ -19,6 +19,8 @@ from tf.transformations import quaternion_from_euler
 from moveit_commander.conversions import pose_to_list
 from enum import Enum
 
+got_bowl = False
+
 class MoveitApp():
     def __init__(self):
         self.rootFrame = 'world'
@@ -55,12 +57,32 @@ class MoveitApp():
 
             rospy.loginfo(target_transformed_pose)
 
+            diffX =round(-realcoordsX+(target_transformed_pose.pose.position.x*1000.0),3)
+            diffY =round(-realcoordsY+(target_transformed_pose.pose.position.y*1000.0),3)
+            diffZ =round(-realcoordsZ+(target_transformed_pose.pose.position.z*1000.0),3)
+
+            
+            print("Diff x: ",diffX)
+            print("Diff y: ",diffY)
+            print("Diff z: ",diffZ)
+
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             rospy.spin()
             rospy.loginfo("Failed lookup")
             return
+        
 
 if __name__ == '__main__':
+    if not got_bowl:
+        try:
+            realcoordsX=float(input('Enter real bowl x coordinate in mm: '))
+            realcoordsY=float(input('Enter real bowl y coordinate in mm: '))
+            realcoordsZ=float(input('Enter real bowl z coordinate in mm: '))
+
+            got_bowl = True
+        except ValueError:
+            print("not a number")
+        
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('moveit_node')
 
