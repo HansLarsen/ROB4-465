@@ -4,6 +4,7 @@
 #include "cv_bridge/cv_bridge.h"
 #include "sensor_msgs/Image.h"
 #include "std_msgs/Bool.h"
+#include "std_msgs/Int32.h"
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -140,11 +141,12 @@ int main( int argc, char* argv[] )
   ros::ServiceClient deproject_client = n.serviceClient<autonomous_eating::deproject_array>("deproject_pixel_to_world_array");
   ros::Publisher pub_cords = n.advertise<autonomous_eating::face_cords>("/face_cords",5);
   ros::Publisher face_img_pub = n.advertise<sensor_msgs::Image>("/gui_figure", 5);
+  ros::Publisher img_processed_pub = n.advertise<std_msgs::Int32>("/images_processed", 5);
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
 
   //total landmarks: 68, skip 17 first
-  int n_usedPoints = 68-17;
+  int n_usedPoints = 68-27;
   float depthLandmarkX[n_usedPoints];
   float depthLandmarkY[n_usedPoints];
   float depthLandmarkZ[n_usedPoints];
@@ -156,6 +158,7 @@ int main( int argc, char* argv[] )
   Mat K(1,3,CV_32FC1);
   autonomous_eating::face_cords face_cords_msg;
   int64 startElse, endElse, postDeproject, preDeproject, start; // debug timings
+  int images_processed = 0;
   while (ros::ok()){
 
     if(new_color_img && new_depth_img && find_face_trigger)
@@ -168,6 +171,12 @@ int main( int argc, char* argv[] )
       new_depth_img = false;
       new_color_img = false;
       faces = faceworker.detectFace(color_image);
+
+      std_msgs::Int32 int_msg;
+      int_msg.data = images_processed;
+      img_processed_pub.publish(int_msg);
+
+      images_processed++;
 
       Mat face_img = faceworker.drawFaces(color_image, faces);
       cvtColor(face_img, face_img, COLOR_BGR2RGB);
@@ -200,10 +209,10 @@ int main( int argc, char* argv[] )
       // ensure coordinates fit in depth_image even if resolution is not 1:1
 
       autonomous_eating::deproject_array srv;
-      for (size_t i = 17; i < 68; i++){
+      for (size_t i = 27; i < 68; i++){
         srv.request.x.push_back(((float)faces.landmarks[0].at(i).x / (float)color_image.cols)*(float)depth_image.cols);
         srv.request.y.push_back(((float)faces.landmarks[0].at(i).y / (float)color_image.rows)*(float)depth_image.rows);
-        srv.request.z.push_back((float)depth_image.at<uint16_t>(Point(srv.request.x[i-17], srv.request.y[i-17])));
+        srv.request.z.push_back((float)depth_image.at<uint16_t>(Point(srv.request.x[i-27], srv.request.y[i-27])));
       }
 
       if(deproject_client.call(srv)){ //successfully called service
@@ -249,16 +258,16 @@ int main( int argc, char* argv[] )
       // a = K.at<float>(Point(0,0)), b = K.at<float>(Point(0,1)) and c = K.at<float>(Point(0,2))
       
       // calculating xyz of first mouth corner projected onto plane
-      float k1 = (-(K.at<float>(Point(0,0)) * depthLandmarkX[43]) - (K.at<float>(Point(0,1)) * depthLandmarkY[43]) - (K.at<float>(Point(0,2)) * depthLandmarkZ[43])) / ((K.at<float>(Point(0,0)) * K.at<float>(Point(0,0))) + (K.at<float>(Point(0,1)) * K.at<float>(Point(0,1))) + (K.at<float>(Point(0,2)) * K.at<float>(Point(0,2))));
-      float x1 = (K.at<float>(Point(0,0)) * k1) + depthLandmarkX[43];
-      float y1 = (K.at<float>(Point(0,1)) * k1) + depthLandmarkY[43];
-      float z1 = (K.at<float>(Point(0,2)) * k1) + depthLandmarkZ[43];
+      float k1 = (-(K.at<float>(Point(0,0)) * depthLandmarkX[33]) - (K.at<float>(Point(0,1)) * depthLandmarkY[33]) - (K.at<float>(Point(0,2)) * depthLandmarkZ[33])) / ((K.at<float>(Point(0,0)) * K.at<float>(Point(0,0))) + (K.at<float>(Point(0,1)) * K.at<float>(Point(0,1))) + (K.at<float>(Point(0,2)) * K.at<float>(Point(0,2))));
+      float x1 = (K.at<float>(Point(0,0)) * k1) + depthLandmarkX[33];
+      float y1 = (K.at<float>(Point(0,1)) * k1) + depthLandmarkY[33];
+      float z1 = (K.at<float>(Point(0,2)) * k1) + depthLandmarkZ[33];
 
       // calculating xyz of second mouth corner projected onto plane 
-      float k2 = (-(K.at<float>(Point(0,0)) * depthLandmarkX[47]) - (K.at<float>(Point(0,1)) * depthLandmarkY[47]) - (K.at<float>(Point(0,2)) * depthLandmarkZ[47])) / ((K.at<float>(Point(0,0)) * K.at<float>(Point(0,0))) + (K.at<float>(Point(0,1)) * K.at<float>(Point(0,1))) + (K.at<float>(Point(0,2)) * K.at<float>(Point(0,2))));
-      float x2 = (K.at<float>(Point(0,0)) * k2) + depthLandmarkX[47];
-      float y2 = (K.at<float>(Point(0,1)) * k2) + depthLandmarkY[47];
-      float z2 = (K.at<float>(Point(0,2)) * k2) + depthLandmarkZ[47];
+      float k2 = (-(K.at<float>(Point(0,0)) * depthLandmarkX[37]) - (K.at<float>(Point(0,1)) * depthLandmarkY[37]) - (K.at<float>(Point(0,2)) * depthLandmarkZ[37])) / ((K.at<float>(Point(0,0)) * K.at<float>(Point(0,0))) + (K.at<float>(Point(0,1)) * K.at<float>(Point(0,1))) + (K.at<float>(Point(0,2)) * K.at<float>(Point(0,2))));
+      float x2 = (K.at<float>(Point(0,0)) * k2) + depthLandmarkX[37];
+      float y2 = (K.at<float>(Point(0,1)) * k2) + depthLandmarkY[37];
+      float z2 = (K.at<float>(Point(0,2)) * k2) + depthLandmarkZ[37];
 
       // calculating xyz of the middle of the mouth projected onto the plane and pulling it out in front of the mouth (middle point + vector)
       face_cords_msg.x_p1 = ((x1 + x2) / 2) + (K.at<float>(Point(0,0)) * startingDis);
