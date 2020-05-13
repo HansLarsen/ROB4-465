@@ -29,7 +29,7 @@ class GUIApp():
       self.itciY = data.y
     else:
       self.itciY = data.y-10
-    self.updateItciImg(self.frame, data.x/10*350, itciY/20*600)
+    self.updateItciImg(self.frame, data.x/10*350, self.itciY/20*600)
 
   #callback for gui_status
   def gui_status_callback(self, data):
