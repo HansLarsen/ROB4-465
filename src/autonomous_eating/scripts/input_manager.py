@@ -72,6 +72,7 @@ def au_position_callback(data):
             buttonTime = rospy.get_time()
     else:
         buttonPressed = 0
+        buttonTime = rospy.get_time()
 
     if msg.y > 15:
         msg.x = 0
