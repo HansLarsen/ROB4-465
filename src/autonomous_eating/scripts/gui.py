@@ -25,7 +25,11 @@ class GUIApp():
   #callback for gui_mode
   def gui_mode_callback(self, data):
     self.updateAcitvationBar(data.selectness)
-    self.updateItciImg(self.frame, data.x, data.y)
+    if data.y < 15:
+      self.itciY = data.y
+    else:
+      self.itciY = data.y-10
+    self.updateItciImg(self.frame, data.x/10*350, itciY/20*600)
 
   #callback for gui_status
   def gui_status_callback(self, data):
@@ -38,10 +42,10 @@ class GUIApp():
     self.master.after(1, self.update_fig_task)
 
   def find_face_trigger_callback(self, data):
-    self.find_face_trigger = data.data;
+    self.find_face_trigger = data.data
 
   def find_bowl_trigger_callback(self, data):
-    self.find_bowl_trigger = data.data;
+    self.find_bowl_trigger = data.data
 
   def r200_camera_callback(self, data):
     if not self.find_face_trigger and not self.find_bowl_trigger:
