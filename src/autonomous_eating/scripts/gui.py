@@ -24,7 +24,7 @@ pkgPath = rospkg.RosPack().get_path('autonomous_eating')
 class GUIApp():
   #callback for gui_mode
   def gui_mode_callback(self, data):
-    self.updateAcitvationBar(data.selectness)
+    self.master.after(1,self.updateAcitvationBar(data.selectness))
     if data.y < 15:
       self.itciY = data.y
     else:
