@@ -87,7 +87,7 @@ def au_position_callback(data):
     gui_msg.inputType = 1
 
     pub.publish(msg)
-    guiPub.publisher(gui_msg)
+    guiPub.publish(gui_msg)
 
 if __name__ == '__main__':
     rospy.init_node('input_manager', anonymous=True)
