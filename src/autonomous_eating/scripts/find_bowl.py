@@ -130,7 +130,7 @@ color_sub = rospy.Subscriber("r200/camera/color/image_raw", Image, color_camera_
 depth_sub = rospy.Subscriber("r200/camera/depth/image_raw", Image, depth_camera_callback)
 #sub_cord3d = rospy.Subscriber("/3D_cordinates", Float32MultiArray, cordinatecallback)
 
-debug = False   
+debug = False 
 search = False
 object_out_of_range = False 
 found_data = False
@@ -169,6 +169,7 @@ if __name__ == '__main__':
         if(search == True):             #checks if we should find the bowl
             if debug == True:
                 print "searching! ",
+                startTime = cv2.getTickCount()
            
             try: 
                 global c
@@ -209,6 +210,12 @@ if __name__ == '__main__':
                 image_p = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)        #if it was not found publish regular camera feed
                 image_to_publish = CvBridge().cv2_to_imgmsg(image_p, "rgb8")
                 pub_img.publish(image_to_publish)
+
+            if debug:
+                endTime = cv2.getTickCount()
+                timeSpent = (endTime-startTime)/cv2.getTickFrequency()
+                print "Time spent in find bowl loop: ",
+                print timeSpent
             
         else:
             if debug == True:                                   #if we are not in bowl searhing position it does nothing
