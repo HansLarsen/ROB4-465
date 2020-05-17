@@ -101,7 +101,7 @@ def runTest(og_pose, lights):
     step = 5
     scaling = 100.0
     rad2deg = 180.0/3.14
-    sleepTime = 0.2
+    sleepTime = 1
 
     ## landmark detection
     rootFrame = 'world'
@@ -171,7 +171,7 @@ def runTest(og_pose, lights):
                         camera_transforms = tfBuffer.lookup_transform(rootFrame, cameraNameFrame, rospy.Time(0))
 
                         target_transformed_pose = tf2_geometry_msgs.do_transform_pose(target_pose, camera_transforms)
-                        print target_transformed_pose.header.frame_id
+
                         x.append(target_transformed_pose.pose.position.x)
                         y.append(target_transformed_pose.pose.position.y)
                         z.append(target_transformed_pose.pose.position.z)
@@ -310,6 +310,7 @@ if __name__ == '__main__':
 
     lights = ['light1', 'light2','light3','light4','light5', 'light6']
     lights = ['light1','light2', 'light3']
+
     og_pose = Pose()
     og_pose.position.x = -0.09
     og_pose.position.y = 1.44
@@ -322,4 +323,4 @@ if __name__ == '__main__':
     
     runTest(og_pose, lights)
     #once done, return to original position:
-    moveModel('human', og_pose.position, 0, 0 ,0)
+    moveModel('human', og_pose.position, 0.0, 0.0, 0.0)
