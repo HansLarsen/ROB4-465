@@ -104,7 +104,7 @@ class GUIApp():
     self.updateStatusText(("Connected", "Disconnected", "OK", "False"))
 
     #adding itci image with red ellipse showing tongue position
-    self.itciBaseImg = ImageTk.PhotoImage(Image.open(pkgPath + "/extra/figures/itci.png"))
+    self.itciBaseImg = ImageTk.PhotoImage(Image.open(pkgPath + "/extra/figures/itci2.png"))
     self.itciCanvas = Canvas(self.frame, width = self.itciBaseImg.width(), height = self.itciBaseImg.height())
     self.itciCanvas.grid(column=1, row=0, rowspan=2)
     self.updateItciImg(self.frame) #center ellipse top-left at start

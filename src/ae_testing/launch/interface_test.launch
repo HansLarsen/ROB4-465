@@ -1,0 +1,10 @@
+<launch>
+    <param name="itci" value="true"/>
+
+    <node pkg="autonomous_eating" type="input_manager.py" name="input_manager" output="screen"/>
+    <node pkg="autonomous_eating" type="gui.py" name="gui" output="screen"/>
+    <node pkg="i_tongue_pkg" name="ITCI" type="itci.py" output="screen" />
+
+    <node pkg="ae_testing" name="test" type="itci_touch.py" output="screen" />
+
+</launch>

@@ -175,6 +175,11 @@ install(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 
+install(PROGRAMS
+  scripts/itci_touch.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+
 #############
 ## Testing ##
 #############
