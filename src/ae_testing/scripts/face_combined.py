@@ -24,6 +24,7 @@ import sys
 import copy
 import numpy as np
 import time
+import cv2
 from tf.transformations import quaternion_from_euler
 from moveit_commander.conversions import pose_to_list
 from enum import Enum
@@ -96,12 +97,25 @@ def chooseLight(lights, light):
 
 def runTest(og_pose, lights):
     ## face detection
-    up_down_range = 25 #15 degrees
-    left_right_range = 80 # 45 degrees
-    step = 5
+    recline_max = 90 # 50 degrees
+    recline_min = 0
+    recline_step = 9
+    sideways_min = -80 # -45 degrees
+    sideways_max = 80 # 45 degrees
+    sideways_step = 16
     scaling = 100.0
     rad2deg = 180.0/3.14
     sleepTime = 1
+
+
+    # ONLY MOVE MODEL FOR PICTURE TAKING???
+    if(False):
+
+        theta_ud = -recline_max/scaling
+        theta_lr = sideways_max/scaling
+        moveModel('human', og_pose.position, -recline_max/scaling, 0.0, sideways_min/scaling)
+        return
+
 
     ## landmark detection
     rootFrame = 'world'
@@ -128,12 +142,12 @@ def runTest(og_pose, lights):
         print i
 
         dataArray = []
-        for up in range(-up_down_range, up_down_range, step):
+        for up in range(recline_min, recline_max, recline_step):
             #theta for up/down angle
-            theta_ud = up/scaling
+            theta_ud = -up/scaling
             data = []
             #save y for graphing
-            for lr in range(-left_right_range, left_right_range, step*2):
+            for lr in range(sideways_min, sideways_max, sideways_step):
                 #empty face_coordinates list:
                 face_coordinates[:] = []
                 #for a in face_coordinates:
@@ -142,10 +156,13 @@ def runTest(og_pose, lights):
                 #theta for left/right angle
                 theta_lr = lr/scaling
                 #move the model
+
                 moveModel('human', og_pose.position, theta_ud, 0.0, theta_lr)
 
                 #give time to detect face
-                rospy.sleep(sleepTime)
+                startTime = cv2.getTickCount()
+                while((cv2.getTickCount()-startTime)/cv2.getTickFrequency() < sleepTime):
+                    rospy.sleep(0.001)
                 
                 #once we have slept, remove noice            
                 for point in face_coordinates:
@@ -157,6 +174,8 @@ def runTest(og_pose, lights):
                 
                 #save amount of detections (face detections)
                 data.append(len(face_coordinates))
+                print "faces detected in this pos: ",
+                print len(face_coordinates)
 
                 #calculate position relative to world of face_cords
                 for faces in face_coordinates:
@@ -278,10 +297,10 @@ def runTest(og_pose, lights):
     #used for plotting
     y = []
     x = []
-    for lr in range(-left_right_range, left_right_range, step*2):
+    for lr in range(sideways_min, sideways_max, sideways_step):
         x.append((lr/scaling)*rad2deg)
 
-    for i in range(-up_down_range, up_down_range, step):
+    for i in range(recline_min, recline_max, recline_step):
         y.append((i/scaling)*rad2deg)
 
     #setup the 2D grid with Numpy
@@ -291,7 +310,7 @@ def runTest(og_pose, lights):
     intensity = np.array(result)
 
     #plot as colormesh
-    plt.pcolormesh(x, y, intensity, vmax=18)
+    plt.pcolormesh(x, y, intensity, vmax=45)
     #need a colorbar to show the intensity scale
     plt.colorbar() 
     plt.xlabel('Horizontal rotation in degrees')
@@ -308,7 +327,7 @@ if __name__ == '__main__':
     rospy.Subscriber('/images_processed', Int32, img_proc_callback)
     
 
-    lights = ['light1', 'light2','light3','light4','light5', 'light6']
+    #lights = ['light1', 'light2','light3','light4','light5', 'light6']
     lights = ['light1','light2', 'light3']
 
     og_pose = Pose()
