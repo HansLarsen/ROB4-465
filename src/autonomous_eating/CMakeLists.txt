@@ -247,3 +247,6 @@ target_link_libraries(deprojector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_executable(face_detector src/face_detector.cpp)
 target_link_libraries(face_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
+add_executable(face_detector_simple src/face_detector_simple.cpp)
+target_link_libraries(face_detector_simple ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
