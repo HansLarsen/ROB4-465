@@ -18,10 +18,10 @@ using namespace cv::face;
 Mat depth_image, color_image;
 bool new_color_img = false, new_depth_img = false, find_face_trigger = false;
 
-struct faceData
-{
-  std::vector<Rect> faces;
-  std::vector<std::vector<Rect>> mouths;
+struct faceData{
+  Rect mouth;
+  Rect face;
+  bool success;
 };
 
 class Face_worker
@@ -66,52 +66,56 @@ faceData Face_worker::detectFace(Mat frame)
   //-- 3. Apply the classifier to the frame
   //equalizeHist( frame_gray, frame_gray ); //should be done for real images, bad for gazebo images
   //-- Detect faces
+  faceData data;
+  data.mouth = Rect();
+  data.face = Rect();
+  data.success = true;
+
   std::vector<Rect> faces;
   face_cascade.detectMultiScale(frame_gray, faces);
 
-  cout << "detected face, trying to find mouth \n";
-  std::vector<std::vector<Rect>> mouths;
-  for(int i = 0; i < faces.size(); i++)
+  if(faces.size() != 1)
   {
-    std::vector<Rect> mouth;
-    Mat face_ROI = frame_gray(faces.at(i));
-    mouth_cascade.detectMultiScale(face_ROI , mouth);
-    mouths.push_back(mouth);
+    if(debug)
+      ROS_INFO_STREAM("Too many faces detected");
+    data.success = false;
+    return data;
   }
+  data.face = faces[0];
 
-  cout << "found mouth(s) \n";
-
-  faceData data;
-  data.faces = faces;
-  data.mouths = mouths;
-  for ( size_t i = 0; i < faces.size(); i++ )
-  {
-      rectangle(frame, faces[i].tl(), faces[i].br(), Scalar(255,0,255), 4);
-      for(int j = 0; j < mouths.size(); j++)
-      {
-          rectangle(frame, mouths[i][j].tl(), mouths[i][j].br(), Scalar(0,255,0), 4);
-      }
-  }
-  imshow("face detection", frame);
-  waitKey(0);
+  std::vector<Rect> mouths;
+  // entire face ROI
+  Mat face_ROI = frame_gray(faces.at(0));
+  Mat mouth_ROI = face_ROI.rowRange(face_ROI.rows / 2, face_ROI.rows);
+  mouth_cascade.detectMultiScale(mouth_ROI , mouths);
   
-  /* optionally draw faces, and landmarks on the frame
+
+  if(mouths.size() != 1)
+  {
+    ROS_INFO_STREAM("too many mouths detected");
+    data.success = false;
+    return data;
+  }
+
+  Point2i mouthROI_TL = faces[0].tl();
+  mouthROI_TL.y +=  (faces[0].height /2);
+
+  data.mouth.x = (mouths[0].tl() + mouthROI_TL).x;
+  data.mouth.y = (mouths[0].tl() + mouthROI_TL).y;
+  data.mouth.width = mouths[0].width;
+  data.mouth.height = mouths[0].height;
+
+  // optionally draw faces, and mouth on the frame
   if(debug)
   {
-    for ( size_t i = 0; i < faces.size(); i++ )
-    {
-        rectangle(frame, faces[i].tl(), faces[i].br(), Scalar(255,0,255), 4);
-        for(int j = 0; j < landmarks[i].size(); j++)
-        {
-            Point2f point = landmarks.at(i).at(j);
-            ellipse(frame, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
-        }
-    }
+    rectangle(frame, faces[0].tl(), faces[0].br(), Scalar(255,0,255), 4);
+    for(int i = 0; i < mouths.size(); i++)
+      rectangle(frame, mouths[i].tl() + mouthROI_TL, mouths[i].br() + mouthROI_TL, Scalar(0,255,0), 4);
+
     //-- Show image
     imshow( "Capture - Face detection", frame );
     waitKey(1);
   }
-  */
   
   return data;
 }
@@ -121,17 +125,10 @@ Mat Face_worker::drawFaces(Mat img, faceData data)
   
   Mat output;
   img.copyTo(output);
-  /*
-  for ( size_t i = 0; i < data.faces.size(); i++ )
-  {
-    rectangle(output, data.faces[i].tl(), data.faces[i].br(), Scalar(255,0,255), 4);
-    for(int j = 0; j < data.landmarks[i].size(); j++)
-    {
-        Point2f point = data.landmarks.at(i).at(j);
-        ellipse(output, point, Size(10,10),0,0,0, Scalar(0,255,0),3);
-    }
-  }
-  */
+  
+  rectangle(output, data.mouth.tl(), data.mouth.br(), Scalar(0, 255, 0), 4);
+  rectangle(output, data.face.tl(), data.face.br(), Scalar(255,0,255), 4);
+  
   return output;
 }
 
@@ -163,8 +160,8 @@ int main( int argc, char* argv[] )
   faceData faces;
   ROS_INFO_STREAM("initialized, ready to find faces!");
 
-  //total landmarks: 68, skip 17 first
-  int n_usedPoints = 68-27;
+  //total landmarks: 5
+  int n_usedPoints = 5;
   float depthLandmarkX[n_usedPoints];
   float depthLandmarkY[n_usedPoints];
   float depthLandmarkZ[n_usedPoints];
@@ -188,15 +185,33 @@ int main( int argc, char* argv[] )
       }
       new_depth_img = false;
       new_color_img = false;
-      cout << "finding face \n";
-      faces = faceworker.detectFace(color_image);
-      cout << "found face" << endl << endl;
-      /*
+
       std_msgs::Int32 int_msg;
       int_msg.data = images_processed;
       img_processed_pub.publish(int_msg);
 
       images_processed++;
+
+      faces = faceworker.detectFace(color_image);
+      if(!faces.success)
+      {
+        //failed detection
+        if(debug)
+          ROS_WARN_STREAM("MOUTH DETECTION FAILED");
+
+        //publish empty image to gui:
+        cvtColor(color_image, color_image, COLOR_BGR2RGB);
+        cv_bridge::CvImage msg;
+        msg.encoding = "rgb8";
+        msg.header.frame_id = "none";
+        msg.header.seq = 0;
+        msg.header.stamp = ros::Time::now();
+        msg.image = color_image;
+        face_img_pub.publish(msg);
+        continue;
+      }
+  
+      
 
       Mat face_img = faceworker.drawFaces(color_image, faces);
       cvtColor(face_img, face_img, COLOR_BGR2RGB);
@@ -212,27 +227,40 @@ int main( int argc, char* argv[] )
       if(debug)
         imshow("depth", depth_image);
       
-      if(faces.faces.size() > 1)// we have multiple faces, skip until only one face is detected
-      {
-        if(debug)
-          ROS_WARN_STREAM("MORE THAN 1 FACE DETECTED");
-        continue;
-      }
-      if (faces.landmarks.size() == 0)
-        continue;
 
       if(debug)
         preDeproject = getTickCount();
 
       // fit a plane to the face:
-
+      // first find five points, (a cross in the ROI)
       // ensure coordinates fit in depth_image even if resolution is not 1:1
-
+      
       autonomous_eating::deproject_array srv;
-      for (size_t i = 27; i < 68; i++){
-        srv.request.x.push_back(((float)faces.landmarks[0].at(i).x / (float)color_image.cols)*(float)depth_image.cols);
-        srv.request.y.push_back(((float)faces.landmarks[0].at(i).y / (float)color_image.rows)*(float)depth_image.rows);
-        srv.request.z.push_back((float)depth_image.at<uint16_t>(Point(srv.request.x[i-27], srv.request.y[i-27])));
+
+      srv.request.x.push_back(faces.mouth.tl().x);
+      for(int i = 0; i < 3; i++)
+        srv.request.x.push_back(faces.mouth.tl().x + (faces.mouth.width/2));
+      srv.request.x.push_back(faces.mouth.tl().x + faces.mouth.width);
+
+      srv.request.y.push_back(faces.mouth.tl().y + (faces.mouth.height/2));
+      srv.request.y.push_back(faces.mouth.tl().y);
+      srv.request.y.push_back(faces.mouth.tl().y + (faces.mouth.height/2));
+      srv.request.y.push_back(faces.mouth.tl().y + faces.mouth.height);
+      srv.request.y.push_back(faces.mouth.tl().y + (faces.mouth.height/2));
+
+
+      for (size_t i = 0; i < 5; i++){
+        srv.request.z.push_back((float)depth_image.at<uint16_t>(Point(srv.request.x[i], srv.request.y[i])));
+        //cout << srv.request.z[i] << endl;
+      }
+      //cout << endl;
+      for(int i = 0; i < srv.request.z.size(); i++)
+      {
+        if(srv.request.z[i] > 1800)
+        {
+          ROS_INFO_STREAM("depth out of range for srv.request.z");
+          continue;
+        }
       }
 
       if(deproject_client.call(srv)){ //successfully called service
@@ -278,16 +306,16 @@ int main( int argc, char* argv[] )
       // a = K.at<float>(Point(0,0)), b = K.at<float>(Point(0,1)) and c = K.at<float>(Point(0,2))
       
       // calculating xyz of first mouth corner projected onto plane
-      float k1 = (-(K.at<float>(Point(0,0)) * depthLandmarkX[33]) - (K.at<float>(Point(0,1)) * depthLandmarkY[33]) - (K.at<float>(Point(0,2)) * depthLandmarkZ[33])) / ((K.at<float>(Point(0,0)) * K.at<float>(Point(0,0))) + (K.at<float>(Point(0,1)) * K.at<float>(Point(0,1))) + (K.at<float>(Point(0,2)) * K.at<float>(Point(0,2))));
-      float x1 = (K.at<float>(Point(0,0)) * k1) + depthLandmarkX[33];
-      float y1 = (K.at<float>(Point(0,1)) * k1) + depthLandmarkY[33];
-      float z1 = (K.at<float>(Point(0,2)) * k1) + depthLandmarkZ[33];
+      float k1 = (-(K.at<float>(Point(0,0)) * depthLandmarkX[0]) - (K.at<float>(Point(0,1)) * depthLandmarkY[0]) - (K.at<float>(Point(0,2)) * depthLandmarkZ[0])) / ((K.at<float>(Point(0,0)) * K.at<float>(Point(0,0))) + (K.at<float>(Point(0,1)) * K.at<float>(Point(0,1))) + (K.at<float>(Point(0,2)) * K.at<float>(Point(0,2))));
+      float x1 = (K.at<float>(Point(0,0)) * k1) + depthLandmarkX[0];
+      float y1 = (K.at<float>(Point(0,1)) * k1) + depthLandmarkY[0];
+      float z1 = (K.at<float>(Point(0,2)) * k1) + depthLandmarkZ[0];
 
       // calculating xyz of second mouth corner projected onto plane 
-      float k2 = (-(K.at<float>(Point(0,0)) * depthLandmarkX[37]) - (K.at<float>(Point(0,1)) * depthLandmarkY[37]) - (K.at<float>(Point(0,2)) * depthLandmarkZ[37])) / ((K.at<float>(Point(0,0)) * K.at<float>(Point(0,0))) + (K.at<float>(Point(0,1)) * K.at<float>(Point(0,1))) + (K.at<float>(Point(0,2)) * K.at<float>(Point(0,2))));
-      float x2 = (K.at<float>(Point(0,0)) * k2) + depthLandmarkX[37];
-      float y2 = (K.at<float>(Point(0,1)) * k2) + depthLandmarkY[37];
-      float z2 = (K.at<float>(Point(0,2)) * k2) + depthLandmarkZ[37];
+      float k2 = (-(K.at<float>(Point(0,0)) * depthLandmarkX[4]) - (K.at<float>(Point(0,1)) * depthLandmarkY[4]) - (K.at<float>(Point(0,2)) * depthLandmarkZ[4])) / ((K.at<float>(Point(0,0)) * K.at<float>(Point(0,0))) + (K.at<float>(Point(0,1)) * K.at<float>(Point(0,1))) + (K.at<float>(Point(0,2)) * K.at<float>(Point(0,2))));
+      float x2 = (K.at<float>(Point(0,0)) * k2) + depthLandmarkX[4];
+      float y2 = (K.at<float>(Point(0,1)) * k2) + depthLandmarkY[4];
+      float z2 = (K.at<float>(Point(0,2)) * k2) + depthLandmarkZ[4];
 
       // calculating xyz of the middle of the mouth projected onto the plane and pulling it out in front of the mouth (middle point + vector)
       face_cords_msg.x_p1 = ((x1 + x2) / 2) + (K.at<float>(Point(0,0)) * startingDis);
@@ -319,7 +347,7 @@ int main( int argc, char* argv[] )
       
         startElse = end;
       }
-      */
+      
       
     }
     ros::spinOnce();
